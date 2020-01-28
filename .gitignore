@@ -1,0 +1,7 @@
+target
+.idea/
+*.iml
+.idea/compiler.xml
+lean-engine.iml
+
+node_modules

@@ -1,0 +1,29 @@
+<database-types>
+
+  <database-type id="GENERIC">
+    <description>Generic database</description>
+    <classname>org.apache.hop.core.database.GenericDatabaseMeta</classname>
+  </database-type>
+
+  <database-type id="NONE">
+    <description>No connection type</description>
+    <classname>org.apache.hop.core.database.NoneDatabaseMeta</classname>
+  </database-type>
+
+
+  <database-type id="MYSQL">
+    <description>MySQL</description>
+    <classname>org.apache.hop.core.database.MySQLDatabaseMeta</classname>
+  </database-type>
+
+  <database-type id="ORACLE">
+    <description>Oracle</description>
+    <classname>org.apache.hop.core.database.OracleDatabaseMeta</classname>
+  </database-type>
+
+  <database-type id="H2">
+    <description>H2</description>
+    <classname>org.apache.hop.core.database.H2DatabaseMeta</classname>
+  </database-type>
+
+ </database-types>

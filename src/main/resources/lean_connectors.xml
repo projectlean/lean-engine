@@ -1,0 +1,45 @@
+<connectors>
+
+  <connector id="SampleDataConnector">
+    <description>Dummy</description>
+    <tooltip>A sample data connector giving back a configurable list of sample rows</tooltip>
+    <classname>org.lean.presentation.connector.types.sampledata.LeanSampleDataConnector</classname>
+  </connector>
+
+  <connector id="PassthroughConnector">
+    <description>A passthrough connector</description>
+    <tooltip>Simply passes all the rows of the selected data source</tooltip>
+    <classname>org.lean.presentation.connector.types.passthrough.LeanPassthroughConnector</classname>
+  </connector>
+
+  <connector id="SqlConnector">
+    <description>Execute a SQL query</description>
+    <tooltip>Reads data from a relational database using a SQL query</tooltip>
+    <classname>org.lean.presentation.connector.types.sql.LeanSqlConnector</classname>
+  </connector>
+
+  <connector id="SelectionConnector">
+    <description>Select fields</description>
+    <tooltip>Makes a selection of fields from a source connector</tooltip>
+    <classname>org.lean.presentation.connector.types.selection.LeanSelectionConnector</classname>
+  </connector>
+
+  <connector id="DistinctConnector">
+    <description>Select distinct rows</description>
+    <tooltip>Only outputs unique rows</tooltip>
+    <classname>org.lean.presentation.connector.types.distinct.LeanDistinctConnector</classname>
+  </connector>
+
+  <connector id="SortConnector">
+    <description>Sort rows</description>
+    <tooltip>Sorts all rows</tooltip>
+    <classname>org.lean.presentation.connector.types.sort.LeanSortConnector</classname>
+  </connector>
+
+  <connector id="ChainConnector">
+    <description>Chain connectors</description>
+    <tooltip>Chain multiple connectors, encapsulate in a single connector</tooltip>
+    <classname>org.lean.presentation.connector.types.chain.LeanChainConnector</classname>
+  </connector>
+
+</connectors>
