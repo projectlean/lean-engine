@@ -36,6 +36,12 @@
     <classname>org.lean.presentation.component.types.image.LeanImageComponent</classname>
   </component>
 
+  <component id="LeanSvgComponent">
+    <description>SVG</description>
+    <tooltip>An SVG component</tooltip>
+    <classname>org.lean.presentation.component.types.svg.LeanSvgComponent</classname>
+  </component>
+
   <component id="LeanLineChartComponent">
     <description>Line chart</description>
     <tooltip>A line chart component</tooltip>
