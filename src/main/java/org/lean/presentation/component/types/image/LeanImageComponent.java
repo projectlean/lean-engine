@@ -35,7 +35,7 @@ public class LeanImageComponent extends LeanBaseComponent implements ILeanCompon
   private String scalePercent;
 
   public LeanImageComponent() {
-    super( "LeanImageComponent" );
+    super( "LeanSvgComponent" );
   }
 
   public LeanImageComponent( String filename ) {
@@ -44,7 +44,7 @@ public class LeanImageComponent extends LeanBaseComponent implements ILeanCompon
   }
 
   public LeanImageComponent( LeanImageComponent c ) {
-    super( "LeanImageComponent", c );
+    super( "LeanSvgComponent", c );
     this.filename = c.filename;
     this.scalePercent = c.scalePercent;
   }

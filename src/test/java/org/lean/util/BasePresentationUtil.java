@@ -91,7 +91,7 @@ public class BasePresentationUtil {
 
   /*
   protected static LeanComponent createHeaderImageComponent() {
-    LeanImageComponent leanImage = new LeanImageComponent( "lean-logo.png" );
+    LeanSvgComponent leanImage = new LeanSvgComponent( "lean-logo.png" );
     leanImage.setBorder( false );
     leanImage.setScalePercent( "5" );
     LeanComponent imageComponent = new LeanComponent( "Logo", leanImage );

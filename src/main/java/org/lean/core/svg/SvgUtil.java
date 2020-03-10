@@ -9,6 +9,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.w3c.dom.svg.SVGDocument;
 
 public class SvgUtil {
 
@@ -33,36 +34,46 @@ public class SvgUtil {
 
   }
 
-  public static Node createNodeCopy( Document document, Node node ) {
-
+  public static Node createNodeCopy( Document document, Node node ) throws LeanException {
     String tagName = node.getNodeName();
-    Element element = document.createElement( tagName );
-    element.setNodeValue( node.getNodeValue() );
+    try {
 
-    // Copy all the attributes...
-    //
-    NamedNodeMap attributes = node.getAttributes();
-    for (int i=0;i<attributes.getLength();i++) {
-      Node item = attributes.item( i );
-      element.setAttribute( item.getNodeName(), item.getNodeValue() );
-    }
+      return document.importNode( node, true );
 
-    // Copy all the children...
-    //
-    NodeList childNodes = node.getChildNodes();
-    for (int i=0;i<childNodes.getLength();i++) {
-      Node childNode = childNodes.item( i );
+      /*
+      Element element = document.createElement( tagName.replace( "#", "" )  );
+      element.setNodeValue( node.getNodeValue() );
 
-      // If we're dealing with a CDATA section, this is not a real child, it's simply the data section
+      // Copy all the attributes...
       //
-      if (node.getNodeValue()==null && childNode.getNodeName().startsWith( "#" )) {
-        element.setTextContent( node.getTextContent() );
-      } else {
-        Node childNodeCopy = createNodeCopy( document, childNode );
-        element.appendChild( childNodeCopy );
+      NamedNodeMap attributes = node.getAttributes();
+      if (attributes!=null) {
+        for ( int i = 0; i < attributes.getLength(); i++ ) {
+          Node item = attributes.item( i );
+          element.setAttribute( item.getNodeName(), item.getNodeValue() );
+        }
       }
-    }
 
-    return element;
+      // Copy all the children...
+      //
+      NodeList childNodes = node.getChildNodes();
+      for ( int i = 0; i < childNodes.getLength(); i++ ) {
+        Node childNode = childNodes.item( i );
+
+        // If we're dealing with a CDATA section, this is not a real child, it's simply the data section
+        //
+        if ( node.getNodeValue() == null && childNode.getNodeName().startsWith( "#" ) ) {
+          element.setTextContent( node.getTextContent() );
+        } else {
+          Node childNodeCopy = createNodeCopy( document, childNode );
+          element.appendChild( childNodeCopy );
+        }
+      }
+
+      return element;
+       */
+    } catch(Exception e) {
+      throw new LeanException( "Unable to copy node with name "+tagName, e );
+    }
   }
 }
