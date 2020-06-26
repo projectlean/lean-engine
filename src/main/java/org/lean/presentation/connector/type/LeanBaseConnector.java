@@ -1,23 +1,23 @@
 package org.lean.presentation.connector.type;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import org.apache.hop.core.row.IRowMeta;
+import org.apache.hop.metadata.api.HopMetadataProperty;
 import org.lean.core.ILeanRowListener;
 import org.lean.core.exception.LeanException;
 import org.lean.presentation.datacontext.IDataContext;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import org.apache.hop.core.row.RowMetaInterface;
-import org.apache.hop.metastore.persist.MetaStoreAttribute;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public abstract class LeanBaseConnector implements ILeanConnector {
 
-  @MetaStoreAttribute
+  @HopMetadataProperty
   @JsonProperty
   protected String pluginId;
 
-  @MetaStoreAttribute
+  @HopMetadataProperty
   @JsonProperty
   protected String sourceConnectorName;
 
@@ -29,7 +29,7 @@ public abstract class LeanBaseConnector implements ILeanConnector {
     rowListeners = new ArrayList<>();
   }
 
-  public LeanBaseConnector(LeanBaseConnector c) {
+  public LeanBaseConnector( LeanBaseConnector c ) {
     this.pluginId = c.pluginId;
     this.sourceConnectorName = c.sourceConnectorName;
     // We don't copy over the listeneres!
@@ -53,18 +53,18 @@ public abstract class LeanBaseConnector implements ILeanConnector {
    * @throws LeanException
    */
   public void outputDone() throws LeanException {
-    for (ILeanRowListener rowListener : rowListeners) {
-      rowListener.rowReceived( null, null);
+    for ( ILeanRowListener rowListener : rowListeners ) {
+      rowListener.rowReceived( null, null );
     }
   }
 
-  public void passToRowListeners( RowMetaInterface rowMeta, Object[] rowData ) throws LeanException {
-    for (ILeanRowListener rowListener : rowListeners) {
+  public void passToRowListeners( IRowMeta rowMeta, Object[] rowData ) throws LeanException {
+    for ( ILeanRowListener rowListener : rowListeners ) {
       rowListener.rowReceived( rowMeta, rowData );
     }
   }
 
-  public abstract void startStreaming( IDataContext dataContext) throws LeanException;
+  public abstract void startStreaming( IDataContext dataContext ) throws LeanException;
 
   public abstract void waitUntilFinished() throws LeanException;
 

@@ -1,7 +1,7 @@
 package org.lean.presentation.component.types.chart;
 
 import org.lean.core.LeanTextGeometry;
-import org.apache.hop.core.row.ValueMetaInterface;
+import org.apache.hop.core.row.IValueMeta;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -27,7 +27,7 @@ public class ChartDetails {
 
   public List<List<String>> factLabels;
   public List<List<Object>> factValues;
-  public List<List<ValueMetaInterface>> factValueMetas;
+  public List<List<IValueMeta>> factValueMetas;
 
   public double minValue;
   public double maxValue;

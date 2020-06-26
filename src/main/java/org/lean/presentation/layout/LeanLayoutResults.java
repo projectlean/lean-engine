@@ -10,7 +10,7 @@ import org.apache.batik.transcoder.TranscoderOutput;
 import org.apache.fop.svg.PDFTranscoder;
 import org.apache.pdfbox.io.MemoryUsageSetting;
 import org.apache.pdfbox.multipdf.PDFMergerUtility;
-import org.apache.hop.core.logging.LogChannelInterface;
+import org.apache.hop.core.logging.ILogChannel;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -32,9 +32,9 @@ public class LeanLayoutResults {
 
   private List<LeanRenderPage> renderPages;
 
-  private LogChannelInterface log;
+  private ILogChannel log;
 
-  public LeanLayoutResults( LogChannelInterface log ) {
+  public LeanLayoutResults( ILogChannel log ) {
     this.log = log;
     componentGeometryMap = new HashMap<>();
     componentDataSetMap = new HashMap<>();
@@ -239,14 +239,14 @@ public class LeanLayoutResults {
    *
    * @return value of log
    */
-  public LogChannelInterface getLog() {
+  public ILogChannel getLog() {
     return log;
   }
 
   /**
    * @param log The log to set
    */
-  public void setLog( LogChannelInterface log ) {
+  public void setLog( ILogChannel log ) {
     this.log = log;
   }
 

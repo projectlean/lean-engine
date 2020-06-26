@@ -1,9 +1,9 @@
 package org.lean.presentation.datacontext;
 
+import org.apache.hop.core.variables.IVariables;
+import org.apache.hop.metadata.api.IHopMetadataProvider;
 import org.lean.core.exception.LeanException;
 import org.lean.presentation.connector.LeanConnector;
-import org.apache.hop.core.variables.VariableSpace;
-import org.apache.hop.metastore.api.IMetaStore;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -30,19 +30,19 @@ public class ChainDataContext implements IDataContext {
     if ( connector == null ) {
       connector = connectorsMap.get( name );
     }
-    if (connector != null) {
+    if ( connector != null ) {
       connector = new LeanConnector( connector );
     }
     return connector;
   }
 
-  @Override public VariableSpace getVariableSpace() {
+  @Override public IVariables getVariableSpace() {
     return parentDataContext.getVariableSpace();
   }
 
   public void addConnector( LeanConnector leanConnector ) {
     this.lastConnector = leanConnector;
-    connectorsMap.put(leanConnector.getName(), leanConnector);
+    connectorsMap.put( leanConnector.getName(), leanConnector );
   }
 
   /**
@@ -93,7 +93,7 @@ public class ChainDataContext implements IDataContext {
     this.lastConnector = lastConnector;
   }
 
-  @Override public IMetaStore getMetaStore() {
-    return parentDataContext.getMetaStore();
+  @Override public IHopMetadataProvider getMetadataProvider() {
+    return parentDataContext.getMetadataProvider();
   }
 }

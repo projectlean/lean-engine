@@ -1,9 +1,9 @@
 package org.lean.core.history;
 
+import org.apache.hop.core.exception.HopException;
+import org.apache.hop.metadata.api.IHopMetadataProvider;
+import org.apache.hop.metadata.api.IHopMetadataSerializer;
 import org.lean.core.Constants;
-import org.lean.core.metastore.MetaStoreFactory;
-import org.apache.hop.metastore.api.IMetaStore;
-import org.apache.hop.metastore.api.exceptions.MetaStoreException;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -23,43 +23,44 @@ public class UserHistoryUtil {
    * This method will update the user action history for the given user and object.
    * It will also limit the history to a certain number of objects per type.
    *
-   * @param metaStore
+   * @param metadataProvider
    * @param user
    * @param objectType
    * @param objectName
-   * @throws MetaStoreException
+   * @throws HopException
    */
-  public static final void addUserHistoryAction( IMetaStore metaStore, String user, String objectType, String objectName ) throws MetaStoreException {
+  public static final void addUserHistoryAction( IHopMetadataProvider metadataProvider, String user, String objectType, String objectName ) throws HopException {
 
-    MetaStoreFactory<LeanUserHistory> factory = new MetaStoreFactory<>( LeanUserHistory.class, metaStore, Constants.NAMESPACE );
-    LeanUserHistory userHistory = factory.loadElement( user );
-    if (userHistory==null) {
-      userHistory = new LeanUserHistory(  );
+    IHopMetadataSerializer<LeanUserHistory> serializer = metadataProvider.getSerializer( LeanUserHistory.class );
+
+    LeanUserHistory userHistory = serializer.load( user );
+    if ( userHistory == null ) {
+      userHistory = new LeanUserHistory();
       userHistory.setName( user );
     }
 
-    userHistory.getActions().add(new LeanUserHistoryAction( objectType, objectName ));
+    userHistory.getActions().add( new LeanUserHistoryAction( objectType, objectName ) );
 
 
     Map<String, Set<LeanUserHistoryAction>> typeActionsMap = new HashMap<>();
 
     // Remember at most 10 per type of object...
     //
-    for (LeanUserHistoryAction action : userHistory.getActions()) {
+    for ( LeanUserHistoryAction action : userHistory.getActions() ) {
       Set<LeanUserHistoryAction> actions = typeActionsMap.get( action.getObjectType() );
-      if (actions==null) {
+      if ( actions == null ) {
         actions = new HashSet<>();
         typeActionsMap.put( action.getObjectType(), actions );
       }
-      actions.add(action);
+      actions.add( action );
     }
 
     // Now clear the actions and keep a limited amount per object type at most...
     //
     userHistory.getActions().clear();
 
-    for (String type : typeActionsMap.keySet()) {
-      List<LeanUserHistoryAction> actions = new ArrayList<>(typeActionsMap.get( type ));
+    for ( String type : typeActionsMap.keySet() ) {
+      List<LeanUserHistoryAction> actions = new ArrayList<>( typeActionsMap.get( type ) );
       // Sort the list by date reversed
       //
       Collections.sort( actions, new Comparator<LeanUserHistoryAction>() {
@@ -69,20 +70,19 @@ public class UserHistoryUtil {
       } );
 
 
-      for (int i=0;i<actions.size() && i<Constants.USER_ACTION_HISTORY_SIZE;i++) {
-        userHistory.getActions().add(actions.get(i));
+      for ( int i = 0; i < actions.size() && i < Constants.USER_ACTION_HISTORY_SIZE; i++ ) {
+        userHistory.getActions().add( actions.get( i ) );
       }
     }
 
-    factory.saveElement( userHistory );
+    serializer.save( userHistory );
   }
 
 
-  public static final List<LeanUserHistoryAction> getUserHistoryActions(IMetaStore metaStore, String user) throws MetaStoreException {
-    MetaStoreFactory<LeanUserHistory> factory = new MetaStoreFactory<>( LeanUserHistory.class, metaStore, Constants.NAMESPACE );
-    LeanUserHistory userHistory = factory.loadElement( user );
-    if (userHistory==null) {
-      return new ArrayList<>(  );
+  public static final List<LeanUserHistoryAction> getUserHistoryActions( IHopMetadataProvider metadataProvider, String user ) throws HopException {
+    LeanUserHistory userHistory = metadataProvider.getSerializer( LeanUserHistory.class ).load( user );
+    if ( userHistory == null ) {
+      return new ArrayList<>();
     }
     return userHistory.getActions();
   }

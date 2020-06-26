@@ -1,5 +1,6 @@
 package org.lean.util;
 
+import org.apache.hop.metadata.api.IHopMetadataProvider;
 import org.lean.core.AggregationMethod;
 import org.lean.core.LeanDimension;
 import org.lean.core.LeanFact;
@@ -15,7 +16,11 @@ import java.util.Arrays;
 public class CrosstabPresentationUtil extends BasePresentationUtil {
 
 
-  public static LeanPresentation createCrosstabPresentation( int nr ) throws Exception {
+  public CrosstabPresentationUtil( IHopMetadataProvider metadataProvider ) {
+    super( metadataProvider );
+  }
+
+  public LeanPresentation createCrosstabPresentation( int nr ) throws Exception {
     LeanPresentation presentation = createBasePresentation(
       "Crosstab (" + nr +")",
       "Crosstab " + nr + " description",
@@ -63,7 +68,7 @@ public class CrosstabPresentationUtil extends BasePresentationUtil {
   }
 
 
-  public static LeanPresentation createCrosstabPresentationOnlyVerticalDimensions( int nr ) throws Exception {
+  public LeanPresentation createCrosstabPresentationOnlyVerticalDimensions( int nr ) throws Exception {
     LeanPresentation presentation = createBasePresentation(
       "Crosstab only vertical" + nr,
       "Crosstab only vertical " + nr + " description",
@@ -111,7 +116,7 @@ public class CrosstabPresentationUtil extends BasePresentationUtil {
     return presentation;
   }
 
-  public static LeanPresentation createCrosstabPresentationOnlyHorizontalDimensions( int nr ) throws Exception {
+  public LeanPresentation createCrosstabPresentationOnlyHorizontalDimensions( int nr ) throws Exception {
     LeanPresentation presentation = createBasePresentation(
       "Crosstab only horizontal (" + nr+")",
       "Crosstab only horizontal " + nr + " description",
@@ -152,7 +157,7 @@ public class CrosstabPresentationUtil extends BasePresentationUtil {
     return presentation;
   }
 
-  public static LeanPresentation createCrosstabPresentationOnlyFacts( int nr ) throws Exception {
+  public LeanPresentation createCrosstabPresentationOnlyFacts( int nr ) throws Exception {
     LeanPresentation presentation = createBasePresentation(
       "Crosstab only facts (" + nr + ")",
       "Crosstab only facts " + nr + " description",

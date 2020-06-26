@@ -1,5 +1,12 @@
 package org.lean.presentation.component.types.chart;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import org.apache.batik.svggen.SVGGraphics2D;
+import org.apache.commons.lang.StringUtils;
+import org.apache.hop.core.Const;
+import org.apache.hop.core.exception.HopValueException;
+import org.apache.hop.core.row.IValueMeta;
+import org.apache.hop.metadata.api.HopMetadataProperty;
 import org.lean.core.LeanColorRGB;
 import org.lean.core.LeanGeometry;
 import org.lean.core.LeanTextGeometry;
@@ -13,13 +20,6 @@ import org.lean.presentation.layout.LeanLayoutResults;
 import org.lean.presentation.page.LeanPage;
 import org.lean.presentation.theme.LeanTheme;
 import org.lean.render.IRenderContext;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import org.apache.batik.svggen.SVGGraphics2D;
-import org.apache.commons.lang.StringUtils;
-import org.apache.hop.core.Const;
-import org.apache.hop.core.exception.HopValueException;
-import org.apache.hop.core.row.ValueMetaInterface;
-import org.apache.hop.metastore.persist.MetaStoreAttribute;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,10 +30,10 @@ public class LeanBarChartComponent extends LeanBaseChartComponent implements ILe
   /**
    * % of the width allocated for the horizontal value
    */
-  @MetaStoreAttribute
+  @HopMetadataProperty
   protected String widthPercentage;
 
-  @MetaStoreAttribute
+  @HopMetadataProperty
   protected boolean showingFactValues;
 
   public LeanBarChartComponent() {
@@ -96,14 +96,14 @@ public class LeanBarChartComponent extends LeanBaseChartComponent implements ILe
     if ( StringUtils.isNotEmpty( titleText ) ) {
       int titleX = x + ( width - details.titleGeometry.getWidth() ) / 2;
       int titleY = y + verticalMargin + details.titleGeometry.getHeight();
-      enableColor( gc, lookupTitleColor(renderContext) );
-      enableFont( gc, lookupTitleFont(renderContext) );
+      enableColor( gc, lookupTitleColor( renderContext ) );
+      enableFont( gc, lookupTitleFont( renderContext ) );
       gc.drawString( titleText, titleX, titleY );
     }
 
     // Draw the X and Y axis
     //
-    enableColor( gc, lookupAxisColor(renderContext) );
+    enableColor( gc, lookupAxisColor( renderContext ) );
 
     // top left X and Y
     //
@@ -141,7 +141,7 @@ public class LeanBarChartComponent extends LeanBaseChartComponent implements ILe
       gc.drawLine( (int) ( minX - tickSize / 2 ), (int) ( minY ), (int) ( minX + tickSize / 2 ), (int) minY );
     }
     if ( showingVerticalLabels ) {
-      enableFont( gc, lookupVerticalDimensionsFont(renderContext) );
+      enableFont( gc, lookupVerticalDimensionsFont( renderContext ) );
       gc.drawString( details.minLabel, (int) ( x + horizontalMargin ), (int) ( minY + minGeo.getHeight() / 2 ) );
     }
 
@@ -154,7 +154,7 @@ public class LeanBarChartComponent extends LeanBaseChartComponent implements ILe
       gc.drawLine( (int) ( maxX - tickSize / 2 ), (int) ( maxY ), (int) ( maxX + tickSize / 2 ), (int) maxY );
     }
     if ( showingHorizontalLabels ) {
-      enableFont( gc, lookupVerticalDimensionsFont(renderContext) );
+      enableFont( gc, lookupVerticalDimensionsFont( renderContext ) );
       gc.drawString( details.maxLabel, (int) ( x + horizontalMargin ), (int) ( maxY + maxGeo.getHeight() / 2 ) );
     }
 
@@ -199,7 +199,7 @@ public class LeanBarChartComponent extends LeanBaseChartComponent implements ILe
 
           if ( showingHorizontalLabels ) {
             enableColor( gc, lookupDefaultColor( renderContext ) );
-            enableFont( gc, lookupHorizontalDimensionsFont(renderContext) );
+            enableFont( gc, lookupHorizontalDimensionsFont( renderContext ) );
             gc.drawString( label, (int) labelX, (int) labelY );
           }
 
@@ -208,7 +208,7 @@ public class LeanBarChartComponent extends LeanBaseChartComponent implements ILe
           if ( showingAxisTicks ) {
             double tickX = bottomLeftX + part * details.partWidth + details.partWidth;
             double tickY = bottomLeftY - tickSize / 2;
-            enableColor( gc, lookupAxisColor(renderContext) );
+            enableColor( gc, lookupAxisColor( renderContext ) );
             gc.drawLine( (int) tickX, (int) tickY, (int) tickX, (int) ( tickY + tickSize ) );
           }
         }
@@ -217,10 +217,10 @@ public class LeanBarChartComponent extends LeanBaseChartComponent implements ILe
         //
         List<String> factLabels = details.factLabels.get( series );
         List<Object> factValues = details.factValues.get( series );
-        List<ValueMetaInterface> factValueMetas = details.factValueMetas.get( series );
+        List<IValueMeta> factValueMetas = details.factValueMetas.get( series );
 
         Object valueData = factValues.get( part );
-        ValueMetaInterface valueMeta = factValueMetas.get( part );
+        IValueMeta valueMeta = factValueMetas.get( part );
         double factValue = 0;
         try {
           factValue = valueMeta.getNumber( valueData );
@@ -282,15 +282,15 @@ public class LeanBarChartComponent extends LeanBaseChartComponent implements ILe
     // OK, now we need to render the labels at the bottom
     //
     double legendX = x + horizontalMargin;
-    double legendY = bottomLeftY + details.maxLabelHeight + 2*verticalMargin;
-    double legendEntryWidth =  details.maxLegendLabelWidth+2*horizontalMargin+details.legendMarkerSize;
-    double legendEntryHeight = details.maxLegendLabelHeight+verticalMargin;
+    double legendY = bottomLeftY + details.maxLabelHeight + 2 * verticalMargin;
+    double legendEntryWidth = details.maxLegendLabelWidth + 2 * horizontalMargin + details.legendMarkerSize;
+    double legendEntryHeight = details.maxLegendLabelHeight + verticalMargin;
 
     // Do we have fewer columns than we can fit?  In that case, center the legend
     //
-    if (details.maxNrLegendColumns>details.nrLegendColumns) {
-      double emptySpace = (details.maxNrLegendColumns-details.nrLegendColumns)*legendEntryWidth;
-      legendX+=emptySpace/2;
+    if ( details.maxNrLegendColumns > details.nrLegendColumns ) {
+      double emptySpace = ( details.maxNrLegendColumns - details.nrLegendColumns ) * legendEntryWidth;
+      legendX += emptySpace / 2;
     }
 
     String themeName = null;
@@ -302,8 +302,8 @@ public class LeanBarChartComponent extends LeanBaseChartComponent implements ILe
     int rowNr = 0;
     for ( String seriesLabel : seriesLabels ) {
 
-      double labelX = legendX + colNr*(legendEntryWidth);
-      double labelY = legendY + rowNr*(details.maxLegendLabelHeight+verticalMargin);
+      double labelX = legendX + colNr * ( legendEntryWidth );
+      double labelY = legendY + rowNr * ( details.maxLegendLabelHeight + verticalMargin );
 
       LeanColorRGB color = renderContext.getStableColor( themeName, seriesLabel );
       if ( color == null ) {
@@ -319,19 +319,19 @@ public class LeanBarChartComponent extends LeanBaseChartComponent implements ILe
 
       // Let's fill a small circle
       //
-      gc.fillOval( (int)labelX, (int)labelY+(details.maxLegendLabelHeight-details.legendMarkerSize)/2, (int)details.legendMarkerSize, (int)details.legendMarkerSize);
+      gc.fillOval( (int) labelX, (int) labelY + ( details.maxLegendLabelHeight - details.legendMarkerSize ) / 2, (int) details.legendMarkerSize, (int) details.legendMarkerSize );
 
       // Print the label in the default color
       //
       enableColor( gc, lookupDefaultColor( renderContext ) );
 
-      gc.drawString( seriesLabel, (int)(labelX+details.legendMarkerSize+horizontalMargin/2), (int)(labelY + details.maxLegendLabelHeight) );
+      gc.drawString( seriesLabel, (int) ( labelX + details.legendMarkerSize + horizontalMargin / 2 ), (int) ( labelY + details.maxLegendLabelHeight ) );
 
       // Switch to the next position
       //
       colNr++;
-      if (colNr>=details.nrLegendColumns) {
-        colNr=0;
+      if ( colNr >= details.nrLegendColumns ) {
+        colNr = 0;
         rowNr++;
       }
     }

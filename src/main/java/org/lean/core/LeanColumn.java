@@ -1,38 +1,38 @@
 package org.lean.core;
 
-import org.apache.hop.metastore.persist.MetaStoreAttribute;
+import org.apache.hop.metadata.api.HopMetadataProperty;
 
 public class LeanColumn {
 
-  @MetaStoreAttribute
+  @HopMetadataProperty
   private String columnName;
 
-  @MetaStoreAttribute
+  @HopMetadataProperty
   private String headerValue;
 
-  @MetaStoreAttribute
+  @HopMetadataProperty
   private LeanHorizontalAlignment horizontalAlignment;
 
-  @MetaStoreAttribute
+  @HopMetadataProperty
   private LeanVerticalAlignment verticalAlignment;
 
-  @MetaStoreAttribute
+  @HopMetadataProperty
   private int width;
 
-  @MetaStoreAttribute
+  @HopMetadataProperty
   private String formatMask;
 
-  @MetaStoreAttribute
+  @HopMetadataProperty
   @Deprecated
   private LeanFont font;
 
 
   public LeanColumn() {
-    horizontalAlignment=LeanHorizontalAlignment.LEFT;
-    verticalAlignment=LeanVerticalAlignment.TOP;
+    horizontalAlignment = LeanHorizontalAlignment.LEFT;
+    verticalAlignment = LeanVerticalAlignment.TOP;
   }
 
-  public LeanColumn( LeanColumn c) {
+  public LeanColumn( LeanColumn c ) {
     this.columnName = c.columnName;
     this.headerValue = c.headerValue;
     this.horizontalAlignment = c.horizontalAlignment;

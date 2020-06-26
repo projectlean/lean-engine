@@ -7,7 +7,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.commons.lang.StringUtils;
 import org.apache.hop.core.exception.HopPluginException;
-import org.apache.hop.core.plugins.PluginInterface;
+import org.apache.hop.core.plugins.IPlugin;
 import org.apache.hop.core.plugins.PluginRegistry;
 
 import java.io.IOException;
@@ -26,7 +26,7 @@ public class ILeanComponentDeserializer extends JsonDeserializer<ILeanComponent>
         // Load the component Plugin class
         //
         PluginRegistry pluginRegistry = PluginRegistry.getInstance();
-        PluginInterface plugin = pluginRegistry.findPluginWithId( LeanComponentPluginType.class, id );
+        IPlugin plugin = pluginRegistry.findPluginWithId( LeanComponentPluginType.class, id );
         if (plugin==null) {
           throw new IOException( "Unable to load component plugin with ID : "+id );
         }

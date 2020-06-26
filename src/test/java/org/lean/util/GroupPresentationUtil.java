@@ -1,5 +1,6 @@
 package org.lean.util;
 
+import org.apache.hop.metadata.api.IHopMetadataProvider;
 import org.lean.core.LeanAttachment;
 import org.lean.core.LeanColorRGB;
 import org.lean.core.LeanColumn;
@@ -21,7 +22,11 @@ public class GroupPresentationUtil extends BasePresentationUtil {
 
   public static final String COMPONENT_NAME_LABEL = "Label1";
 
-  public static LeanPresentation createSimpleGroupedLabelPresentation( int nr ) throws Exception {
+  public GroupPresentationUtil( IHopMetadataProvider metadataProvider ) {
+    super( metadataProvider );
+  }
+
+  public LeanPresentation createSimpleGroupedLabelPresentation( int nr ) throws Exception {
 
     LeanPresentation presentation = createBasePresentation(
       "Group label (" + nr + ")",
@@ -41,7 +46,7 @@ public class GroupPresentationUtil extends BasePresentationUtil {
     labelComponent.setVerticalAlignment( LeanVerticalAlignment.TOP );
     labelComponent.setBorder( true );
     labelComponent.setDefaultColor( new LeanColorRGB( 0, 140, 194 ) );
-    labelComponent.setBorderColor( new LeanColorRGB( 240, 240, 240) );
+    labelComponent.setBorderColor( new LeanColorRGB( 240, 240, 240 ) );
     labelComponent.setBackGroundColor( new LeanColorRGB( 200, 200, 200 ) );
 
     LeanComponent label = new LeanComponent( COMPONENT_NAME_LABEL, labelComponent );
@@ -59,20 +64,20 @@ public class GroupPresentationUtil extends BasePresentationUtil {
     //
     LeanGroupComponent groupComponent = new LeanGroupComponent(
       CONNECTOR_SAMPLE_ROWS,
-      Collections.singletonList(new LeanColumn( "country", "Country", LeanHorizontalAlignment.LEFT, LeanVerticalAlignment.TOP )),
-      Collections.singletonList(new LeanSortMethod( LeanSortMethod.Type.NATIVE_VALUE, true )),
+      Collections.singletonList( new LeanColumn( "country", "Country", LeanHorizontalAlignment.LEFT, LeanVerticalAlignment.TOP ) ),
+      Collections.singletonList( new LeanSortMethod( LeanSortMethod.Type.NATIVE_VALUE, true ) ),
       true, // distinct values from all rows
       label, // The component to repeat
       5 // Margin
-     );
+    );
     LeanComponent leanGroupComponent = new LeanComponent( "Group", groupComponent );
-    LeanLayout groupLayout = new LeanLayout(  );
-    groupLayout.setLeft( new LeanAttachment(null, 0, 0, LeanAttachment.Alignment.LEFT ) );
+    LeanLayout groupLayout = new LeanLayout();
+    groupLayout.setLeft( new LeanAttachment( null, 0, 0, LeanAttachment.Alignment.LEFT ) );
     groupLayout.setTop( new LeanAttachment( null, 0, 0, LeanAttachment.Alignment.TOP ) );
     leanGroupComponent.setLayout( groupLayout );
     leanGroupComponent.setSize( null );
 
-    pageOne.getComponents().add(leanGroupComponent);
+    pageOne.getComponents().add( leanGroupComponent );
 
 
     return presentation;

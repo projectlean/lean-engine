@@ -9,8 +9,8 @@ import org.lean.presentation.datacontext.IDataContext;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import org.apache.hop.core.exception.HopException;
-import org.apache.hop.core.row.RowMetaInterface;
-import org.apache.hop.core.row.ValueMetaInterface;
+import org.apache.hop.core.row.IRowMeta;
+import org.apache.hop.core.row.IValueMeta;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -51,12 +51,12 @@ public class LeanSimpleFilterConnector extends LeanBaseConnector implements ILea
     return new LeanSimpleFilterConnector(this);
   }
 
-  @Override public RowMetaInterface describeOutput( IDataContext dataContext ) throws LeanException {
+  @Override public IRowMeta describeOutput( IDataContext dataContext ) throws LeanException {
     LeanConnector connector = dataContext.getConnector( getSourceConnectorName() );
     if ( connector == null ) {
       throw new LeanException( "Unable to find connector source '" + getSourceConnectorName() + "' for simple filter connector" );
     }
-    RowMetaInterface sourceRowMeta = connector.getConnector().describeOutput( dataContext );
+    IRowMeta sourceRowMeta = connector.getConnector().describeOutput( dataContext );
     return sourceRowMeta;
   }
 
@@ -76,7 +76,7 @@ public class LeanSimpleFilterConnector extends LeanBaseConnector implements ILea
 
     // What does the input look like?
     //
-    final RowMetaInterface inputRowMeta = connector.describeOutput( dataContext );
+    final IRowMeta inputRowMeta = connector.describeOutput( dataContext );
 
     // What are the simple filter row indexes?
     //
@@ -94,7 +94,7 @@ public class LeanSimpleFilterConnector extends LeanBaseConnector implements ILea
     connector.getConnector().addRowListener( new ILeanRowListener() {
       private Object[] previousRow = null;
 
-      @Override public void rowReceived( RowMetaInterface rowMeta, Object[] rowData ) throws LeanException {
+      @Override public void rowReceived( IRowMeta rowMeta, Object[] rowData ) throws LeanException {
 
         if ( rowData == null ) {
           outputDone();
@@ -109,7 +109,7 @@ public class LeanSimpleFilterConnector extends LeanBaseConnector implements ILea
           int valueIndex = valueIndexes[i];
 
           String filterValue = simpleFilterValue.getFilterValue();
-          ValueMetaInterface valueMeta = inputRowMeta.getValueMeta( valueIndex );
+          IValueMeta valueMeta = inputRowMeta.getValueMeta( valueIndex );
 
           try {
             String rowValue = valueMeta.getString( rowData[valueIndex] );

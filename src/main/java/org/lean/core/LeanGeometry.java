@@ -1,19 +1,19 @@
 package org.lean.core;
 
-import org.apache.hop.metastore.persist.MetaStoreAttribute;
+import org.apache.hop.metadata.api.HopMetadataProperty;
 
 import java.awt.*;
 import java.util.Objects;
 
 public class LeanGeometry implements Cloneable {
 
-  @MetaStoreAttribute
+  @HopMetadataProperty
   private int x;
-  @MetaStoreAttribute
+  @HopMetadataProperty
   private int y;
-  @MetaStoreAttribute
+  @HopMetadataProperty
   private int width;
-  @MetaStoreAttribute
+  @HopMetadataProperty
   private int height;
 
   /**

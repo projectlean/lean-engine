@@ -4,7 +4,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>org.lean</groupId>
-  <version>0.0.8-SNAPSHOT</version>
+  <version>0.0.9-SNAPSHOT</version>
   <artifactId>lean-engine</artifactId>
   <name>${project.artifactId}</name>
   <description>Lean Engine for ANalytics</description>
@@ -20,7 +20,7 @@
     </license>
   </licenses>
   <properties>
-    <hop.version>0.1.0-SNAPSHOT</hop.version>
+    <hop.version>0.30-SNAPSHOT</hop.version>
 
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>1.8</maven.compiler.target>
@@ -29,6 +29,7 @@
     <mockito-all.version>1.9.5</mockito-all.version>
     <junit.version>4.4</junit.version>
     <grizzly2-version>2.29.1</grizzly2-version>
+    <batik.version>1.12</batik.version>
   </properties>
 
   <repositories>
@@ -68,14 +69,7 @@
 
     <dependency>
       <groupId>org.hop</groupId>
-      <artifactId>metastore</artifactId>
-      <version>${hop.version}</version>
-      <exclusions><exclusion><groupId>javax.ws.rs</groupId><artifactId>jsr311-api</artifactId></exclusion></exclusions>
-    </dependency>
-
-    <dependency>
-      <groupId>org.hop</groupId>
-      <artifactId>hop-plugins-databases-h2</artifactId>
+      <artifactId>hop-databases-h2</artifactId>
       <version>${hop.version}</version>
       <scope>test</scope>
       <exclusions><exclusion><groupId>javax.ws.rs</groupId><artifactId>jsr311-api</artifactId></exclusion></exclusions>
@@ -118,26 +112,27 @@
       <version>2.10.2</version>
     </dependency>
 
-    <!-- https://mvnrepository.com/artifact/org.apache.xmlgraphics/batik-svg-dom -->
     <dependency>
       <groupId>org.apache.xmlgraphics</groupId>
       <artifactId>batik-svg-dom</artifactId>
-      <version>1.10</version>
+      <version>${batik.version}</version>
     </dependency>
-
-    <!-- https://mvnrepository.com/artifact/org.apache.xmlgraphics/batik-svggen -->
     <dependency>
       <groupId>org.apache.xmlgraphics</groupId>
       <artifactId>batik-svggen</artifactId>
-      <version>1.10</version>
+      <version>${batik.version}</version>
     </dependency>
-
-    <!-- https://mvnrepository.com/artifact/org.apache.xmlgraphics/batik-codec -->
     <dependency>
       <groupId>org.apache.xmlgraphics</groupId>
       <artifactId>batik-codec</artifactId>
-      <version>1.10</version>
+      <version>${batik.version}</version>
     </dependency>
+    <dependency>
+      <groupId>org.apache.xmlgraphics</groupId>
+      <artifactId>batik-util</artifactId>
+      <version>${batik.version}</version>
+    </dependency>
+
 
     <!-- https://mvnrepository.com/artifact/org.apache.pdfbox/pdfbox -->
     <dependency>
@@ -186,6 +181,20 @@
       <artifactId>h2</artifactId>
       <version>1.4.197</version>
       <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.hop</groupId>
+      <artifactId>hop-databases-oracle</artifactId>
+      <version>${hop.version}</version>
+      <scope>test</scope>
+      <exclusions><exclusion><groupId>javax.ws.rs</groupId><artifactId>jsr311-api</artifactId></exclusion></exclusions>
+    </dependency>
+    <dependency>
+      <groupId>org.hop</groupId>
+      <artifactId>hop-databases-mysql</artifactId>
+      <version>${hop.version}</version>
+      <scope>test</scope>
+      <exclusions><exclusion><groupId>javax.ws.rs</groupId><artifactId>jsr311-api</artifactId></exclusion></exclusions>
     </dependency>
 
   </dependencies>
@@ -307,18 +316,26 @@
 
       <dependency>
         <groupId>org.hop</groupId>
-        <artifactId>metastore</artifactId>
-        <version>${hop.version}</version>
-        <exclusions><exclusion><groupId>javax.ws.rs</groupId><artifactId>jsr311-api</artifactId></exclusion></exclusions>
-      </dependency>
-
-      <dependency>
-        <groupId>org.hop</groupId>
-        <artifactId>hop-plugins-databases-h2</artifactId>
+        <artifactId>hop-databases-h2</artifactId>
         <version>${hop.version}</version>
         <scope>test</scope>
         <exclusions><exclusion><groupId>javax.ws.rs</groupId><artifactId>jsr311-api</artifactId></exclusion></exclusions>
       </dependency>
+      <dependency>
+        <groupId>org.hop</groupId>
+        <artifactId>hop-databases-oracle</artifactId>
+        <version>${hop.version}</version>
+        <scope>test</scope>
+        <exclusions><exclusion><groupId>javax.ws.rs</groupId><artifactId>jsr311-api</artifactId></exclusion></exclusions>
+      </dependency>
+      <dependency>
+        <groupId>org.hop</groupId>
+        <artifactId>hop-databases-mysql</artifactId>
+        <version>${hop.version}</version>
+        <scope>test</scope>
+        <exclusions><exclusion><groupId>javax.ws.rs</groupId><artifactId>jsr311-api</artifactId></exclusion></exclusions>
+      </dependency>
+
 
       <dependency>
         <groupId>org.apache.commons</groupId>
@@ -330,6 +347,12 @@
         <groupId>junit</groupId>
         <artifactId>junit</artifactId>
         <version>${junit.version}</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.hop</groupId>
+        <artifactId>hop-databases-h2</artifactId>
+        <version>${hop.version}</version>
         <scope>test</scope>
       </dependency>
       <dependency>

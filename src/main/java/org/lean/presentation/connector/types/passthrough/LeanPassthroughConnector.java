@@ -7,7 +7,7 @@ import org.lean.presentation.connector.type.LeanBaseConnector;
 import org.lean.presentation.datacontext.IDataContext;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import org.apache.hop.core.row.RowMetaInterface;
+import org.apache.hop.core.row.IRowMeta;
 
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.TimeUnit;
@@ -37,7 +37,7 @@ public class LeanPassthroughConnector extends LeanBaseConnector implements ILean
     return new LeanPassthroughConnector(this);
   }
 
-  @Override public RowMetaInterface describeOutput( IDataContext dataContext) throws LeanException {
+  @Override public IRowMeta describeOutput( IDataContext dataContext) throws LeanException {
     LeanConnector connector = dataContext.getConnector( getSourceConnectorName() );
     if (connector==null) {
       throw new LeanException( "Unable to find connector source '"+getSourceConnectorName()+"' for passthrough connector" );

@@ -1,12 +1,12 @@
 package org.lean.core;
 
-import org.apache.hop.metastore.persist.MetaStoreAttribute;
+import org.apache.hop.metadata.api.HopMetadataProperty;
 
 public class LeanPosition {
 
-  @MetaStoreAttribute
+  @HopMetadataProperty
   private int x;
-  @MetaStoreAttribute
+  @HopMetadataProperty
   private int y;
 
   /**
@@ -26,7 +26,7 @@ public class LeanPosition {
   }
 
   @Override public String toString() {
-    return "LeanPosition("+x+","+y+")";
+    return "LeanPosition(" + x + "," + y + ")";
   }
 
   /**

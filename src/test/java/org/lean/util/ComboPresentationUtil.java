@@ -1,5 +1,6 @@
 package org.lean.util;
 
+import org.apache.hop.metadata.api.IHopMetadataProvider;
 import org.lean.core.AggregationMethod;
 import org.lean.core.LeanAttachment;
 import org.lean.core.LeanColorRGB;
@@ -21,7 +22,11 @@ import java.util.Arrays;
 public class ComboPresentationUtil extends BasePresentationUtil {
 
 
-  public static LeanPresentation createComboPresentation( int nr ) throws Exception {
+  public ComboPresentationUtil( IHopMetadataProvider metadataProvider ) {
+    super( metadataProvider );
+  }
+
+  public LeanPresentation createComboPresentation( int nr ) throws Exception {
     LeanPresentation presentation = createBasePresentation(
       "Combo (" + nr + ")",
       "Combo " + nr + " description",
@@ -77,7 +82,7 @@ public class ComboPresentationUtil extends BasePresentationUtil {
       LeanLineChartComponent lineChart = LineChartPresentationUtil.createColorRandomLineChart();
 
       lineChart.setVerticalDimensions( Arrays.asList(
-        new LeanDimension( "country", "Country", LeanHorizontalAlignment.CENTER, LeanVerticalAlignment.MIDDLE)
+        new LeanDimension( "country", "Country", LeanHorizontalAlignment.CENTER, LeanVerticalAlignment.MIDDLE )
       ) );
       lineChart.setDrawingCurvedTrendLine( true );
 

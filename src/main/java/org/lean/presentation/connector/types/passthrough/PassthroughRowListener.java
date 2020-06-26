@@ -4,7 +4,7 @@ package org.lean.presentation.connector.types.passthrough;
 import org.lean.core.ILeanRowListener;
 import org.lean.core.exception.LeanException;
 import org.lean.presentation.connector.type.ILeanConnector;
-import org.apache.hop.core.row.RowMetaInterface;
+import org.apache.hop.core.row.IRowMeta;
 
 import java.util.concurrent.ArrayBlockingQueue;
 
@@ -18,7 +18,7 @@ public class PassthroughRowListener implements ILeanRowListener {
     this.finishedQueue = finishedQueue;
   }
 
-  public void rowReceived( RowMetaInterface rowMeta, Object[] rowData ) throws LeanException {
+  public void rowReceived( IRowMeta rowMeta, Object[] rowData ) throws LeanException {
     if ( rowData == null ) {
       // Signal we're done
       //

@@ -1,13 +1,11 @@
 package org.lean.core;
 
-import org.apache.hop.metastore.persist.MetaStoreAttribute;
+import org.apache.hop.metadata.api.HopMetadataProperty;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class LeanSortMethod {
-
-
 
   public enum Type {
     NATIVE_VALUE,
@@ -15,13 +13,14 @@ public class LeanSortMethod {
     STRING_NUMERIC,
     STRING_CUSTOM;
   }
-  @MetaStoreAttribute
+
+  @HopMetadataProperty
   private Type type;
 
-  @MetaStoreAttribute
+  @HopMetadataProperty
   private boolean ascending;
 
-  @MetaStoreAttribute
+  @HopMetadataProperty
   private List<String> customOrder;
 
   public LeanSortMethod() {
@@ -46,8 +45,8 @@ public class LeanSortMethod {
     this();
     this.type = m.type;
     this.ascending = m.ascending;
-    for (String s : m.customOrder) {
-      this.customOrder.add(s);
+    for ( String s : m.customOrder ) {
+      this.customOrder.add( s );
     }
   }
 

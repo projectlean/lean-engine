@@ -1,12 +1,12 @@
 package org.lean.core;
 
-import org.apache.hop.core.row.RowMetaInterface;
+import org.apache.hop.core.row.IRowMeta;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class LeanDataSet {
-  private RowMetaInterface rowMeta;
+  private IRowMeta rowMeta;
 
   private List<Object[]> rows;
 
@@ -14,7 +14,7 @@ public class LeanDataSet {
     rows = new ArrayList<>();
   }
 
-  public LeanDataSet( RowMetaInterface rowMeta, List<Object[]> rows ) {
+  public LeanDataSet( IRowMeta rowMeta, List<Object[]> rows ) {
     this.rowMeta = rowMeta;
     this.rows = rows;
   }
@@ -24,14 +24,14 @@ public class LeanDataSet {
    *
    * @return value of rowMeta
    */
-  public RowMetaInterface getRowMeta() {
+  public IRowMeta getRowMeta() {
     return rowMeta;
   }
 
   /**
    * @param rowMeta The rowMeta to set
    */
-  public void setRowMeta( RowMetaInterface rowMeta ) {
+  public void setRowMeta( IRowMeta rowMeta ) {
     this.rowMeta = rowMeta;
   }
 

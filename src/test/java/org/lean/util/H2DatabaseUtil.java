@@ -1,14 +1,13 @@
 package org.lean.util;
 
-import org.lean.core.Constants;
-import org.lean.core.LeanDatabaseConnection;
-import org.lean.core.exception.LeanException;
-import org.lean.core.metastore.MetaStoreFactory;
 import org.apache.commons.io.FileUtils;
 import org.apache.hop.core.database.Database;
 import org.apache.hop.core.database.DatabaseMeta;
 import org.apache.hop.core.logging.LoggingObject;
-import org.apache.hop.metastore.api.IMetaStore;
+import org.apache.hop.metadata.api.IHopMetadataProvider;
+import org.apache.hop.metadata.api.IHopMetadataSerializer;
+import org.lean.core.LeanDatabaseConnection;
+import org.lean.core.exception.LeanException;
 
 import java.io.File;
 import java.io.FileFilter;
@@ -24,10 +23,10 @@ public class H2DatabaseUtil {
   /**
    * Create and populate the SteelWheels database
    *
-   * @param metaStore The metastore to save the database connection in
+   * @param metadataProvider The metadata provider to save the database connection in
    * @return The created/populated SteelWheels database connection
    */
-  public static final LeanDatabaseConnection createSteelWheelsDatabase( IMetaStore metaStore ) throws LeanException {
+  public static final LeanDatabaseConnection createSteelWheelsDatabase( IHopMetadataProvider metadataProvider ) throws LeanException {
     try {
 
       String h2DatabaseName = System.getProperty( "java.io.tmpdir" ) + File.separator + CONNECTOR_STEEL_WHEELS_NAME;
@@ -37,8 +36,8 @@ public class H2DatabaseUtil {
       connection.setName( CONNECTOR_STEEL_WHEELS_NAME );
       connection.setDatabaseName( h2DatabaseName );
 
-      MetaStoreFactory<LeanDatabaseConnection> connectionFactory = new MetaStoreFactory<>( LeanDatabaseConnection.class, metaStore, Constants.NAMESPACE );
-      connectionFactory.saveElement( connection );
+      IHopMetadataSerializer<LeanDatabaseConnection> serializer = metadataProvider.getSerializer( LeanDatabaseConnection.class );
+      serializer.save( connection );
 
       // Delete old database
       //
@@ -48,8 +47,8 @@ public class H2DatabaseUtil {
             return pathname.toString().endsWith( ".db" ) && pathname.toString().contains( CONNECTOR_STEEL_WHEELS_NAME );
           }
         } );
-      for (File file : files) {
-        FileUtils.forceDelete(file);
+      for ( File file : files ) {
+        FileUtils.forceDelete( file );
       }
 
       // Read the script

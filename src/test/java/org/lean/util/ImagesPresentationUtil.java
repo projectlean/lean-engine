@@ -1,5 +1,6 @@
 package org.lean.util;
 
+import org.apache.hop.metadata.api.IHopMetadataProvider;
 import org.lean.core.LeanAttachment;
 import org.lean.core.LeanFont;
 import org.lean.core.LeanHorizontalAlignment;
@@ -13,7 +14,11 @@ import org.lean.presentation.page.LeanPage;
 public class ImagesPresentationUtil extends BasePresentationUtil {
 
 
-  public static LeanPresentation createImagesPresentation( int nr ) throws Exception {
+  public ImagesPresentationUtil( IHopMetadataProvider metadataProvider ) {
+    super( metadataProvider );
+  }
+
+  public LeanPresentation createImagesPresentation( int nr ) throws Exception {
     // Landscape A4 presentation
     //
     LeanPresentation presentation = createBasePresentation(
@@ -30,8 +35,8 @@ public class ImagesPresentationUtil extends BasePresentationUtil {
     presentation.setFooter( null );
 
     LeanPage pageOne = presentation.getPages().get( 0 );
-    pageOne.setHeight( 250 );
     pageOne.setWidth( 800 );
+    pageOne.setHeight( 250 );
 
     // Add the tap image...
     //

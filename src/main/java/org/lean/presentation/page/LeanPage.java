@@ -1,10 +1,10 @@
 package org.lean.presentation.page;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.apache.hop.metadata.api.HopMetadataProperty;
 import org.lean.core.Constants;
 import org.lean.core.exception.LeanException;
 import org.lean.presentation.component.LeanComponent;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import org.apache.hop.metastore.persist.MetaStoreAttribute;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,28 +14,28 @@ import java.util.List;
  */
 public class LeanPage {
 
-  @MetaStoreAttribute
+  @HopMetadataProperty
   private int pageNumber;
 
-  @MetaStoreAttribute
+  @HopMetadataProperty
   private int width;
 
-  @MetaStoreAttribute
+  @HopMetadataProperty
   private int height;
 
-  @MetaStoreAttribute
+  @HopMetadataProperty
   private int leftMargin;
 
-  @MetaStoreAttribute
+  @HopMetadataProperty
   private int rightMargin;
 
-  @MetaStoreAttribute
+  @HopMetadataProperty
   private int topMargin;
 
-  @MetaStoreAttribute
+  @HopMetadataProperty
   private int bottomMargin;
 
-  @MetaStoreAttribute( factoryNameReference = true, factoryNameKey = Constants.METASTORE_FACTORY_NAME_COMPONENTS, factorySharedIndicatorName = "shared" )
+  @HopMetadataProperty
   private List<LeanComponent> components;
 
   public LeanPage() {
@@ -55,6 +55,7 @@ public class LeanPage {
 
   /**
    * Create a copy of the given page with everything on it.
+   *
    * @param p
    */
   public LeanPage( LeanPage p ) {
@@ -66,38 +67,38 @@ public class LeanPage {
     this.rightMargin = p.rightMargin;
     this.topMargin = p.topMargin;
     this.bottomMargin = p.bottomMargin;
-    for (LeanComponent c : p.components) {
-      this.components.add(new LeanComponent( c ));
+    for ( LeanComponent c : p.components ) {
+      this.components.add( new LeanComponent( c ) );
     }
   }
 
-  public static LeanPage getA4( int pageNumber, boolean portrait) {
+  public static LeanPage getA4( int pageNumber, boolean portrait ) {
     int width = 794;
     int height = 1123;
-    if (portrait) {
-      return new LeanPage( pageNumber, width, height, 25, 25, 25, 25);
+    if ( portrait ) {
+      return new LeanPage( pageNumber, width, height, 25, 25, 25, 25 );
     } else {
-      return new LeanPage( pageNumber, height, width, 25, 25, 25, 25);
+      return new LeanPage( pageNumber, height, width, 25, 25, 25, 25 );
     }
   }
 
-  public static LeanPage getHeaderFooter( boolean portrait, int size) {
+  public static LeanPage getHeaderFooter( boolean portrait, int size ) {
     // Exclude the margins of parent page!
     //
-    int width = 794-25-25;
-    int height = 1123-25-25;
-    if (portrait) {
-      return new LeanPage( -1, width, size, 0, 0, 0, 0);
+    int width = 794 - 25 - 25;
+    int height = 1123 - 25 - 25;
+    if ( portrait ) {
+      return new LeanPage( -1, width, size, 0, 0, 0, 0 );
     } else {
-      return new LeanPage( -1, height, size, 0, 0, 0, 0);
+      return new LeanPage( -1, height, size, 0, 0, 0, 0 );
     }
   }
 
   @Override public boolean equals( Object o ) {
-    if (!(o instanceof LeanPage)) {
+    if ( !( o instanceof LeanPage ) ) {
       return false;
     }
-    if (o==this) {
+    if ( o == this ) {
       return true;
     }
     LeanPage page = (LeanPage) o;
@@ -112,7 +113,7 @@ public class LeanPage {
 
   @JsonIgnore
   public int getWidthBeweenMargins() {
-    return width-leftMargin-rightMargin;
+    return width - leftMargin - rightMargin;
   }
 
   /**
@@ -123,8 +124,8 @@ public class LeanPage {
    * @throws
    */
   public LeanComponent findComponent( String componentName ) throws LeanException {
-    for (LeanComponent component : components) {
-      if (component.getName().equalsIgnoreCase( componentName )) {
+    for ( LeanComponent component : components ) {
+      if ( component.getName().equalsIgnoreCase( componentName ) ) {
         return component;
       }
     }

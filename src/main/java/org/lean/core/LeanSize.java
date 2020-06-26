@@ -1,15 +1,15 @@
 package org.lean.core;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import org.apache.hop.metastore.persist.MetaStoreAttribute;
+import org.apache.hop.metadata.api.HopMetadataProperty;
 
 public class LeanSize {
 
-  public static final LeanSize UNKNOWN_SIZE = new LeanSize(-1, -1);
+  public static final LeanSize UNKNOWN_SIZE = new LeanSize( -1, -1 );
 
-  @MetaStoreAttribute
+  @HopMetadataProperty
   private int width;
-  @MetaStoreAttribute
+  @HopMetadataProperty
   private int height;
 
   /**
@@ -35,23 +35,23 @@ public class LeanSize {
   }
 
   @Override public String toString() {
-    return "LeanSize("+width+"x"+height+")";
+    return "LeanSize(" + width + "x" + height + ")";
   }
 
   @Override public boolean equals( Object obj ) {
-    if (!(obj instanceof LeanSize)) {
+    if ( !( obj instanceof LeanSize ) ) {
       return false;
     }
-    if (obj==this) {
+    if ( obj == this ) {
       return true;
     }
     LeanSize size = (LeanSize) obj;
-    return width==size.width && height==size.height;
+    return width == size.width && height == size.height;
   }
 
   @JsonIgnore
   public boolean isDefined() {
-    return width>0 && height>0;
+    return width > 0 && height > 0;
   }
 
   /**

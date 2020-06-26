@@ -1,24 +1,26 @@
 package org.lean.core.history;
 
-import org.apache.hop.metastore.persist.MetaStoreAttribute;
-import org.apache.hop.metastore.persist.MetaStoreElementType;
+import org.apache.hop.metadata.api.HopMetadata;
+import org.apache.hop.metadata.api.HopMetadataProperty;
+import org.apache.hop.metadata.api.IHopMetadata;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@MetaStoreElementType(
+@HopMetadata(
+  key = "user-history",
   name = "Lean User History",
   description = "Describes user action history"
 )
-public class LeanUserHistory {
+public class LeanUserHistory implements IHopMetadata {
 
   /**
    * This is the name of the user for which we have history
    */
-  @MetaStoreAttribute
+  @HopMetadataProperty
   private String name;
 
-  @MetaStoreAttribute
+  @HopMetadataProperty
   private List<LeanUserHistoryAction> actions;
 
   public LeanUserHistory() {

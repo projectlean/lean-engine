@@ -9,7 +9,7 @@ public class LeanPresentationCompositeTest extends LeanPresentationTestBase {
   @Test
   public void testCompositeRender() throws Exception {
 
-    LeanPresentation presentation = CompositePresentationUtil.createSimpleCompositePresentation( 8000 );
+    LeanPresentation presentation = new CompositePresentationUtil( metadataProvider ).createSimpleCompositePresentation( 8000 );
     testRendering( presentation, "composite_test");
   }
 

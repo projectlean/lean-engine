@@ -1,11 +1,10 @@
 package org.lean.core;
 
-import org.lean.rest.LeanServletContext;
 import org.apache.commons.lang.StringUtils;
 import org.apache.hop.core.exception.HopException;
 import org.apache.hop.core.exception.HopPluginException;
 import org.apache.hop.core.plugins.BasePluginType;
-import org.apache.hop.core.xml.XMLHandler;
+import org.apache.hop.core.xml.XmlHandler;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
@@ -14,20 +13,14 @@ import java.io.InputStream;
 import java.lang.annotation.Annotation;
 import java.util.List;
 
-public abstract class BaseLeanPluginType extends BasePluginType {
+public abstract class BaseLeanPluginType<T extends Annotation> extends BasePluginType<T> {
 
-  public BaseLeanPluginType( Class<? extends Annotation> pluginType, String id, String name ) {
+  public BaseLeanPluginType( Class<T> pluginType, String id, String name ) {
     super( pluginType, id, name );
   }
 
   protected void loadPluginsFromXmlFile( String xmlFile, String alternative, String pluginListElement, String pluginElement ) throws HopException {
     InputStream inputStream = getClass().getResourceAsStream( xmlFile );
-
-    // For use in a servlet context
-    //
-    if ( LeanServletContext.isInitialized() ) {
-      inputStream = LeanServletContext.getInstance().getResourceAsStream( "/WEB-INF/" + xmlFile );
-    }
 
     // Regular files
     //
@@ -45,10 +38,10 @@ public abstract class BaseLeanPluginType extends BasePluginType {
     if ( inputStream == null ) {
       throw new HopPluginException( "Unable to find native plugins definition file: " + xmlFile );
     }
-    Document document = XMLHandler.loadXMLFile( inputStream, null, true, false );
+    Document document = XmlHandler.loadXmlFile( inputStream, null, true, false );
 
-    Node componentsNode = XMLHandler.getSubNode( document, pluginListElement );
-    List<Node> componentNodes = XMLHandler.getNodes( componentsNode, pluginElement );
+    Node componentsNode = XmlHandler.getSubNode( document, pluginListElement );
+    List<Node> componentNodes = XmlHandler.getNodes( componentsNode, pluginElement );
     for ( Node componentNode : componentNodes ) {
       registerPluginFromXmlResource( componentNode, null, this.getClass(), true, null );
     }

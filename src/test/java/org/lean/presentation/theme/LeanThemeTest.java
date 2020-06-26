@@ -1,37 +1,36 @@
 package org.lean.presentation.theme;
 
-import org.lean.core.Constants;
-import org.lean.core.metastore.MetaStoreFactory;
-import org.lean.util.TestUtil;
+import org.apache.hop.metadata.api.IHopMetadataProvider;
+import org.apache.hop.metadata.api.IHopMetadataSerializer;
+import org.apache.hop.metadata.serializer.memory.MemoryMetadataProvider;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.apache.hop.metastore.api.IMetaStore;
-import org.apache.hop.metastore.stores.memory.MemoryMetaStore;
+import org.lean.util.TestUtil;
 
 public class LeanThemeTest {
 
   public static final String THEME_NAME = "Theme1";
-  private IMetaStore metaStore;
+  private IHopMetadataProvider metadataProvider;
 
   @Before
   public void before() throws Exception {
-
-    metaStore = new MemoryMetaStore();
+    metadataProvider = new MemoryMetadataProvider();
   }
 
   @Test
   public void testThemeSaveLoad() throws Exception {
-    MetaStoreFactory<LeanTheme> factory = new MetaStoreFactory<>( LeanTheme.class, metaStore, Constants.NAMESPACE );
+
+    IHopMetadataSerializer<LeanTheme> themeSerializer = metadataProvider.getSerializer( LeanTheme.class );
 
     LeanTheme theme = createTheme( THEME_NAME );
-    factory.saveElement( theme );
+    themeSerializer.save( theme );
 
     // Load it back...
     //
-    LeanTheme verify = factory.loadElement( THEME_NAME );
+    LeanTheme verify = themeSerializer.load( THEME_NAME );
 
-    TestUtil.assertEqualThemes(theme, verify);
+    TestUtil.assertEqualThemes( theme, verify );
 
   }
 
@@ -40,8 +39,7 @@ public class LeanThemeTest {
   }
 
 
-
-  public static final LeanTheme createTheme(String name) {
+  public static final LeanTheme createTheme( String name ) {
     LeanTheme theme = LeanTheme.getDefault();
     theme.setName( name );
     return theme;

@@ -1,15 +1,11 @@
 package org.lean.core.svg;
 
-import org.lean.core.exception.LeanException;
 import org.apache.batik.dom.GenericDOMImplementation;
-import org.apache.hop.core.xml.XMLHandler;
+import org.apache.hop.core.xml.XmlHandler;
+import org.lean.core.exception.LeanException;
 import org.w3c.dom.DOMImplementation;
 import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.w3c.dom.svg.SVGDocument;
 
 public class SvgUtil {
 
@@ -18,18 +14,18 @@ public class SvgUtil {
 
     // Create an instance of org.w3c.dom.Document.
     String svgNamespace = "http://www.w3.org/2000/svg";
-    Document document = domImplementation.createDocument(svgNamespace, "svg", null);
+    Document document = domImplementation.createDocument( svgNamespace, "svg", null );
 
     return new LeanSVGGraphics2D( document );
   }
 
-  public static Document loadSvgDom(String svgXml) throws LeanException {
+  public static Document loadSvgDom( String svgXml ) throws LeanException {
 
     try {
-      Document document = XMLHandler.loadXMLString( svgXml );
+      Document document = XmlHandler.loadXmlString( svgXml );
       return document;
-    } catch(Exception e) {
-      throw new LeanException( "Unable to parse SVG XML : "+svgXml, e );
+    } catch ( Exception e ) {
+      throw new LeanException( "Unable to parse SVG XML : " + svgXml, e );
     }
 
   }
@@ -72,8 +68,8 @@ public class SvgUtil {
 
       return element;
        */
-    } catch(Exception e) {
-      throw new LeanException( "Unable to copy node with name "+tagName, e );
+    } catch ( Exception e ) {
+      throw new LeanException( "Unable to copy node with name " + tagName, e );
     }
   }
 }

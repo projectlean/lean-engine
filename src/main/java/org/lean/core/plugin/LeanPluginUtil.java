@@ -3,14 +3,14 @@ package org.lean.core.plugin;
 import org.lean.core.dialog.ILeanDialog;
 import org.lean.presentation.LeanPresentation;
 import org.lean.presentation.component.LeanComponent;
-import org.apache.hop.core.plugins.PluginInterface;
+import org.apache.hop.core.plugins.IPlugin;
 import org.apache.hop.core.plugins.PluginRegistry;
 
 import java.lang.reflect.Constructor;
 
 public class LeanPluginUtil {
 
-  public static ILeanDialog loadComponentDialogClass( PluginInterface plugin, LeanPresentation presentation, LeanComponent component, String dialogClassName ) throws Exception {
+  public static ILeanDialog loadComponentDialogClass( IPlugin plugin, LeanPresentation presentation, LeanComponent component, String dialogClassName ) throws Exception {
 
     PluginRegistry registry = PluginRegistry.getInstance();
     ClassLoader classLoader = registry.getClassLoader( plugin );

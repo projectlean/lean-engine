@@ -1,71 +1,76 @@
 package org.lean.presentation.theme;
 
+import org.apache.hop.metadata.api.HopMetadata;
+import org.apache.hop.metadata.api.HopMetadataProperty;
+import org.apache.hop.metadata.api.IHopMetadata;
 import org.lean.core.Constants;
 import org.lean.core.LeanColorRGB;
 import org.lean.core.LeanFont;
 import org.lean.core.exception.LeanException;
-import org.apache.hop.metastore.persist.MetaStoreAttribute;
-import org.apache.hop.metastore.persist.MetaStoreElementType;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-@MetaStoreElementType( name = "Lean Theme", description = "A theme with colors and fonts to use as default in the components" )
-public class LeanTheme {
+@HopMetadata(
+  key = "theme",
+  name = "Lean Theme",
+  description = "A theme with colors and fonts to use as default in the components"
+)
+public class LeanTheme implements IHopMetadata {
 
-  @MetaStoreAttribute
+  @HopMetadataProperty
   protected String name;
 
-  @MetaStoreAttribute
+  @HopMetadataProperty
   protected String description;
 
-  @MetaStoreAttribute
+  @HopMetadataProperty
   protected List<LeanColorRGB> colors;
 
-  @MetaStoreAttribute
+  @HopMetadataProperty
   protected LeanColorRGB backgroundColor;
 
-  @MetaStoreAttribute
+  @HopMetadataProperty
   protected LeanColorRGB defaultColor;
 
-  @MetaStoreAttribute
+  @HopMetadataProperty
   protected LeanFont defaultFont;
 
-  @MetaStoreAttribute
+  @HopMetadataProperty
   protected LeanColorRGB borderColor;
 
-  @MetaStoreAttribute
+  @HopMetadataProperty
   protected LeanFont horizontalDimensionsFont;
 
-  @MetaStoreAttribute
+  @HopMetadataProperty
   protected LeanColorRGB horizontalDimensionsColor;
 
-  @MetaStoreAttribute
+  @HopMetadataProperty
   protected LeanFont verticalDimensionsFont;
 
-  @MetaStoreAttribute
+  @HopMetadataProperty
   protected LeanColorRGB verticalDimensionsColor;
 
-  @MetaStoreAttribute
+  @HopMetadataProperty
   protected LeanFont factsFont;
 
-  @MetaStoreAttribute
+  @HopMetadataProperty
   protected LeanColorRGB factsColor;
 
-  @MetaStoreAttribute
+  @HopMetadataProperty
   protected LeanFont titleFont;
 
-  @MetaStoreAttribute
+  @HopMetadataProperty
   protected LeanColorRGB titleColor;
 
-  @MetaStoreAttribute
+  @HopMetadataProperty
   protected LeanColorRGB axisColor;
 
-  @MetaStoreAttribute
+  @HopMetadataProperty
   protected LeanColorRGB gridColor;
 
-  @MetaStoreAttribute
+  @HopMetadataProperty
   private boolean shared;
 
   public LeanTheme() {
@@ -94,9 +99,9 @@ public class LeanTheme {
     this.defaultFont = s.defaultFont == null ? null : new LeanFont( s.defaultFont );
     this.borderColor = s.borderColor == null ? null : new LeanColorRGB( s.borderColor );
     this.horizontalDimensionsFont = s.horizontalDimensionsFont == null ? null : new LeanFont( s.horizontalDimensionsFont );
-    this.horizontalDimensionsColor = s.horizontalDimensionsColor== null ? null : new LeanColorRGB( s.horizontalDimensionsColor);
+    this.horizontalDimensionsColor = s.horizontalDimensionsColor == null ? null : new LeanColorRGB( s.horizontalDimensionsColor );
     this.verticalDimensionsFont = s.verticalDimensionsFont == null ? null : new LeanFont( s.verticalDimensionsFont );
-    this.verticalDimensionsColor = s.verticalDimensionsColor== null ? null : new LeanColorRGB( s.verticalDimensionsColor);
+    this.verticalDimensionsColor = s.verticalDimensionsColor == null ? null : new LeanColorRGB( s.verticalDimensionsColor );
     this.factsFont = s.factsFont == null ? null : new LeanFont( s.factsFont );
     this.factsColor = s.factsColor == null ? null : new LeanColorRGB( s.factsColor );
     this.titleFont = s.titleFont == null ? null : new LeanFont( s.titleFont );
@@ -109,8 +114,8 @@ public class LeanTheme {
   public static final LeanTheme getDefault() {
     LeanTheme theme = new LeanTheme();
 
-    theme.setName( Constants.DEFAULT_THEME_NAME);
-    theme.setDescription(Constants.DEFAULT_THEME_DESCRIPTION);
+    theme.setName( Constants.DEFAULT_THEME_NAME );
+    theme.setDescription( Constants.DEFAULT_THEME_DESCRIPTION );
 
     theme.getColors().clear();
     theme.getColors().addAll( Arrays.asList(
@@ -126,16 +131,16 @@ public class LeanTheme {
 
     theme.setBackgroundColor( new LeanColorRGB( "#ffffff" ) ); // Simply white
     theme.setDefaultColor( new LeanColorRGB( "#000000" ) ); // Simply black
-    theme.setDefaultFont( new LeanFont("Arial", "12", false, false) );
+    theme.setDefaultFont( new LeanFont( "Arial", "12", false, false ) );
     theme.setBorderColor( new LeanColorRGB( "#f0f0f0" ) ); // very light gray
 
-    theme.setHorizontalDimensionsFont( new LeanFont("Arial", "12", true, false) );
+    theme.setHorizontalDimensionsFont( new LeanFont( "Arial", "12", true, false ) );
     theme.setHorizontalDimensionsColor( new LeanColorRGB( "#000000" ) );
-    theme.setVerticalDimensionsFont( new LeanFont("Arial", "12", true, false) );
+    theme.setVerticalDimensionsFont( new LeanFont( "Arial", "12", true, false ) );
     theme.setVerticalDimensionsColor( new LeanColorRGB( "#000000" ) );
-    theme.setFactsFont( new LeanFont("Hack", "12", false, false) );
+    theme.setFactsFont( new LeanFont( "Hack", "12", false, false ) );
     theme.setFactsColor( new LeanColorRGB( "#000000" ) );
-    theme.setTitleFont( new LeanFont("Arial", "10", true, true) );
+    theme.setTitleFont( new LeanFont( "Arial", "10", true, true ) );
     theme.setTitleColor( new LeanColorRGB( "#c8c8c8" ) );
     theme.setAxisColor( new LeanColorRGB( "#000000" ) );
     theme.setGridColor( new LeanColorRGB( "#c8c8c8" ) );
@@ -145,94 +150,94 @@ public class LeanTheme {
   }
 
   public LeanColorRGB lookupDefaultColor() throws LeanException {
-    if (defaultColor==null) {
-      throw new LeanException( "No default color defined in theme '"+name+"'" );
+    if ( defaultColor == null ) {
+      throw new LeanException( "No default color defined in theme '" + name + "'" );
     }
     return defaultColor;
   }
 
   public LeanFont lookupDefaultFont() throws LeanException {
-    if (defaultFont==null) {
-      throw new LeanException( "No default font defined in theme '"+name+"'" );
+    if ( defaultFont == null ) {
+      throw new LeanException( "No default font defined in theme '" + name + "'" );
     }
     return defaultFont;
   }
 
   public LeanColorRGB lookupBackgroundColor() throws LeanException {
-    if (backgroundColor==null && defaultColor==null) {
-      throw new LeanException( "No background color nor default color defined in theme '"+name+"'" );
+    if ( backgroundColor == null && defaultColor == null ) {
+      throw new LeanException( "No background color nor default color defined in theme '" + name + "'" );
     }
-    if (backgroundColor!=null) {
+    if ( backgroundColor != null ) {
       return backgroundColor;
     }
     return defaultColor;
   }
-  
+
   public LeanColorRGB lookupBorderColor() throws LeanException {
-    if (borderColor==null && defaultColor==null) {
-      throw new LeanException( "No border color nor default color defined in theme '"+name+"'" );
+    if ( borderColor == null && defaultColor == null ) {
+      throw new LeanException( "No border color nor default color defined in theme '" + name + "'" );
     }
-    if (borderColor!=null) {
+    if ( borderColor != null ) {
       return borderColor;
     }
     return defaultColor;
   }
 
   public LeanColorRGB lookupHorizontalDimensionsColor() throws LeanException {
-    if (horizontalDimensionsColor==null && defaultColor==null) {
-      throw new LeanException( "No horizontal dimensions color nor default color defined in theme '"+name+"'" );
+    if ( horizontalDimensionsColor == null && defaultColor == null ) {
+      throw new LeanException( "No horizontal dimensions color nor default color defined in theme '" + name + "'" );
     }
-    if (horizontalDimensionsColor!=null) {
+    if ( horizontalDimensionsColor != null ) {
       return horizontalDimensionsColor;
     }
     return defaultColor;
   }
 
   public LeanColorRGB lookupVerticalDimensionsColor() throws LeanException {
-    if (verticalDimensionsColor==null && defaultColor==null) {
-      throw new LeanException( "No vertical dimensions color nor default color defined in theme '"+name+"'" );
+    if ( verticalDimensionsColor == null && defaultColor == null ) {
+      throw new LeanException( "No vertical dimensions color nor default color defined in theme '" + name + "'" );
     }
-    if (verticalDimensionsColor!=null) {
+    if ( verticalDimensionsColor != null ) {
       return verticalDimensionsColor;
     }
     return defaultColor;
   }
 
   public LeanColorRGB lookupFactsColor() throws LeanException {
-    if (factsColor==null && defaultColor==null) {
-      throw new LeanException( "No facts color nor default color defined in theme '"+name+"'" );
+    if ( factsColor == null && defaultColor == null ) {
+      throw new LeanException( "No facts color nor default color defined in theme '" + name + "'" );
     }
-    if (factsColor!=null) {
+    if ( factsColor != null ) {
       return factsColor;
     }
     return defaultColor;
   }
 
   public LeanColorRGB lookupTitleColor() throws LeanException {
-    if (titleColor==null && defaultColor==null) {
-      throw new LeanException( "No title color nor default color defined in theme '"+name+"'" );
+    if ( titleColor == null && defaultColor == null ) {
+      throw new LeanException( "No title color nor default color defined in theme '" + name + "'" );
     }
-    if (titleColor!=null) {
+    if ( titleColor != null ) {
       return titleColor;
     }
     return defaultColor;
   }
 
   public LeanColorRGB lookupAxisColor() throws LeanException {
-    if (axisColor==null && defaultColor==null) {
-      throw new LeanException( "No axis color nor default color defined in theme '"+name+"'" );
+    if ( axisColor == null && defaultColor == null ) {
+      throw new LeanException( "No axis color nor default color defined in theme '" + name + "'" );
     }
-    if (axisColor!=null) {
+    if ( axisColor != null ) {
       return axisColor;
     }
     return defaultColor;
   }
 
   public LeanColorRGB lookupGridColor() throws LeanException {
-    if (gridColor==null && defaultColor==null) {
-      throw new LeanException( "No grid color nor default color defined in theme '"+name+"'" );
+    if ( gridColor == null && defaultColor == null ) {
+      throw new LeanException( "No grid color nor default color defined in theme '" + name + "'" );
     }
-    if (gridColor!=null) {
+    if ( gridColor != null ) {
       return gridColor;
     }
     return defaultColor;
@@ -240,50 +245,47 @@ public class LeanTheme {
 
 
   public LeanFont lookupHorizontalDimensionsFont() throws LeanException {
-    if (horizontalDimensionsFont==null && defaultFont==null) {
-      throw new LeanException( "No horizontal dimensions font nor default font defined in theme '"+name+"'" );
+    if ( horizontalDimensionsFont == null && defaultFont == null ) {
+      throw new LeanException( "No horizontal dimensions font nor default font defined in theme '" + name + "'" );
     }
-    if (horizontalDimensionsFont!=null) {
+    if ( horizontalDimensionsFont != null ) {
       return horizontalDimensionsFont;
     }
     return defaultFont;
   }
 
-  
+
   public LeanFont lookupVerticalDimensionsFont() throws LeanException {
-    if (verticalDimensionsFont==null && defaultFont==null) {
-      throw new LeanException( "No vertical dimensions font nor default font defined in theme '"+name+"'" );
+    if ( verticalDimensionsFont == null && defaultFont == null ) {
+      throw new LeanException( "No vertical dimensions font nor default font defined in theme '" + name + "'" );
     }
-    if (verticalDimensionsFont!=null) {
+    if ( verticalDimensionsFont != null ) {
       return verticalDimensionsFont;
     }
     return defaultFont;
   }
-  
+
   public LeanFont lookupFactsFont() throws LeanException {
-    if (factsFont==null && defaultFont==null) {
-      throw new LeanException( "No facts font nor default font defined in theme '"+name+"'" );
+    if ( factsFont == null && defaultFont == null ) {
+      throw new LeanException( "No facts font nor default font defined in theme '" + name + "'" );
     }
-    if (factsFont!=null) {
+    if ( factsFont != null ) {
       return factsFont;
     }
     return defaultFont;
   }
 
   public LeanFont lookupTitleFont() throws LeanException {
-    if (titleFont==null && defaultFont==null) {
-      throw new LeanException( "No title font nor default font defined in theme '"+name+"'" );
+    if ( titleFont == null && defaultFont == null ) {
+      throw new LeanException( "No title font nor default font defined in theme '" + name + "'" );
     }
-    if (titleFont!=null) {
+    if ( titleFont != null ) {
       return titleFont;
     }
     return defaultFont;
   }
 
-  
-  
-  
-  
+
   /**
    * Gets name
    *

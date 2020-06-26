@@ -1,5 +1,8 @@
 package org.lean.presentation.component.types.group;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import org.apache.hop.core.RowMetaAndData;
+import org.apache.hop.metadata.api.HopMetadataProperty;
 import org.lean.core.LeanAttachment;
 import org.lean.core.LeanColumn;
 import org.lean.core.LeanGeometry;
@@ -24,9 +27,6 @@ import org.lean.presentation.layout.LeanLayout;
 import org.lean.presentation.layout.LeanLayoutResults;
 import org.lean.presentation.page.LeanPage;
 import org.lean.render.IRenderContext;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import org.apache.hop.core.RowMetaAndData;
-import org.apache.hop.metastore.persist.MetaStoreAttribute;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -51,30 +51,29 @@ import java.util.List;
  * <p>
  * Finally, we render all what we've calculated looping once again over the groups.
  * @see ILeanComponent#render(LeanComponentLayoutResult, LeanLayoutResults, IRenderContext)
- *
  */
 @JsonDeserialize( as = LeanGroupComponent.class )
 public class LeanGroupComponent extends LeanBaseComponent implements ILeanComponent {
 
   public static final String DATA_GROUP_DETAILS = "DATA_GROUP_DETAILS";
 
-  @MetaStoreAttribute
+  @HopMetadataProperty
   private List<LeanColumn> columnSelection;
 
-  @MetaStoreAttribute
+  @HopMetadataProperty
   private List<LeanSortMethod> columnSorts;
 
-  @MetaStoreAttribute
+  @HopMetadataProperty
   private boolean distinctSelection;
 
-  @MetaStoreAttribute
+  @HopMetadataProperty
   private LeanComponent groupComponent;
 
-  @MetaStoreAttribute
+  @HopMetadataProperty
   private int verticalMargin;
 
   public LeanGroupComponent() {
-    super( "LeanGroupComponent");
+    super( "LeanGroupComponent" );
 
     columnSelection = new ArrayList<>();
     columnSorts = new ArrayList<>();
@@ -94,13 +93,13 @@ public class LeanGroupComponent extends LeanBaseComponent implements ILeanCompon
   public LeanGroupComponent( LeanGroupComponent c ) {
     super( "LeanGroupComponent", c );
     this.sourceConnectorName = c.sourceConnectorName;
-    this.columnSelection = new ArrayList<>(  );
-    for (LeanColumn column : c.columnSelection) {
-      this.columnSelection.add(new LeanColumn( column ));
+    this.columnSelection = new ArrayList<>();
+    for ( LeanColumn column : c.columnSelection ) {
+      this.columnSelection.add( new LeanColumn( column ) );
     }
-    this.columnSorts = new ArrayList<>(  );
-    for (LeanSortMethod m : c.columnSorts) {
-      this.columnSorts.add(new LeanSortMethod( m ));
+    this.columnSorts = new ArrayList<>();
+    for ( LeanSortMethod m : c.columnSorts ) {
+      this.columnSorts.add( new LeanSortMethod( m ) );
     }
     this.distinctSelection = c.distinctSelection;
     this.groupComponent = c.groupComponent == null ? null : new LeanComponent( c.groupComponent );
@@ -108,7 +107,7 @@ public class LeanGroupComponent extends LeanBaseComponent implements ILeanCompon
   }
 
   public LeanGroupComponent clone() {
-    return new LeanGroupComponent(this);
+    return new LeanGroupComponent( this );
   }
 
 
@@ -172,16 +171,16 @@ public class LeanGroupComponent extends LeanBaseComponent implements ILeanCompon
     //
     LeanComponent lastComponent = null;
 
-    for ( int rowNr=0;rowNr<details.rows.size();rowNr++) {
+    for ( int rowNr = 0; rowNr < details.rows.size(); rowNr++ ) {
 
       RowMetaAndData groupRow = details.rows.get( rowNr );
       GroupRowDetails rowDetails = new GroupRowDetails();
-      details.rowDetails.add(rowDetails);
+      details.rowDetails.add( rowDetails );
 
       // Make a copy of the current component to store separately in the
       // component geometry map in results.
       //
-      String rowComponentName = component.getName() + "-group#" + ( rowNr + 1 )+":"+groupComponent.getName();
+      String rowComponentName = component.getName() + "-group#" + ( rowNr + 1 ) + ":" + groupComponent.getName();
 
       // Create a new component to render
       //
@@ -195,10 +194,10 @@ public class LeanGroupComponent extends LeanBaseComponent implements ILeanCompon
 
       // Adjust layout: position from parent to previous row component
       //
-      if (lastComponent!=null) {
+      if ( lastComponent != null ) {
         // This component needs to position below the previous one.
         //
-        rowComponent.getLayout().setTop(new LeanAttachment( lastComponent.getName(), 0, 0, LeanAttachment.Alignment.BOTTOM ) );
+        rowComponent.getLayout().setTop( new LeanAttachment( lastComponent.getName(), 0, 0, LeanAttachment.Alignment.BOTTOM ) );
       }
 
       // Create a new data context which will filter the data sources...
@@ -244,7 +243,8 @@ public class LeanGroupComponent extends LeanBaseComponent implements ILeanCompon
   }
 
   @Override
-  public LeanSize getExpectedSize( LeanPresentation presentation, LeanPage page, LeanComponent component, IDataContext dataContext, IRenderContext renderContext, LeanLayoutResults results ) throws LeanException {
+  public LeanSize getExpectedSize( LeanPresentation presentation, LeanPage page, LeanComponent component, IDataContext dataContext, IRenderContext renderContext, LeanLayoutResults results )
+    throws LeanException {
 
     if ( component.isDynamic() ) {
       GroupDetails details = (GroupDetails) results.getDataSet( component, DATA_GROUP_DETAILS );
@@ -255,7 +255,8 @@ public class LeanGroupComponent extends LeanBaseComponent implements ILeanCompon
   }
 
   @Override
-  public void doLayout( LeanPresentation presentation, LeanPage page, LeanComponent component, IDataContext dataContext, IRenderContext renderContext, LeanLayoutResults results ) throws LeanException {
+  public void doLayout( LeanPresentation presentation, LeanPage page, LeanComponent component, IDataContext dataContext, IRenderContext renderContext, LeanLayoutResults results )
+    throws LeanException {
 
     // This stores results in the details, including the total size
     //
@@ -267,8 +268,8 @@ public class LeanGroupComponent extends LeanBaseComponent implements ILeanCompon
 
     // Call doLayout for every group row
     //
-    for ( int rowNr = 0; rowNr<details.rowDetails.size(); rowNr++) {
-      GroupRowDetails groupRowDetails = details.rowDetails.get(rowNr);
+    for ( int rowNr = 0; rowNr < details.rowDetails.size(); rowNr++ ) {
+      GroupRowDetails groupRowDetails = details.rowDetails.get( rowNr );
       LeanComponent rowComponent = groupRowDetails.groupRowComponent;
       ILeanComponent groupIComponent = rowComponent.getComponent();
       groupIComponent.doLayout( presentation, page, rowComponent, groupRowDetails.groupRowDataContext, renderContext, results );
@@ -280,7 +281,7 @@ public class LeanGroupComponent extends LeanBaseComponent implements ILeanCompon
 
       // Make the geometry higher to the tune of the vertical margin
       //
-      rowComponentGeometry.incHeight(verticalMargin);
+      rowComponentGeometry.incHeight( verticalMargin );
 
       // Now store this under the name of the group
       // It will allow other components to position against this

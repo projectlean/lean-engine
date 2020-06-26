@@ -1,28 +1,28 @@
 package org.lean.core;
 
-import org.apache.hop.metastore.persist.MetaStoreAttribute;
+import org.apache.hop.metadata.api.HopMetadataProperty;
 
 public class LeanFact extends LeanColumn {
 
-  @MetaStoreAttribute
+  @HopMetadataProperty
   private AggregationMethod aggregationMethod;
 
-  @MetaStoreAttribute
+  @HopMetadataProperty
   private boolean horizontalAggregation;
 
-  @MetaStoreAttribute
+  @HopMetadataProperty
   private String horizontalAggregationHeader;
 
-  @MetaStoreAttribute
+  @HopMetadataProperty
   private boolean verticalAggregation;
 
-  @MetaStoreAttribute
+  @HopMetadataProperty
   private String verticalAggregationHeader;
 
-  @MetaStoreAttribute
+  @HopMetadataProperty
   private LeanHorizontalAlignment headerHorizontalAlignment;
 
-  @MetaStoreAttribute
+  @HopMetadataProperty
   private LeanVerticalAlignment headerVerticalAlignment;
 
   public LeanFact() {
@@ -35,13 +35,12 @@ public class LeanFact extends LeanColumn {
   }
 
 
-
   public LeanFact( String columnName, String headerValue,
                    LeanHorizontalAlignment horizontalAlignment, LeanVerticalAlignment verticalAlignment,
                    AggregationMethod aggregationMethod, String formatMask ) {
     super( columnName, headerValue, horizontalAlignment, verticalAlignment );
     this.aggregationMethod = aggregationMethod;
-    setFormatMask(formatMask);
+    setFormatMask( formatMask );
   }
 
   public LeanFact( LeanFact f ) {

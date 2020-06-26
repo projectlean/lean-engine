@@ -1,5 +1,6 @@
 package org.lean.util;
 
+import org.apache.hop.metadata.api.IHopMetadataProvider;
 import org.lean.core.AggregationMethod;
 import org.lean.core.LeanAttachment;
 import org.lean.core.LeanDimension;
@@ -16,12 +17,15 @@ import java.util.Arrays;
 
 public class LineChartPresentationUtil extends BasePresentationUtil {
 
-
   public static final String LINE_CHART_NAME = "LineChart";
 
-  public static LeanPresentation createLineChartPresentation( int nr ) throws Exception {
+  public LineChartPresentationUtil( IHopMetadataProvider metadataProvider ) {
+    super( metadataProvider );
+  }
+
+  public LeanPresentation createLineChartPresentation( int nr ) throws Exception {
     LeanPresentation presentation = createBasePresentation(
-      "Chart (" + nr +")",
+      "Chart (" + nr + ")",
       "Chart " + nr + " description",
       1000,
       "Line chart filling the whole page"
@@ -29,26 +33,26 @@ public class LineChartPresentationUtil extends BasePresentationUtil {
 
     LeanLineChartComponent lineChart = createColorRandomLineChart();
 
-    LeanComponent lineChartComponent = new LeanComponent( LINE_CHART_NAME, lineChart);
+    LeanComponent lineChartComponent = new LeanComponent( LINE_CHART_NAME, lineChart );
     LeanLayout chartLayout = new LeanLayout();
     // Fill the page
-    chartLayout.setLeft(new LeanAttachment( 0, 5 ) );
-    chartLayout.setRight(new LeanAttachment( 100, -5 ) );
-    chartLayout.setTop(new LeanAttachment( 0, 5 ) );
-    chartLayout.setBottom(new LeanAttachment( 100, -5 ) );
+    chartLayout.setLeft( new LeanAttachment( 0, 5 ) );
+    chartLayout.setRight( new LeanAttachment( 100, -5 ) );
+    chartLayout.setTop( new LeanAttachment( 0, 5 ) );
+    chartLayout.setBottom( new LeanAttachment( 100, -5 ) );
     lineChartComponent.setLayout( chartLayout );
     lineChartComponent.setSize( null );
 
     // Add the table to the first page.
     //
-    presentation.getPages().get(0).getComponents().add( lineChartComponent );
+    presentation.getPages().get( 0 ).getComponents().add( lineChartComponent );
 
     return presentation;
   }
 
-  public static LeanPresentation createLineChartNoLabelsPresentation( int nr ) throws Exception {
+  public LeanPresentation createLineChartNoLabelsPresentation( int nr ) throws Exception {
     LeanPresentation presentation = createBasePresentation(
-      "Chart no labels (" + nr +")",
+      "Chart no labels (" + nr + ")",
       "Chart no labels " + nr + " description",
       1000,
       "Line char without labels filling page"
@@ -57,30 +61,30 @@ public class LineChartPresentationUtil extends BasePresentationUtil {
     LeanLineChartComponent lineChart = createNoLabelsTrendChart();
     lineChart.setDrawingCurvedTrendLine( true );
 
-    LeanComponent lineChartComponent = new LeanComponent( LINE_CHART_NAME, lineChart);
+    LeanComponent lineChartComponent = new LeanComponent( LINE_CHART_NAME, lineChart );
     LeanLayout chartLayout = new LeanLayout();
     // Fill the page
-    chartLayout.setLeft(new LeanAttachment( 0, 5 ) );
-    chartLayout.setRight(new LeanAttachment( 100, -5 ) );
-    chartLayout.setTop(new LeanAttachment( 0, 5 ) );
-    chartLayout.setBottom(new LeanAttachment( 100, -5 ) );
+    chartLayout.setLeft( new LeanAttachment( 0, 5 ) );
+    chartLayout.setRight( new LeanAttachment( 100, -5 ) );
+    chartLayout.setTop( new LeanAttachment( 0, 5 ) );
+    chartLayout.setBottom( new LeanAttachment( 100, -5 ) );
     lineChartComponent.setLayout( chartLayout );
     lineChartComponent.setSize( null );
 
     // Add the table to the first page.
     //
-    presentation.getPages().get(0).getComponents().add( lineChartComponent );
+    presentation.getPages().get( 0 ).getComponents().add( lineChartComponent );
 
     return presentation;
   }
 
-  public static LeanPresentation createLineChartSeriesPresentation( int nr ) throws Exception {
+  public LeanPresentation createLineChartSeriesPresentation( int nr ) throws Exception {
     LeanPresentation presentation = createLineChartPresentation( nr );
 
-    LeanLineChartComponent lineChart = (LeanLineChartComponent) presentation.getPages().get(0).findComponent( LINE_CHART_NAME ).getComponent();
+    LeanLineChartComponent lineChart = (LeanLineChartComponent) presentation.getPages().get( 0 ).findComponent( LINE_CHART_NAME ).getComponent();
 
     lineChart.setVerticalDimensions( Arrays.asList(
-      new LeanDimension( "country", "Country", LeanHorizontalAlignment.CENTER, LeanVerticalAlignment.MIDDLE)
+      new LeanDimension( "country", "Country", LeanHorizontalAlignment.CENTER, LeanVerticalAlignment.MIDDLE )
     ) );
 
     lineChart.setTitle( "Random value by Country and Color" );
@@ -95,15 +99,15 @@ public class LineChartPresentationUtil extends BasePresentationUtil {
   public static LeanLineChartComponent createColorRandomLineChart() {
     LeanLineChartComponent lineChart = new LeanLineChartComponent( BasePresentationUtil.CONNECTOR_SAMPLE_ROWS );
     lineChart.setHorizontalDimensions( Arrays.asList(
-      new LeanDimension( "color", "Color", LeanHorizontalAlignment.CENTER, LeanVerticalAlignment.MIDDLE)
+      new LeanDimension( "color", "Color", LeanHorizontalAlignment.CENTER, LeanVerticalAlignment.MIDDLE )
     ) );
-    LeanFact sumFact = new LeanFact( "random", "Sum", LeanHorizontalAlignment.RIGHT, LeanVerticalAlignment.MIDDLE, AggregationMethod.SUM, "0.000");
+    LeanFact sumFact = new LeanFact( "random", "Sum", LeanHorizontalAlignment.RIGHT, LeanVerticalAlignment.MIDDLE, AggregationMethod.SUM, "0.000" );
     sumFact.setHorizontalAggregation( true );
     sumFact.setHorizontalAggregationHeader( "Total Sum" );
     sumFact.setHeaderHorizontalAlignment( LeanHorizontalAlignment.CENTER );
     sumFact.setHeaderVerticalAlignment( LeanVerticalAlignment.MIDDLE );
     sumFact.setFormatMask( "0.00" );
-    lineChart.setFacts( Arrays.asList( sumFact ));
+    lineChart.setFacts( Arrays.asList( sumFact ) );
     lineChart.setHorizontalMargin( 10 );
     lineChart.setVerticalMargin( 10 );
     lineChart.setBorder( true );
@@ -119,14 +123,14 @@ public class LineChartPresentationUtil extends BasePresentationUtil {
     LeanLineChartComponent lineChart = new LeanLineChartComponent( BasePresentationUtil.CONNECTOR_SAMPLE_ROWS );
 
     LeanDimension nameDimension = new LeanDimension( "name", "Name", LeanHorizontalAlignment.CENTER, LeanVerticalAlignment.MIDDLE );
-    lineChart.getHorizontalDimensions().add(nameDimension);
-    LeanFact sumFact = new LeanFact( "random", "Sum", LeanHorizontalAlignment.RIGHT, LeanVerticalAlignment.MIDDLE, AggregationMethod.SUM, "0.000");
+    lineChart.getHorizontalDimensions().add( nameDimension );
+    LeanFact sumFact = new LeanFact( "random", "Sum", LeanHorizontalAlignment.RIGHT, LeanVerticalAlignment.MIDDLE, AggregationMethod.SUM, "0.000" );
     sumFact.setHorizontalAggregation( true );
     sumFact.setHorizontalAggregationHeader( "Total Sum" );
     sumFact.setHeaderHorizontalAlignment( LeanHorizontalAlignment.CENTER );
     sumFact.setHeaderVerticalAlignment( LeanVerticalAlignment.MIDDLE );
     sumFact.setFormatMask( "0.00" );
-    lineChart.setFacts( Arrays.asList( sumFact ));
+    lineChart.setFacts( Arrays.asList( sumFact ) );
     lineChart.setHorizontalMargin( 10 );
     lineChart.setVerticalMargin( 10 );
     lineChart.setBorder( true );
@@ -144,11 +148,11 @@ public class LineChartPresentationUtil extends BasePresentationUtil {
 
   public static LeanLineChartComponent createNoLabelsTrendChartDetailed() {
     LeanLineChartComponent lineChart = createNoLabelsTrendChart();
-    LeanDimension importantDimension = new LeanDimension( "important", "Important", LeanHorizontalAlignment.CENTER, LeanVerticalAlignment.MIDDLE);
-    LeanDimension colorDimension = new LeanDimension( "color", "Color", LeanHorizontalAlignment.CENTER, LeanVerticalAlignment.MIDDLE);
+    LeanDimension importantDimension = new LeanDimension( "important", "Important", LeanHorizontalAlignment.CENTER, LeanVerticalAlignment.MIDDLE );
+    LeanDimension colorDimension = new LeanDimension( "color", "Color", LeanHorizontalAlignment.CENTER, LeanVerticalAlignment.MIDDLE );
 
-    lineChart.getHorizontalDimensions().add(importantDimension);
-    lineChart.getHorizontalDimensions().add(colorDimension);
+    lineChart.getHorizontalDimensions().add( importantDimension );
+    lineChart.getHorizontalDimensions().add( colorDimension );
 
     lineChart.setTitle( "Very detailed" );
 

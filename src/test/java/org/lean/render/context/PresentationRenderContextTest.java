@@ -1,24 +1,25 @@
 package org.lean.render.context;
 
+import org.apache.hop.metadata.api.IHopMetadataProvider;
+import org.apache.hop.metadata.serializer.memory.MemoryMetadataProvider;
+import org.junit.Before;
+import org.junit.Test;
 import org.lean.core.Constants;
 import org.lean.core.LeanColorRGB;
 import org.lean.core.LeanEnvironment;
 import org.lean.core.exception.LeanException;
 import org.lean.presentation.LeanPresentation;
 import org.lean.presentation.theme.LeanTheme;
-import org.junit.Before;
-import org.junit.Test;
-import org.apache.hop.metastore.api.IMetaStore;
-import org.apache.hop.metastore.stores.memory.MemoryMetaStore;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotSame;
 
 public class PresentationRenderContextTest {
 
   @Before
   public void setUp() throws LeanException {
-    IMetaStore metaStore = new MemoryMetaStore();
-    LeanEnvironment.init( metaStore );
+    IHopMetadataProvider metadataProvider = new MemoryMetadataProvider();
+    LeanEnvironment.init();
 
   }
 

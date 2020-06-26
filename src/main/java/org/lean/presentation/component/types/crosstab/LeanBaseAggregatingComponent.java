@@ -1,5 +1,10 @@
 package org.lean.presentation.component.types.crosstab;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.apache.hop.core.exception.HopException;
+import org.apache.hop.core.row.IRowMeta;
+import org.apache.hop.core.row.IValueMeta;
+import org.apache.hop.metadata.api.HopMetadataProperty;
 import org.lean.core.AggregationMethod;
 import org.lean.core.LeanColorRGB;
 import org.lean.core.LeanDimension;
@@ -10,11 +15,6 @@ import org.lean.presentation.component.type.ILeanComponent;
 import org.lean.presentation.component.type.LeanBaseComponent;
 import org.lean.presentation.theme.LeanTheme;
 import org.lean.render.IRenderContext;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import org.apache.hop.core.exception.HopException;
-import org.apache.hop.core.row.RowMetaInterface;
-import org.apache.hop.core.row.ValueMetaInterface;
-import org.apache.hop.metastore.persist.MetaStoreAttribute;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -30,49 +30,49 @@ public abstract class LeanBaseAggregatingComponent extends LeanBaseComponent imp
 
   public static final String GRANT_TOTAL_STRING = "___!GrandTotal!___";
 
-  @MetaStoreAttribute
+  @HopMetadataProperty
   protected List<LeanDimension> horizontalDimensions;
 
-  @MetaStoreAttribute
+  @HopMetadataProperty
   protected List<LeanDimension> verticalDimensions;
 
-  @MetaStoreAttribute
+  @HopMetadataProperty
   protected List<LeanFact> facts;
 
-  @MetaStoreAttribute
+  @HopMetadataProperty
   protected boolean showingHorizontalTotals;
 
-  @MetaStoreAttribute
+  @HopMetadataProperty
   protected boolean showingVerticalTotals;
 
-  @MetaStoreAttribute
+  @HopMetadataProperty
   private LeanFont horizontalDimensionsFont;
 
-  @MetaStoreAttribute
+  @HopMetadataProperty
   private LeanColorRGB horizontalDimensionsColor;
 
-  @MetaStoreAttribute
+  @HopMetadataProperty
   private LeanFont verticalDimensionsFont;
 
-  @MetaStoreAttribute
+  @HopMetadataProperty
   private LeanColorRGB verticalDimensionsColor;
 
-  @MetaStoreAttribute
+  @HopMetadataProperty
   private LeanFont factsFont;
 
-  @MetaStoreAttribute
+  @HopMetadataProperty
   private LeanColorRGB factsColor;
 
-  @MetaStoreAttribute
+  @HopMetadataProperty
   private LeanFont titleFont;
 
-  @MetaStoreAttribute
+  @HopMetadataProperty
   private LeanColorRGB titleColor;
 
-  @MetaStoreAttribute
+  @HopMetadataProperty
   private LeanColorRGB gridColor;
 
-  @MetaStoreAttribute
+  @HopMetadataProperty
   private LeanColorRGB axisColor;
 
 
@@ -96,7 +96,7 @@ public abstract class LeanBaseAggregatingComponent extends LeanBaseComponent imp
   protected transient List<Map<List<String>, Long>> countMapList;
 
   @JsonIgnore
-  protected transient RowMetaInterface inputRowMeta;
+  protected transient IRowMeta inputRowMeta;
 
   public LeanBaseAggregatingComponent() {
     this.horizontalDimensions = new ArrayList<>();
@@ -130,15 +130,15 @@ public abstract class LeanBaseAggregatingComponent extends LeanBaseComponent imp
 
     // Fonts and colors
     //
-    this.horizontalDimensionsFont = c.horizontalDimensionsFont ==null ? null : new LeanFont(c.horizontalDimensionsFont);
-    this.horizontalDimensionsColor = c.horizontalDimensionsColor==null ? null : new LeanColorRGB(c.horizontalDimensionsColor);
-    this.verticalDimensionsFont = c.verticalDimensionsFont == null ? null : new LeanFont(c.verticalDimensionsFont);
-    this.verticalDimensionsColor = c.verticalDimensionsColor== null ? null : new LeanColorRGB(c.verticalDimensionsColor);
-    this.factsFont = c.factsFont == null ? null : new LeanFont(c.factsFont);
+    this.horizontalDimensionsFont = c.horizontalDimensionsFont == null ? null : new LeanFont( c.horizontalDimensionsFont );
+    this.horizontalDimensionsColor = c.horizontalDimensionsColor == null ? null : new LeanColorRGB( c.horizontalDimensionsColor );
+    this.verticalDimensionsFont = c.verticalDimensionsFont == null ? null : new LeanFont( c.verticalDimensionsFont );
+    this.verticalDimensionsColor = c.verticalDimensionsColor == null ? null : new LeanColorRGB( c.verticalDimensionsColor );
+    this.factsFont = c.factsFont == null ? null : new LeanFont( c.factsFont );
     this.factsColor = c.factsColor == null ? null : new LeanColorRGB( c.factsColor );
     this.axisColor = c.axisColor == null ? null : new LeanColorRGB( c.axisColor );
     this.gridColor = c.gridColor == null ? null : new LeanColorRGB( c.gridColor );
-    this.titleFont = c.titleFont == null ? null : new LeanFont(c.titleFont);
+    this.titleFont = c.titleFont == null ? null : new LeanFont( c.titleFont );
     this.titleColor = c.titleColor == null ? null : new LeanColorRGB( c.titleColor );
 
     // Clear transient fields
@@ -151,7 +151,7 @@ public abstract class LeanBaseAggregatingComponent extends LeanBaseComponent imp
     this.inputRowMeta = null;
   }
 
-  protected void pivotRow( RowMetaInterface rowMeta, Object[] rowData ) throws LeanException {
+  protected void pivotRow( IRowMeta rowMeta, Object[] rowData ) throws LeanException {
     try {
       if ( factIndexes == null ) {
         determineColumnIndexes( rowMeta );
@@ -227,7 +227,7 @@ public abstract class LeanBaseAggregatingComponent extends LeanBaseComponent imp
             Map<List<String>, Object> pivotMap = pivotMapList.get( i );
             Map<List<String>, Long> countMap = countMapList.get( i );
 
-            ValueMetaInterface valueMeta = rowMeta.getValueMeta( factIndexes.get( i ) );
+            IValueMeta valueMeta = rowMeta.getValueMeta( factIndexes.get( i ) );
             Object valueData = rowData[ factIndexes.get( i ) ];
             LeanFact fact = facts.get( i );
 
@@ -244,7 +244,7 @@ public abstract class LeanBaseAggregatingComponent extends LeanBaseComponent imp
 
               //
               switch ( valueMeta.getType() ) {
-                case ValueMetaInterface.TYPE_NUMBER:
+                case IValueMeta.TYPE_NUMBER:
                   // Do some aggregation
                   Double numberValue = valueMeta.getNumber( valueData );
                   switch ( fact.getAggregationMethod() ) {
@@ -264,7 +264,7 @@ public abstract class LeanBaseAggregatingComponent extends LeanBaseComponent imp
                       throw new LeanException( "Number aggregation not supported yet: " + fact.getAggregationMethod() );
                   }
                   break;
-                case ValueMetaInterface.TYPE_INTEGER:
+                case IValueMeta.TYPE_INTEGER:
                   Long integerValue = valueMeta.getInteger( valueData );
                   switch ( fact.getAggregationMethod() ) {
                     case SUM:
@@ -283,7 +283,7 @@ public abstract class LeanBaseAggregatingComponent extends LeanBaseComponent imp
                       throw new LeanException( "Integer aggregation not supported yet: " + fact.getAggregationMethod() );
                   }
                   break;
-                case ValueMetaInterface.TYPE_BIGNUMBER:
+                case IValueMeta.TYPE_BIGNUMBER:
                   BigDecimal bigValue = valueMeta.getBigNumber( valueData );
                   switch ( fact.getAggregationMethod() ) {
                     case SUM:
@@ -321,7 +321,7 @@ public abstract class LeanBaseAggregatingComponent extends LeanBaseComponent imp
     }
   }
 
-  protected void determineColumnIndexes( RowMetaInterface rowMeta ) throws LeanException {
+  protected void determineColumnIndexes( IRowMeta rowMeta ) throws LeanException {
     factIndexes = new ArrayList<>();
     horizontalDimensionIndexes = new ArrayList<>();
     verticalDimensionIndexes = new ArrayList<>();
@@ -456,7 +456,6 @@ public abstract class LeanBaseAggregatingComponent extends LeanBaseComponent imp
   }
 
 
-
   protected LeanColorRGB lookupVerticalDimensionsColor( IRenderContext renderContext ) throws LeanException {
     if ( verticalDimensionsColor != null ) {
       return verticalDimensionsColor;
@@ -465,7 +464,7 @@ public abstract class LeanBaseAggregatingComponent extends LeanBaseComponent imp
     if ( theme != null ) {
       return theme.lookupVerticalDimensionsColor();
     }
-    if (getDefaultColor()!=null) {
+    if ( getDefaultColor() != null ) {
       return getDefaultColor();
     }
     throw new LeanException( "No vertical dimensions color nor default color defined (no theme used or found)" );
@@ -479,7 +478,7 @@ public abstract class LeanBaseAggregatingComponent extends LeanBaseComponent imp
     if ( theme != null ) {
       return theme.lookupVerticalDimensionsFont();
     }
-    if (getDefaultFont()!=null) {
+    if ( getDefaultFont() != null ) {
       return getDefaultFont();
     }
     throw new LeanException( "No vertical dimensions font nor default font defined (no theme used or found)" );
@@ -493,7 +492,7 @@ public abstract class LeanBaseAggregatingComponent extends LeanBaseComponent imp
     if ( theme != null ) {
       return theme.lookupHorizontalDimensionsColor();
     }
-    if (getDefaultColor()!=null) {
+    if ( getDefaultColor() != null ) {
       return getDefaultColor();
     }
     throw new LeanException( "No horizontal dimensions color nor default color defined (no theme used or found)" );
@@ -507,7 +506,7 @@ public abstract class LeanBaseAggregatingComponent extends LeanBaseComponent imp
     if ( theme != null ) {
       return theme.lookupHorizontalDimensionsFont();
     }
-    if (getDefaultFont()!=null) {
+    if ( getDefaultFont() != null ) {
       return getDefaultFont();
     }
     throw new LeanException( "No horizontal dimensions font nor default font defined (no theme used or found)" );
@@ -521,7 +520,7 @@ public abstract class LeanBaseAggregatingComponent extends LeanBaseComponent imp
     if ( theme != null ) {
       return theme.lookupFactsColor();
     }
-    if (getDefaultColor()!=null) {
+    if ( getDefaultColor() != null ) {
       return getDefaultColor();
     }
     throw new LeanException( "No facts color nor default color defined (no theme used or found)" );
@@ -535,7 +534,7 @@ public abstract class LeanBaseAggregatingComponent extends LeanBaseComponent imp
     if ( theme != null ) {
       return theme.lookupFactsFont();
     }
-    if (getDefaultFont()!=null) {
+    if ( getDefaultFont() != null ) {
       return getDefaultFont();
     }
     throw new LeanException( "No facts font nor default font defined (no theme used or found)" );
@@ -549,7 +548,7 @@ public abstract class LeanBaseAggregatingComponent extends LeanBaseComponent imp
     if ( theme != null ) {
       return theme.lookupTitleColor();
     }
-    if (getDefaultColor()!=null) {
+    if ( getDefaultColor() != null ) {
       return getDefaultColor();
     }
     throw new LeanException( "No title color nor default color defined (no theme used or found)" );
@@ -563,7 +562,7 @@ public abstract class LeanBaseAggregatingComponent extends LeanBaseComponent imp
     if ( theme != null ) {
       return theme.lookupTitleFont();
     }
-    if (getDefaultFont()!=null) {
+    if ( getDefaultFont() != null ) {
       return getDefaultFont();
     }
     throw new LeanException( "No title font nor default font defined (no theme used or found)" );
@@ -577,7 +576,7 @@ public abstract class LeanBaseAggregatingComponent extends LeanBaseComponent imp
     if ( theme != null ) {
       return theme.lookupAxisColor();
     }
-    if (getDefaultColor()!=null) {
+    if ( getDefaultColor() != null ) {
       return getDefaultColor();
     }
     throw new LeanException( "No axis color nor default color defined (no theme used or found)" );
@@ -592,7 +591,7 @@ public abstract class LeanBaseAggregatingComponent extends LeanBaseComponent imp
     if ( theme != null ) {
       return theme.lookupGridColor();
     }
-    if (getDefaultColor()!=null) {
+    if ( getDefaultColor() != null ) {
       return getDefaultColor();
     }
     throw new LeanException( "No grid color nor default color defined (no theme used or found)" );
@@ -924,14 +923,14 @@ public abstract class LeanBaseAggregatingComponent extends LeanBaseComponent imp
    *
    * @return value of inputRowMeta
    */
-  public RowMetaInterface getInputRowMeta() {
+  public IRowMeta getInputRowMeta() {
     return inputRowMeta;
   }
 
   /**
    * @param inputRowMeta The inputRowMeta to set
    */
-  public void setInputRowMeta( RowMetaInterface inputRowMeta ) {
+  public void setInputRowMeta( IRowMeta inputRowMeta ) {
     this.inputRowMeta = inputRowMeta;
   }
 }

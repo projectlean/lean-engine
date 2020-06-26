@@ -1,19 +1,19 @@
 package org.lean.presentation.connector.types.selection;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import org.apache.commons.lang.StringUtils;
+import org.apache.hop.core.row.IRowMeta;
+import org.apache.hop.core.row.IValueMeta;
+import org.apache.hop.core.row.RowDataUtil;
+import org.apache.hop.core.row.RowMeta;
+import org.apache.hop.metadata.api.HopMetadataProperty;
 import org.lean.core.LeanColumn;
 import org.lean.core.exception.LeanException;
 import org.lean.presentation.connector.LeanConnector;
 import org.lean.presentation.connector.type.ILeanConnector;
 import org.lean.presentation.connector.type.LeanBaseConnector;
 import org.lean.presentation.datacontext.IDataContext;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import org.apache.commons.lang.StringUtils;
-import org.apache.hop.core.row.RowDataUtil;
-import org.apache.hop.core.row.RowMeta;
-import org.apache.hop.core.row.RowMetaInterface;
-import org.apache.hop.core.row.ValueMetaInterface;
-import org.apache.hop.metastore.persist.MetaStoreAttribute;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,7 +26,7 @@ import java.util.concurrent.TimeUnit;
 @JsonDeserialize( as = LeanSelectionConnector.class )
 public class LeanSelectionConnector extends LeanBaseConnector implements ILeanConnector {
 
-  @MetaStoreAttribute
+  @HopMetadataProperty
   private List<LeanColumn> columns;
 
   @JsonIgnore
@@ -38,16 +38,16 @@ public class LeanSelectionConnector extends LeanBaseConnector implements ILeanCo
     columns = new ArrayList<>();
   }
 
-  public LeanSelectionConnector(LeanSelectionConnector c) {
-    super(c);
-    this.columns = new ArrayList<>(  );
-    for (LeanColumn column : c.columns) {
-      this.columns.add(new LeanColumn( column ));
+  public LeanSelectionConnector( LeanSelectionConnector c ) {
+    super( c );
+    this.columns = new ArrayList<>();
+    for ( LeanColumn column : c.columns ) {
+      this.columns.add( new LeanColumn( column ) );
     }
   }
 
   public LeanSelectionConnector clone() {
-    return new LeanSelectionConnector(this);
+    return new LeanSelectionConnector( this );
   }
 
   public LeanSelectionConnector( List<LeanColumn> columns ) {
@@ -55,24 +55,24 @@ public class LeanSelectionConnector extends LeanBaseConnector implements ILeanCo
     this.columns = columns;
   }
 
-  @Override public RowMetaInterface describeOutput( IDataContext dataContext ) throws LeanException {
+  @Override public IRowMeta describeOutput( IDataContext dataContext ) throws LeanException {
     LeanConnector connector = dataContext.getConnector( getSourceConnectorName() );
     if ( connector == null ) {
       throw new LeanException( "Unable to find connector source '" + getSourceConnectorName() + "' for selection connector" );
     }
-    RowMetaInterface sourceRowMeta = connector.getConnector().describeOutput( dataContext );
+    IRowMeta sourceRowMeta = connector.getConnector().describeOutput( dataContext );
 
     // Only pass the selected columns
     //
-    RowMetaInterface rowMeta = new RowMeta();
+    IRowMeta rowMeta = new RowMeta();
     for ( LeanColumn column : columns ) {
-      ValueMetaInterface sourceValueMeta = sourceRowMeta.searchValueMeta( column.getColumnName() );
-      if (sourceValueMeta==null) {
-        throw new LeanException( "Unable to find column selection '"+column.getColumnName()+"' in source connector : "+getSourceConnectorName()+" : "+rowMeta.toString() );
+      IValueMeta sourceValueMeta = sourceRowMeta.searchValueMeta( column.getColumnName() );
+      if ( sourceValueMeta == null ) {
+        throw new LeanException( "Unable to find column selection '" + column.getColumnName() + "' in source connector : " + getSourceConnectorName() + " : " + rowMeta.toString() );
       }
-      ValueMetaInterface valueMeta = sourceValueMeta.clone();
+      IValueMeta valueMeta = sourceValueMeta.clone();
 
-      if ( StringUtils.isNotEmpty(column.getFormatMask())) {
+      if ( StringUtils.isNotEmpty( column.getFormatMask() ) ) {
         valueMeta.setConversionMask( column.getFormatMask() );
       }
       valueMeta.setOrigin( getSourceConnectorName() );
@@ -99,17 +99,17 @@ public class LeanSelectionConnector extends LeanBaseConnector implements ILeanCo
 
     // What does the input look like?
     //
-    final RowMetaInterface inputRowMeta = connector.describeOutput( dataContext );
+    final IRowMeta inputRowMeta = connector.describeOutput( dataContext );
 
     // What does the output look like?
     //
-    final RowMetaInterface outputRowMeta = describeOutput( dataContext );
+    final IRowMeta outputRowMeta = describeOutput( dataContext );
 
     // Calculate column indexes
     //
-    final int columnIndexes[] = new int[columns.size()];
-    for (int i=0;i<columnIndexes.length;i++) {
-      columnIndexes[i] = inputRowMeta.indexOfValue( columns.get( i ).getColumnName() );
+    final int columnIndexes[] = new int[ columns.size() ];
+    for ( int i = 0; i < columnIndexes.length; i++ ) {
+      columnIndexes[ i ] = inputRowMeta.indexOfValue( columns.get( i ).getColumnName() );
     }
 
     // Add a row listener to the parent connector
@@ -123,12 +123,12 @@ public class LeanSelectionConnector extends LeanBaseConnector implements ILeanCo
 
       // Create a new row
       //
-      Object[] outputRowData = RowDataUtil.allocateRowData(outputRowMeta.size());
-      for (int i=0;i<outputRowMeta.size();i++) {
-        outputRowData[i] = rowData[columnIndexes[i]];
+      Object[] outputRowData = RowDataUtil.allocateRowData( outputRowMeta.size() );
+      for ( int i = 0; i < outputRowMeta.size(); i++ ) {
+        outputRowData[ i ] = rowData[ columnIndexes[ i ] ];
       }
 
-      passToRowListeners( outputRowMeta, outputRowData);
+      passToRowListeners( outputRowMeta, outputRowData );
 
     } );
 

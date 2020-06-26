@@ -1,7 +1,7 @@
 package org.lean.core;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import org.apache.hop.metastore.persist.MetaStoreAttribute;
+import org.apache.hop.metadata.api.HopMetadataProperty;
 
 import java.awt.*;
 
@@ -10,19 +10,19 @@ public class LeanColorRGB {
   public static final LeanColorRGB BLACK = new LeanColorRGB( "#000000" );
   public static final LeanColorRGB WHITE = new LeanColorRGB( "#ffffff" );
 
-  @MetaStoreAttribute
+  @HopMetadataProperty
   private int r;
 
-  @MetaStoreAttribute
+  @HopMetadataProperty
   private int g;
 
-  @MetaStoreAttribute
+  @HopMetadataProperty
   private int b;
 
   public LeanColorRGB() {
-    r=0;
-    g=140;
-    b=194;
+    r = 0;
+    g = 140;
+    b = 194;
   }
 
   public LeanColorRGB( int r, int g, int b ) {
@@ -33,11 +33,12 @@ public class LeanColorRGB {
   }
 
   public LeanColorRGB( LeanColorRGB c ) {
-    this(c.r, c.g, c.b);
+    this( c.r, c.g, c.b );
   }
 
   /**
    * Decode standard hex values like "#FFCCEE"
+   *
    * @param hexValue The hex value to convert to RGB
    */
   public LeanColorRGB( String hexValue ) {
@@ -48,18 +49,18 @@ public class LeanColorRGB {
   }
 
   @Override public boolean equals( Object obj ) {
-    if (!(obj instanceof LeanColorRGB)) {
+    if ( !( obj instanceof LeanColorRGB ) ) {
       return false;
     }
-    if (obj==this) {
+    if ( obj == this ) {
       return true;
     }
     LeanColorRGB color = (LeanColorRGB) obj;
-    return r==color.r && g==color.g && b==color.b;
+    return r == color.r && g == color.g && b == color.b;
   }
 
   @Override public String toString() {
-    return "Color("+r+","+g+","+ b+")";
+    return "Color(" + r + "," + g + "," + b + ")";
   }
 
   public int getR() {
@@ -87,10 +88,10 @@ public class LeanColorRGB {
   }
 
   @JsonIgnore
-  public String getHexColor(){
-    Color color = new Color(getR(), getG(), getB());
-    String hex = Integer.toHexString(color.getRGB() & 0xffffff);
-    if (hex.length() < 6) {
+  public String getHexColor() {
+    Color color = new Color( getR(), getG(), getB() );
+    String hex = Integer.toHexString( color.getRGB() & 0xffffff );
+    if ( hex.length() < 6 ) {
       hex = "0" + hex;
     }
     hex = "#" + hex;

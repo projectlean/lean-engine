@@ -1,5 +1,10 @@
 package org.lean.presentation.component.types.image;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import org.apache.batik.svggen.SVGGraphics2D;
+import org.apache.commons.lang.StringUtils;
+import org.apache.hop.core.Const;
+import org.apache.hop.metadata.api.HopMetadataProperty;
 import org.lean.core.LeanGeometry;
 import org.lean.core.LeanSize;
 import org.lean.core.exception.LeanException;
@@ -12,11 +17,6 @@ import org.lean.presentation.datacontext.IDataContext;
 import org.lean.presentation.layout.LeanLayoutResults;
 import org.lean.presentation.page.LeanPage;
 import org.lean.render.IRenderContext;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import org.apache.batik.svggen.SVGGraphics2D;
-import org.apache.commons.lang.StringUtils;
-import org.apache.hop.core.Const;
-import org.apache.hop.metastore.persist.MetaStoreAttribute;
 
 import javax.imageio.ImageIO;
 import java.awt.geom.AffineTransform;
@@ -28,10 +28,10 @@ public class LeanImageComponent extends LeanBaseComponent implements ILeanCompon
 
   public static final String DATA_IMAGE_DETAILS = "Image Details";
 
-  @MetaStoreAttribute
+  @HopMetadataProperty
   private String filename;
 
-  @MetaStoreAttribute
+  @HopMetadataProperty
   private String scalePercent;
 
   public LeanImageComponent() {
@@ -50,7 +50,7 @@ public class LeanImageComponent extends LeanBaseComponent implements ILeanCompon
   }
 
   public LeanImageComponent clone() {
-    return new LeanImageComponent(this);
+    return new LeanImageComponent( this );
   }
 
   @Override public void processSourceData( LeanPresentation presentation, LeanPage page, LeanComponent component, IDataContext dataContext, IRenderContext renderContext,
@@ -66,28 +66,29 @@ public class LeanImageComponent extends LeanBaseComponent implements ILeanCompon
     //
     try {
       URL resource = this.getClass().getClassLoader().getResource( filename );
-      details.image = ImageIO.read(resource.openStream());
-    } catch ( IOException e) {
-      throw new LeanException( "Unable to load image file '"+filename+"'", e);
+      details.image = ImageIO.read( resource.openStream() );
+    } catch ( IOException e ) {
+      throw new LeanException( "Unable to load image file '" + filename + "'", e );
     }
 
-    if (details.image==null) {
+    if ( details.image == null ) {
       // Probably unsupported image type
       //
-      throw new LeanException( "Unable to load file '"+filename+"' (Unsupported type?)" );
+      throw new LeanException( "Unable to load file '" + filename + "' (Unsupported type?)" );
     }
 
-    details.scaleFactor = (double) Const.toDouble(scalePercent, 100.0) / 100;
+    details.scaleFactor = (double) Const.toDouble( scalePercent, 100.0 ) / 100;
 
     details.originalSize = new LeanSize( details.image.getWidth(), details.image.getHeight() );
-    details.imageSize = new LeanSize( (int)(details.image.getWidth()*details.scaleFactor), (int)(details.image.getHeight()*details.scaleFactor) );
+    details.imageSize = new LeanSize( (int) ( details.image.getWidth() * details.scaleFactor ), (int) ( details.image.getHeight() * details.scaleFactor ) );
 
     // Don't calculate this twice...
     //
     results.addDataSet( component, DATA_IMAGE_DETAILS, details );
   }
 
-  public LeanSize getExpectedSize( LeanPresentation leanPresentation, LeanPage page, LeanComponent component, IDataContext dataContext, IRenderContext renderContext, LeanLayoutResults results ) throws LeanException {
+  public LeanSize getExpectedSize( LeanPresentation leanPresentation, LeanPage page, LeanComponent component, IDataContext dataContext, IRenderContext renderContext, LeanLayoutResults results )
+    throws LeanException {
     ImageDetails details = (ImageDetails) results.getDataSet( component, DATA_IMAGE_DETAILS );
     return details.imageSize;
   }
@@ -101,7 +102,7 @@ public class LeanImageComponent extends LeanBaseComponent implements ILeanCompon
 
     // Draw background for the full imageSize of the component area
     //
-    setBackgroundBorderFont( gc, componentGeometry, renderContext);
+    setBackgroundBorderFont( gc, componentGeometry, renderContext );
 
     // Remember the details
     //
@@ -113,15 +114,15 @@ public class LeanImageComponent extends LeanBaseComponent implements ILeanCompon
     gc.scale( details.scaleFactor, details.scaleFactor );
 
     // Don't scale the location...
-    int x = (int)(componentGeometry.getX()/details.scaleFactor);
-    int y = (int)(componentGeometry.getY()/details.scaleFactor);
+    int x = (int) ( componentGeometry.getX() / details.scaleFactor );
+    int y = (int) ( componentGeometry.getY() / details.scaleFactor );
     gc.drawImage( details.image, x, y, null );
 
     // Set the drawing scale back to normal
     //
     gc.setTransform( oldTransform );
 
-    if (isBorder()) {
+    if ( isBorder() ) {
       enableColor( gc, lookupBorderColor( renderContext ) );
       gc.drawRect( componentGeometry.getX(), componentGeometry.getY(), details.imageSize.getWidth(), details.imageSize.getHeight() );
     }

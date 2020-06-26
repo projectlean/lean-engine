@@ -1,7 +1,7 @@
 package org.lean.presentation.layout;
 
+import org.apache.hop.metadata.api.HopMetadataProperty;
 import org.lean.core.LeanAttachment;
-import org.apache.hop.metastore.persist.MetaStoreAttribute;
 
 /**
  * In case a position is not relative it means absolute vs the top and left margins of the page.
@@ -16,16 +16,16 @@ import org.apache.hop.metastore.persist.MetaStoreAttribute;
  */
 public class LeanLayout {
 
-  @MetaStoreAttribute
+  @HopMetadataProperty
   private LeanAttachment left;
 
-  @MetaStoreAttribute
+  @HopMetadataProperty
   private LeanAttachment right;
 
-  @MetaStoreAttribute
+  @HopMetadataProperty
   private LeanAttachment top;
 
-  @MetaStoreAttribute
+  @HopMetadataProperty
   private LeanAttachment bottom;
 
   public LeanLayout() {
@@ -33,10 +33,11 @@ public class LeanLayout {
 
   /**
    * Position the component relative to the page, with an offset of (x,y)
+   *
    * @param x
    * @param y
    */
-  public LeanLayout(int x, int y) {
+  public LeanLayout( int x, int y ) {
     left = new LeanAttachment( 0, x );
     top = new LeanAttachment( 0, y );
   }
@@ -49,31 +50,31 @@ public class LeanLayout {
   }
 
   public LeanLayout( LeanLayout layout ) {
-    if (layout.left==null) {
+    if ( layout.left == null ) {
       this.left = null;
     } else {
       this.left = new LeanAttachment( layout.left );
     }
-    if (layout.right==null) {
-      this.right= null;
+    if ( layout.right == null ) {
+      this.right = null;
     } else {
-      this.right = new LeanAttachment( layout.right);
+      this.right = new LeanAttachment( layout.right );
     }
-    if (layout.top==null) {
-      this.top= null;
+    if ( layout.top == null ) {
+      this.top = null;
     } else {
-      this.top = new LeanAttachment( layout.top);
+      this.top = new LeanAttachment( layout.top );
     }
-    if (layout.bottom==null) {
+    if ( layout.bottom == null ) {
       this.bottom = null;
     } else {
-      this.bottom = new LeanAttachment( layout.bottom);
+      this.bottom = new LeanAttachment( layout.bottom );
     }
   }
 
   public static LeanLayout topLeftPage() {
     LeanLayout layout = new LeanLayout();
-    layout.left = new LeanAttachment( null, 0, 0, LeanAttachment.Alignment.LEFT  );
+    layout.left = new LeanAttachment( null, 0, 0, LeanAttachment.Alignment.LEFT );
     layout.top = new LeanAttachment( null, 0, 0, LeanAttachment.Alignment.TOP );
     return layout;
   }
@@ -86,8 +87,8 @@ public class LeanLayout {
    * @param newName
    */
   public void replaceReferences( String oldName, String newName ) {
-    for (LeanAttachment attachment : new LeanAttachment[] { left, top, right, bottom}) {
-      if (attachment!=null && oldName.equals(attachment.getComponentName())) {
+    for ( LeanAttachment attachment : new LeanAttachment[] { left, top, right, bottom } ) {
+      if ( attachment != null && oldName.equals( attachment.getComponentName() ) ) {
         attachment.setComponentName( newName );
       }
     }

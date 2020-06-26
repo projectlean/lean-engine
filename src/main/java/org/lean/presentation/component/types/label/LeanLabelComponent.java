@@ -1,5 +1,9 @@
 package org.lean.presentation.component.types.label;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import org.apache.batik.svggen.SVGGraphics2D;
+import org.apache.commons.lang.StringUtils;
+import org.apache.hop.metadata.api.HopMetadataProperty;
 import org.lean.core.LeanGeometry;
 import org.lean.core.LeanHorizontalAlignment;
 import org.lean.core.LeanSize;
@@ -16,10 +20,6 @@ import org.lean.presentation.layout.LeanLayoutResults;
 import org.lean.presentation.layout.LeanRenderPage;
 import org.lean.presentation.page.LeanPage;
 import org.lean.render.IRenderContext;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import org.apache.batik.svggen.SVGGraphics2D;
-import org.apache.commons.lang.StringUtils;
-import org.apache.hop.metastore.persist.MetaStoreAttribute;
 
 @JsonDeserialize( as = LeanLabelComponent.class )
 public class LeanLabelComponent extends LeanBaseComponent implements ILeanComponent {
@@ -27,16 +27,16 @@ public class LeanLabelComponent extends LeanBaseComponent implements ILeanCompon
   public static final String DATA_TEXT_GEOMETRY = "Text Geometry";
   public static final String DATA_TEXT_STRING = "Text String";
 
-  @MetaStoreAttribute
+  @HopMetadataProperty
   private String label;
 
-  @MetaStoreAttribute
+  @HopMetadataProperty
   private LeanHorizontalAlignment horizontalAlignment;
 
-  @MetaStoreAttribute
+  @HopMetadataProperty
   private LeanVerticalAlignment verticalAlignment;
 
-  @MetaStoreAttribute
+  @HopMetadataProperty
   private String customHtml;
 
 
@@ -46,7 +46,7 @@ public class LeanLabelComponent extends LeanBaseComponent implements ILeanCompon
     verticalAlignment = LeanVerticalAlignment.TOP;
   }
 
-  public LeanLabelComponent( LeanLabelComponent c  ) {
+  public LeanLabelComponent( LeanLabelComponent c ) {
     super( "LeanLabelComponent", c );
     this.label = c.label;
     this.horizontalAlignment = c.horizontalAlignment;
@@ -55,7 +55,7 @@ public class LeanLabelComponent extends LeanBaseComponent implements ILeanCompon
   }
 
   public LeanLabelComponent clone() {
-    return new LeanLabelComponent(this);
+    return new LeanLabelComponent( this );
   }
 
 
@@ -85,8 +85,8 @@ public class LeanLabelComponent extends LeanBaseComponent implements ILeanCompon
   }
 
 
-
-  public LeanSize getExpectedSize( LeanPresentation leanPresentation, LeanPage page, LeanComponent component, IDataContext dataContext, IRenderContext renderContext, LeanLayoutResults results ) throws LeanException {
+  public LeanSize getExpectedSize( LeanPresentation leanPresentation, LeanPage page, LeanComponent component, IDataContext dataContext, IRenderContext renderContext, LeanLayoutResults results )
+    throws LeanException {
 
     LeanTextGeometry textGeometry = (LeanTextGeometry) results.getDataSet( component, DATA_TEXT_GEOMETRY );
 
@@ -104,7 +104,7 @@ public class LeanLabelComponent extends LeanBaseComponent implements ILeanCompon
     // Remember the proper text geometry
     //
     LeanTextGeometry textGeometry = (LeanTextGeometry) results.getDataSet( component, DATA_TEXT_GEOMETRY );
-    String text = (String) results.getDataSet(component, DATA_TEXT_STRING);
+    String text = (String) results.getDataSet( component, DATA_TEXT_STRING );
 
     if ( StringUtils.isEmpty( text ) ) {
       text = " ";
@@ -114,13 +114,13 @@ public class LeanLabelComponent extends LeanBaseComponent implements ILeanCompon
 
     // Draw background for the full imageSize of the component area
     //
-    setBackgroundBorderFont( gc, componentGeometry, renderContext);
+    setBackgroundBorderFont( gc, componentGeometry, renderContext );
 
     float x;
     float y;
 
-    if (horizontalAlignment==null) {
-      throw new LeanException( "Don't know how to horizontally align label '"+layoutResult.getComponent().getName()+"'" );
+    if ( horizontalAlignment == null ) {
+      throw new LeanException( "Don't know how to horizontally align label '" + layoutResult.getComponent().getName() + "'" );
     }
 
     switch ( horizontalAlignment ) {
@@ -136,8 +136,8 @@ public class LeanLabelComponent extends LeanBaseComponent implements ILeanCompon
         break;
     }
 
-    if (verticalAlignment==null) {
-      throw new LeanException( "Don't know how to vertically align label '"+layoutResult.getComponent().getName()+"'" );
+    if ( verticalAlignment == null ) {
+      throw new LeanException( "Don't know how to vertically align label '" + layoutResult.getComponent().getName() + "'" );
     }
 
     switch ( verticalAlignment ) {

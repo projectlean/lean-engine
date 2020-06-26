@@ -2,7 +2,7 @@ package org.lean.presentation.component.types.table;
 
 import org.lean.core.LeanTextGeometry;
 import org.apache.hop.core.RowMetaAndData;
-import org.apache.hop.core.row.RowMetaInterface;
+import org.apache.hop.core.row.IRowMeta;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,7 +13,7 @@ public class TableDetails {
   public List<List<String>> rowStringsList;
   public List<Integer> maxWidths;
   public List<Integer> maxHeights;
-  public RowMetaInterface rowMeta;
+  public IRowMeta rowMeta;
   public int totalWidth;
   public int totalHeight;
 

@@ -1,5 +1,14 @@
 package org.lean.presentation.component.types.chart;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import org.apache.batik.svggen.SVGGraphics2D;
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.math3.analysis.interpolation.SplineInterpolator;
+import org.apache.commons.math3.analysis.polynomials.PolynomialSplineFunction;
+import org.apache.hop.core.Const;
+import org.apache.hop.core.exception.HopValueException;
+import org.apache.hop.core.row.IValueMeta;
+import org.apache.hop.metadata.api.HopMetadataProperty;
 import org.lean.core.LeanColorRGB;
 import org.lean.core.LeanGeometry;
 import org.lean.core.LeanTextGeometry;
@@ -10,15 +19,6 @@ import org.lean.presentation.component.type.ILeanComponent;
 import org.lean.presentation.layout.LeanLayoutResults;
 import org.lean.presentation.theme.LeanTheme;
 import org.lean.render.IRenderContext;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import org.apache.batik.svggen.SVGGraphics2D;
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.math3.analysis.interpolation.SplineInterpolator;
-import org.apache.commons.math3.analysis.polynomials.PolynomialSplineFunction;
-import org.apache.hop.core.Const;
-import org.apache.hop.core.exception.HopValueException;
-import org.apache.hop.core.row.ValueMetaInterface;
-import org.apache.hop.metastore.persist.MetaStoreAttribute;
 
 import java.awt.*;
 import java.awt.geom.Path2D;
@@ -29,7 +29,7 @@ import java.util.List;
 @JsonDeserialize( as = LeanLineChartComponent.class )
 public class LeanLineChartComponent extends LeanBaseChartComponent implements ILeanComponent {
 
-  @MetaStoreAttribute
+  @HopMetadataProperty
   protected boolean drawingCurvedTrendLine;
 
   public LeanLineChartComponent() {
@@ -197,10 +197,10 @@ public class LeanLineChartComponent extends LeanBaseChartComponent implements IL
         //
         List<String> factLabels = details.factLabels.get( series );
         List<Object> factValues = details.factValues.get( series );
-        List<ValueMetaInterface> factValueMetas = details.factValueMetas.get( series );
+        List<IValueMeta> factValueMetas = details.factValueMetas.get( series );
 
         Object valueData = factValues.get( part );
-        ValueMetaInterface valueMeta = factValueMetas.get( part );
+        IValueMeta valueMeta = factValueMetas.get( part );
         double factValue = 0;
         try {
           Double factValueDouble = valueMeta.getNumber( valueData );
