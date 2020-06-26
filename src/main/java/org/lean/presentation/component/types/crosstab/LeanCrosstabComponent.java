@@ -1,5 +1,12 @@
 package org.lean.presentation.component.types.crosstab;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import org.apache.batik.svggen.SVGGraphics2D;
+import org.apache.hop.core.exception.HopValueException;
+import org.apache.hop.core.row.IRowMeta;
+import org.apache.hop.core.row.IValueMeta;
+import org.apache.hop.core.row.value.ValueMetaInteger;
+import org.apache.hop.metadata.api.HopMetadataProperty;
 import org.lean.core.LeanColorRGB;
 import org.lean.core.LeanColumn;
 import org.lean.core.LeanFact;
@@ -20,13 +27,6 @@ import org.lean.presentation.layout.LeanLayoutResults;
 import org.lean.presentation.layout.LeanRenderPage;
 import org.lean.presentation.page.LeanPage;
 import org.lean.render.IRenderContext;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import org.apache.batik.svggen.SVGGraphics2D;
-import org.apache.hop.core.exception.HopValueException;
-import org.apache.hop.core.row.RowMetaInterface;
-import org.apache.hop.core.row.ValueMetaInterface;
-import org.apache.hop.core.row.value.ValueMetaInteger;
-import org.apache.hop.metastore.persist.MetaStoreAttribute;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -46,23 +46,22 @@ public class LeanCrosstabComponent extends LeanBaseAggregatingComponent implemen
   public static final String DATA_START_ROW = "start_row";
   public static final String DATA_END_ROW = "end_row";
 
-
-  @MetaStoreAttribute
+  @HopMetadataProperty
   private int horizontalMargin;
 
-  @MetaStoreAttribute
+  @HopMetadataProperty
   private int verticalMargin;
 
-  @MetaStoreAttribute
+  @HopMetadataProperty
   private boolean evenHeights;
 
-  @MetaStoreAttribute
+  @HopMetadataProperty
   private boolean headerOnEveryPage;
 
-  @MetaStoreAttribute
+  @HopMetadataProperty
   private boolean showingHorizontalSubtotals;
 
-  @MetaStoreAttribute
+  @HopMetadataProperty
   private boolean showingVerticalSubtotals;
 
   public LeanCrosstabComponent() {
@@ -176,7 +175,7 @@ public class LeanCrosstabComponent extends LeanBaseAggregatingComponent implemen
     // One row for every horizontal dimension
     // Then one row with the vertical headers and the facts
     //
-    enableFont( gc, lookupHorizontalDimensionsFont(renderContext) );
+    enableFont( gc, lookupHorizontalDimensionsFont( renderContext ) );
 
 
     for ( int rowNr = 0; rowNr < horizontalDimensions.size(); rowNr++ ) {
@@ -298,7 +297,7 @@ public class LeanCrosstabComponent extends LeanBaseAggregatingComponent implemen
 
         // Now we can add the vertical dimensions without too much of an issue
         //
-        enableFont( gc, lookupVerticalDimensionsFont(renderContext) );
+        enableFont( gc, lookupVerticalDimensionsFont( renderContext ) );
         for ( int i = 0; i < verticalCombination.size(); i++ ) {
           String verticalValue = verticalCombination.get( i );
           LeanColumn dimension = verticalDimensions.get( i );
@@ -496,7 +495,8 @@ public class LeanCrosstabComponent extends LeanBaseAggregatingComponent implemen
    * @return
    * @throws LeanException
    */
-  public LeanSize getExpectedSize( LeanPresentation presentation, LeanPage page, LeanComponent component, IDataContext dataContext, IRenderContext renderContext, LeanLayoutResults results ) throws LeanException {
+  public LeanSize getExpectedSize( LeanPresentation presentation, LeanPage page, LeanComponent component, IDataContext dataContext, IRenderContext renderContext, LeanLayoutResults results )
+    throws LeanException {
     if ( component.isDynamic() ) {
       CrosstabDetails details = (CrosstabDetails) results.getDataSet( component, DATA_CROSSTAB_DETAILS );
       return new LeanSize( details.totalWidth, details.totalHeight );
@@ -514,7 +514,7 @@ public class LeanCrosstabComponent extends LeanBaseAggregatingComponent implemen
       // Make a copy so we can change format masks
       // TODO: cache this clone somewhere for performance
       //
-      ValueMetaInterface valueMeta = inputRowMeta.getValueMeta( factIndexes.get( factNr ) ).clone();
+      IValueMeta valueMeta = inputRowMeta.getValueMeta( factIndexes.get( factNr ) ).clone();
       if ( fact.getFormatMask() != null ) {
         valueMeta.setConversionMask( fact.getFormatMask() );
       }
@@ -595,7 +595,7 @@ public class LeanCrosstabComponent extends LeanBaseAggregatingComponent implemen
     List<List<CellInfo>> cellInfosList = details.cellInfosList;
     List<Integer> maxWidths = details.maxWidths;
     List<Integer> maxHeights = details.maxHeights;
-    RowMetaInterface rowMeta = inputRowMeta;
+    IRowMeta rowMeta = inputRowMeta;
 
     // Loop over all the rows, see how many we can fit onto this page, then create another one.
     //

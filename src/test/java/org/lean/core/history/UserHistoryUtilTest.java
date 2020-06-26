@@ -1,9 +1,10 @@
 package org.lean.core.history;
 
-import org.lean.core.Constants;
+import org.apache.hop.metadata.api.IHopMetadataProvider;
+import org.apache.hop.metadata.serializer.memory.MemoryMetadataProvider;
 import org.junit.Assert;
 import org.junit.Test;
-import org.apache.hop.metastore.stores.memory.MemoryMetaStore;
+import org.lean.core.Constants;
 
 import java.util.List;
 
@@ -14,50 +15,49 @@ public class UserHistoryUtilTest {
   @Test
   public void userHistoryStoreRetrieveTest() throws Exception {
 
-    MemoryMetaStore metaStore = new MemoryMetaStore();
-    metaStore.setName( "Memory" );
+    IHopMetadataProvider metadataProvider = new MemoryMetadataProvider();
 
-    UserHistoryUtil.addUserHistoryAction( metaStore, "joe", "Presentation", "Sales Report" );
-    UserHistoryUtil.addUserHistoryAction( metaStore, "suzy", "Presentation", "Marketing Overview" );
-    UserHistoryUtil.addUserHistoryAction( metaStore, "joe", "Presentation", "Sales Report" );
-    UserHistoryUtil.addUserHistoryAction( metaStore, "suzy", "Presentation", "Marketing Overview" );
-    UserHistoryUtil.addUserHistoryAction( metaStore, "suzy", "Presentation", "Marketing Details" );
-    UserHistoryUtil.addUserHistoryAction( metaStore, "suzy", "Presentation", "Marketing Details" );
-    UserHistoryUtil.addUserHistoryAction( metaStore, "suzy", "Presentation", "Marketing Details" );
-    UserHistoryUtil.addUserHistoryAction( metaStore, "suzy", "Presentation", "Marketing Details" );
-    UserHistoryUtil.addUserHistoryAction( metaStore, "suzy", "Presentation", "Marketing Details" );
-    UserHistoryUtil.addUserHistoryAction( metaStore, "suzy", "Presentation", "Marketing Details" );
-    UserHistoryUtil.addUserHistoryAction( metaStore, "suzy", "Presentation", "Marketing Details" );
-    UserHistoryUtil.addUserHistoryAction( metaStore, "suzy", "Presentation", "Marketing Details" );
-    UserHistoryUtil.addUserHistoryAction( metaStore, "pat", "Connector", "c1" );
-    UserHistoryUtil.addUserHistoryAction( metaStore, "suzy", "Presentation", "Marketing Details" );
-    UserHistoryUtil.addUserHistoryAction( metaStore, "suzy", "Presentation", "Marketing Details" );
-    UserHistoryUtil.addUserHistoryAction( metaStore, "suzy", "Presentation", "Marketing Details" );
-    UserHistoryUtil.addUserHistoryAction( metaStore, "suzy", "Presentation", "Marketing Details" );
-    UserHistoryUtil.addUserHistoryAction( metaStore, "pat", "Connector", "c2" );
-    UserHistoryUtil.addUserHistoryAction( metaStore, "suzy", "Presentation", "Marketing Details" );
-    UserHistoryUtil.addUserHistoryAction( metaStore, "suzy", "Presentation", "Marketing Details" );
-    UserHistoryUtil.addUserHistoryAction( metaStore, "suzy", "Presentation", "Marketing Details" );
-    UserHistoryUtil.addUserHistoryAction( metaStore, "suzy", "Presentation", "Marketing Details" );
-    UserHistoryUtil.addUserHistoryAction( metaStore, "pat", "Connector", "c3" );
-    UserHistoryUtil.addUserHistoryAction( metaStore, "pat", "Connector", "c4" );
-    UserHistoryUtil.addUserHistoryAction( metaStore, "pat", "Connector", "c5" );
-    UserHistoryUtil.addUserHistoryAction( metaStore, "pat", "Connector", "c6" );
-    UserHistoryUtil.addUserHistoryAction( metaStore, "pat", "Connector", "c7" );
-    UserHistoryUtil.addUserHistoryAction( metaStore, "pat", "Connector", "c8" );
-    UserHistoryUtil.addUserHistoryAction( metaStore, "pat", "Connector", "c9" );
-    UserHistoryUtil.addUserHistoryAction( metaStore, "pat", "Connector", "c10" );
-    UserHistoryUtil.addUserHistoryAction( metaStore, "pat", "Connector", "c11" );
-    UserHistoryUtil.addUserHistoryAction( metaStore, "pat", "Connector", "c12" );
-    UserHistoryUtil.addUserHistoryAction( metaStore, "pat", "Connector", "c13" );
+    UserHistoryUtil.addUserHistoryAction( metadataProvider, "joe", "Presentation", "Sales Report" );
+    UserHistoryUtil.addUserHistoryAction( metadataProvider, "suzy", "Presentation", "Marketing Overview" );
+    UserHistoryUtil.addUserHistoryAction( metadataProvider, "joe", "Presentation", "Sales Report" );
+    UserHistoryUtil.addUserHistoryAction( metadataProvider, "suzy", "Presentation", "Marketing Overview" );
+    UserHistoryUtil.addUserHistoryAction( metadataProvider, "suzy", "Presentation", "Marketing Details" );
+    UserHistoryUtil.addUserHistoryAction( metadataProvider, "suzy", "Presentation", "Marketing Details" );
+    UserHistoryUtil.addUserHistoryAction( metadataProvider, "suzy", "Presentation", "Marketing Details" );
+    UserHistoryUtil.addUserHistoryAction( metadataProvider, "suzy", "Presentation", "Marketing Details" );
+    UserHistoryUtil.addUserHistoryAction( metadataProvider, "suzy", "Presentation", "Marketing Details" );
+    UserHistoryUtil.addUserHistoryAction( metadataProvider, "suzy", "Presentation", "Marketing Details" );
+    UserHistoryUtil.addUserHistoryAction( metadataProvider, "suzy", "Presentation", "Marketing Details" );
+    UserHistoryUtil.addUserHistoryAction( metadataProvider, "suzy", "Presentation", "Marketing Details" );
+    UserHistoryUtil.addUserHistoryAction( metadataProvider, "pat", "Connector", "c1" );
+    UserHistoryUtil.addUserHistoryAction( metadataProvider, "suzy", "Presentation", "Marketing Details" );
+    UserHistoryUtil.addUserHistoryAction( metadataProvider, "suzy", "Presentation", "Marketing Details" );
+    UserHistoryUtil.addUserHistoryAction( metadataProvider, "suzy", "Presentation", "Marketing Details" );
+    UserHistoryUtil.addUserHistoryAction( metadataProvider, "suzy", "Presentation", "Marketing Details" );
+    UserHistoryUtil.addUserHistoryAction( metadataProvider, "pat", "Connector", "c2" );
+    UserHistoryUtil.addUserHistoryAction( metadataProvider, "suzy", "Presentation", "Marketing Details" );
+    UserHistoryUtil.addUserHistoryAction( metadataProvider, "suzy", "Presentation", "Marketing Details" );
+    UserHistoryUtil.addUserHistoryAction( metadataProvider, "suzy", "Presentation", "Marketing Details" );
+    UserHistoryUtil.addUserHistoryAction( metadataProvider, "suzy", "Presentation", "Marketing Details" );
+    UserHistoryUtil.addUserHistoryAction( metadataProvider, "pat", "Connector", "c3" );
+    UserHistoryUtil.addUserHistoryAction( metadataProvider, "pat", "Connector", "c4" );
+    UserHistoryUtil.addUserHistoryAction( metadataProvider, "pat", "Connector", "c5" );
+    UserHistoryUtil.addUserHistoryAction( metadataProvider, "pat", "Connector", "c6" );
+    UserHistoryUtil.addUserHistoryAction( metadataProvider, "pat", "Connector", "c7" );
+    UserHistoryUtil.addUserHistoryAction( metadataProvider, "pat", "Connector", "c8" );
+    UserHistoryUtil.addUserHistoryAction( metadataProvider, "pat", "Connector", "c9" );
+    UserHistoryUtil.addUserHistoryAction( metadataProvider, "pat", "Connector", "c10" );
+    UserHistoryUtil.addUserHistoryAction( metadataProvider, "pat", "Connector", "c11" );
+    UserHistoryUtil.addUserHistoryAction( metadataProvider, "pat", "Connector", "c12" );
+    UserHistoryUtil.addUserHistoryAction( metadataProvider, "pat", "Connector", "c13" );
 
-    List<LeanUserHistoryAction> joeActions = UserHistoryUtil.getUserHistoryActions( metaStore, "joe" );
+    List<LeanUserHistoryAction> joeActions = UserHistoryUtil.getUserHistoryActions( metadataProvider, "joe" );
     assertEquals( 1, joeActions.size() );
 
-    List<LeanUserHistoryAction> suzyActions = UserHistoryUtil.getUserHistoryActions( metaStore, "suzy" );
+    List<LeanUserHistoryAction> suzyActions = UserHistoryUtil.getUserHistoryActions( metadataProvider, "suzy" );
     assertEquals( 2, suzyActions.size() );
 
-    List<LeanUserHistoryAction> patActions = UserHistoryUtil.getUserHistoryActions( metaStore, "pat" );
+    List<LeanUserHistoryAction> patActions = UserHistoryUtil.getUserHistoryActions( metadataProvider, "pat" );
     Assert.assertEquals( Constants.USER_ACTION_HISTORY_SIZE, patActions.size() );
 
   }

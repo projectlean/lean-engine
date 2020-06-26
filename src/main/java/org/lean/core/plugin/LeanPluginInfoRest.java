@@ -5,9 +5,9 @@ import org.lean.presentation.component.type.LeanComponentPluginType;
 import org.lean.presentation.connector.type.ILeanConnector;
 import org.lean.presentation.connector.type.LeanConnectorPluginType;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import org.apache.hop.core.plugins.PluginInterface;
+import org.apache.hop.core.plugins.IPlugin;
 import org.apache.hop.core.plugins.PluginRegistry;
-import org.apache.hop.core.plugins.PluginTypeInterface;
+import org.apache.hop.core.plugins.IPluginType;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -66,12 +66,12 @@ public class LeanPluginInfoRest {
     }
   }
 
-  private List<LeanPluginDescription> getPluginDescriptions( Class<? extends PluginTypeInterface> pluginTypeClass, Class<?> interfaceClass) {
+  private List<LeanPluginDescription> getPluginDescriptions( Class<? extends IPluginType> pluginTypeClass, Class<?> interfaceClass) {
     PluginRegistry registry = PluginRegistry.getInstance();
 
-    List<PluginInterface> plugins = registry.getPlugins( pluginTypeClass );
+    List<IPlugin> plugins = registry.getPlugins( pluginTypeClass );
     List<LeanPluginDescription> list = new ArrayList<LeanPluginDescription>();
-    for (PluginInterface plugin : plugins) {
+    for (IPlugin plugin : plugins) {
       list.add(
         new LeanPluginDescription(
           plugin.getIds()[0],

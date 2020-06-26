@@ -2,24 +2,24 @@ package org.lean.core;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import org.apache.hop.metastore.persist.MetaStoreAttribute;
+import org.apache.hop.metadata.api.HopMetadataProperty;
 
-@JsonDeserialize( as=LeanFont.class)
+@JsonDeserialize( as = LeanFont.class )
 public class LeanFont {
 
-  @MetaStoreAttribute
+  @HopMetadataProperty
   @JsonProperty
   private String fontName;
 
-  @MetaStoreAttribute
+  @HopMetadataProperty
   @JsonProperty
   private String fontSize;
 
-  @MetaStoreAttribute
+  @HopMetadataProperty
   @JsonProperty
   private boolean bold;
 
-  @MetaStoreAttribute
+  @HopMetadataProperty
   @JsonProperty
   private boolean italic;
 
@@ -34,22 +34,22 @@ public class LeanFont {
   }
 
   public LeanFont( LeanFont f ) {
-    this(f.fontName, f.fontSize, f.bold, f.italic);
+    this( f.fontName, f.fontSize, f.bold, f.italic );
   }
 
   @Override public boolean equals( Object obj ) {
-    if (!(obj instanceof LeanFont)) {
+    if ( !( obj instanceof LeanFont ) ) {
       return false;
     }
-    if (obj==this) {
+    if ( obj == this ) {
       return true;
     }
     LeanFont font = (LeanFont) obj;
 
-    boolean sameName = fontName==null && font.fontName==null || fontName!=null && fontName.equals( font.fontName );
-    boolean sameSize = fontSize==null && font.fontSize==null || fontSize!=null && fontSize.equals( font.fontSize );
-    boolean sameBold = bold==font.bold;
-    boolean sameItalic = italic==font.italic;
+    boolean sameName = fontName == null && font.fontName == null || fontName != null && fontName.equals( font.fontName );
+    boolean sameSize = fontSize == null && font.fontSize == null || fontSize != null && fontSize.equals( font.fontSize );
+    boolean sameBold = bold == font.bold;
+    boolean sameItalic = italic == font.italic;
 
     return sameName && sameSize && sameBold && sameItalic;
   }

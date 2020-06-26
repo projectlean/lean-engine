@@ -1,5 +1,12 @@
 package org.lean.presentation.component.type;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import org.apache.batik.svggen.SVGGraphics2D;
+import org.apache.commons.lang.StringUtils;
+import org.apache.hop.core.Const;
+import org.apache.hop.core.logging.ILogChannel;
+import org.apache.hop.metadata.api.HopMetadataProperty;
 import org.lean.core.LeanAttachment;
 import org.lean.core.LeanColorRGB;
 import org.lean.core.LeanFont;
@@ -17,13 +24,6 @@ import org.lean.presentation.layout.LeanRenderPage;
 import org.lean.presentation.page.LeanPage;
 import org.lean.presentation.theme.LeanTheme;
 import org.lean.render.IRenderContext;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import org.apache.batik.svggen.SVGGraphics2D;
-import org.apache.commons.lang.StringUtils;
-import org.apache.hop.core.Const;
-import org.apache.hop.core.logging.LogChannelInterface;
-import org.apache.hop.metastore.persist.MetaStoreAttribute;
 
 import java.awt.*;
 import java.awt.font.TextLayout;
@@ -31,46 +31,46 @@ import java.awt.geom.Rectangle2D;
 
 public abstract class LeanBaseComponent implements ILeanComponent {
 
-  @MetaStoreAttribute
+  @HopMetadataProperty
   @JsonProperty
   protected String pluginId;
 
-  @MetaStoreAttribute
+  @HopMetadataProperty
   @JsonProperty
   protected String sourceConnectorName;
 
-  @MetaStoreAttribute
+  @HopMetadataProperty
   @JsonProperty
   private LeanFont defaultFont;
 
-  @MetaStoreAttribute
+  @HopMetadataProperty
   @JsonProperty
   private LeanColorRGB defaultColor;
 
-  @MetaStoreAttribute
+  @HopMetadataProperty
   @JsonProperty
   protected boolean background;
 
-  @MetaStoreAttribute
+  @HopMetadataProperty
   @JsonProperty
   private LeanColorRGB backGroundColor;
 
-  @MetaStoreAttribute
+  @HopMetadataProperty
   @JsonProperty
   protected boolean border;
 
-  @MetaStoreAttribute
+  @HopMetadataProperty
   @JsonProperty
   private LeanColorRGB borderColor;
 
-  @MetaStoreAttribute
+  @HopMetadataProperty
   @JsonProperty
   protected String themeName;
 
   // Fields below are not serialized
   //
   @JsonIgnore
-  protected transient LogChannelInterface log;
+  protected transient ILogChannel log;
 
   public LeanBaseComponent() {
   }
@@ -101,10 +101,12 @@ public abstract class LeanBaseComponent implements ILeanComponent {
   }
 
   // First
-  public abstract LeanSize getExpectedSize( LeanPresentation presentation, LeanPage page, LeanComponent component, IDataContext dataContext, IRenderContext renderContext, LeanLayoutResults results ) throws LeanException;
+  public abstract LeanSize getExpectedSize( LeanPresentation presentation, LeanPage page, LeanComponent component, IDataContext dataContext, IRenderContext renderContext, LeanLayoutResults results )
+    throws LeanException;
 
   // Second
-  public LeanGeometry getNaturalGeometry( LeanPresentation presentation, LeanPage page, LeanComponent component, IDataContext dataContext, IRenderContext renderContext, LeanLayoutResults results ) throws LeanException {
+  public LeanGeometry getNaturalGeometry( LeanPresentation presentation, LeanPage page, LeanComponent component, IDataContext dataContext, IRenderContext renderContext, LeanLayoutResults results )
+    throws LeanException {
     int x = 0;
     int y = 0;
     int width;
@@ -151,7 +153,8 @@ public abstract class LeanBaseComponent implements ILeanComponent {
    * @param component
    * @param results
    */
-  public LeanGeometry getExpectedGeometry( LeanPresentation presentation, LeanPage page, LeanComponent component, IDataContext dataContext, IRenderContext renderContext, LeanLayoutResults results ) throws LeanException {
+  public LeanGeometry getExpectedGeometry( LeanPresentation presentation, LeanPage page, LeanComponent component, IDataContext dataContext, IRenderContext renderContext, LeanLayoutResults results )
+    throws LeanException {
 
     // Get the natural imageSize of this component
     //
@@ -565,6 +568,7 @@ public abstract class LeanBaseComponent implements ILeanComponent {
 
   /**
    * Look up the default font from component settings or from the active theme
+   *
    * @param renderContext The context to lookup a theme in
    * @return The default font or null if no font is found
    */
@@ -578,10 +582,6 @@ public abstract class LeanBaseComponent implements ILeanComponent {
     }
     throw new LeanException( "There is no default font set (no theme found or found)" );
   }
-
-
-
-
 
 
   protected void drawBackGround( SVGGraphics2D gc, LeanGeometry componentGeometry, IRenderContext renderContext ) throws LeanException {
@@ -701,7 +701,7 @@ public abstract class LeanBaseComponent implements ILeanComponent {
    * @return value of log
    */
   @JsonIgnore
-  public LogChannelInterface getLogChannel() {
+  public ILogChannel getLogChannel() {
     return log;
   }
 
@@ -709,7 +709,7 @@ public abstract class LeanBaseComponent implements ILeanComponent {
    * @param log The log to set
    */
   @JsonIgnore
-  public void setLogChannel( LogChannelInterface log ) {
+  public void setLogChannel( ILogChannel log ) {
     this.log = log;
   }
 

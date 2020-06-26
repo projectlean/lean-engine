@@ -1,5 +1,9 @@
 package org.lean.presentation.connector.types.chain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import org.apache.hop.core.row.IRowMeta;
+import org.apache.hop.metadata.api.HopMetadataProperty;
 import org.lean.core.exception.LeanException;
 import org.lean.presentation.connector.LeanConnector;
 import org.lean.presentation.connector.type.ILeanConnector;
@@ -7,10 +11,6 @@ import org.lean.presentation.connector.type.LeanBaseConnector;
 import org.lean.presentation.connector.types.passthrough.PassthroughRowListener;
 import org.lean.presentation.datacontext.ChainDataContext;
 import org.lean.presentation.datacontext.IDataContext;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import org.apache.hop.core.row.RowMetaInterface;
-import org.apache.hop.metastore.persist.MetaStoreAttribute;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,7 +22,7 @@ public class LeanChainConnector extends LeanBaseConnector implements ILeanConnec
 
   public static final String STRING_LAST_CONNECTOR_NAME = "_RESULT_OF_CHAIN_";
 
-  @MetaStoreAttribute
+  @HopMetadataProperty
   private List<ILeanConnector> connectors;
 
   @JsonIgnore
@@ -34,11 +34,11 @@ public class LeanChainConnector extends LeanBaseConnector implements ILeanConnec
     connectors = new ArrayList<>();
   }
 
-  public LeanChainConnector(LeanChainConnector c) {
-    super(c);
-    connectors = new ArrayList<>(  );
-    for (ILeanConnector connector : c.connectors) {
-      connectors.add(connector.clone());
+  public LeanChainConnector( LeanChainConnector c ) {
+    super( c );
+    connectors = new ArrayList<>();
+    for ( ILeanConnector connector : c.connectors ) {
+      connectors.add( connector.clone() );
     }
   }
 
@@ -52,7 +52,7 @@ public class LeanChainConnector extends LeanBaseConnector implements ILeanConnec
     this.connectors = connectors;
   }
 
-  @Override public RowMetaInterface describeOutput( IDataContext dataContext ) throws LeanException {
+  @Override public IRowMeta describeOutput( IDataContext dataContext ) throws LeanException {
 
     // Validate input first
     //
@@ -71,7 +71,7 @@ public class LeanChainConnector extends LeanBaseConnector implements ILeanConnec
     return lastConnector.getConnector().describeOutput( dataContext );
   }
 
-  public ChainDataContext createChainContext( IDataContext parentDataContext) {
+  public ChainDataContext createChainContext( IDataContext parentDataContext ) {
     // We want to chain all the connectors, give them sampledata names,
     //
     ChainDataContext chainDataContext = new ChainDataContext( parentDataContext );

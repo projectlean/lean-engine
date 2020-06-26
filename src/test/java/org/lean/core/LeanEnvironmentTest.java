@@ -1,13 +1,11 @@
 package org.lean.core;
 
-import org.lean.core.metastore.LeanMetaStoreUtil;
+import org.apache.hop.core.plugins.IPlugin;
+import org.apache.hop.core.plugins.IPluginType;
+import org.apache.hop.core.plugins.PluginRegistry;
+import org.junit.Test;
 import org.lean.presentation.component.type.LeanComponentPluginType;
 import org.lean.presentation.connector.type.LeanConnectorPluginType;
-import org.junit.Test;
-import org.apache.hop.core.plugins.PluginInterface;
-import org.apache.hop.core.plugins.PluginRegistry;
-import org.apache.hop.core.plugins.PluginTypeInterface;
-import org.apache.hop.metastore.api.IMetaStore;
 
 import java.util.List;
 
@@ -21,32 +19,29 @@ public class LeanEnvironmentTest {
 
     // Load all plugins, initialize environment
     //
-    IMetaStore metaStore = LeanMetaStoreUtil.createTestMetaStore( "Test" );
-    LeanEnvironment.init(metaStore);
+    LeanEnvironment.init();
 
     PluginRegistry registry = PluginRegistry.getInstance();
 
     // Check Component plugin type...
     //
-    PluginTypeInterface leanComponentPluginType = registry.getPluginType( LeanComponentPluginType.class );
+    IPluginType leanComponentPluginType = registry.getPluginType( LeanComponentPluginType.class );
     assertNotNull( "Component plugin type not found ", leanComponentPluginType );
-    PluginInterface leanLabelComponent = registry.findPluginWithId( LeanComponentPluginType.class, "LeanLabelComponent" );
+    IPlugin leanLabelComponent = registry.findPluginWithId( LeanComponentPluginType.class, "LeanLabelComponent" );
     assertNotNull( "Label component not found", leanLabelComponent );
 
-    List<PluginInterface> componentPlugins = registry.getPlugins( LeanComponentPluginType.class );
+    List<IPlugin> componentPlugins = registry.getPlugins( LeanComponentPluginType.class );
     assertTrue( "Plugins list empty", !componentPlugins.isEmpty() );
 
 
     // Check connector plugin type...
     //
-    PluginTypeInterface leanConnectorPluginType = registry.getPluginType( LeanConnectorPluginType.class );
+    IPluginType leanConnectorPluginType = registry.getPluginType( LeanConnectorPluginType.class );
     assertNotNull( "Data connector plugin type not found ", leanConnectorPluginType );
-    PluginInterface sampleDataConnector = registry.findPluginWithId( LeanConnectorPluginType.class, "SampleDataConnector" );
+    IPlugin sampleDataConnector = registry.findPluginWithId( LeanConnectorPluginType.class, "SampleDataConnector" );
     assertNotNull( "Sample data connector plugin type not found", sampleDataConnector );
 
-    List<PluginInterface> connectorPlugins = registry.getPlugins( LeanConnectorPluginType.class );
+    List<IPlugin> connectorPlugins = registry.getPlugins( LeanConnectorPluginType.class );
     assertTrue( "Plugins list empty", !connectorPlugins.isEmpty() );
-
-    LeanMetaStoreUtil.cleanupTestMetaStore( metaStore );
   }
 }

@@ -1,6 +1,20 @@
 package org.lean.presentation;
 
-import org.lean.core.Constants;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.batik.svggen.SVGGraphics2D;
+import org.apache.commons.lang.StringUtils;
+import org.apache.hop.core.Const;
+import org.apache.hop.core.logging.ILogChannel;
+import org.apache.hop.core.logging.ILoggingObject;
+import org.apache.hop.core.logging.LogChannel;
+import org.apache.hop.core.logging.Metrics;
+import org.apache.hop.core.metrics.MetricsSnapshotType;
+import org.apache.hop.metadata.api.HopMetadata;
+import org.apache.hop.metadata.api.HopMetadataProperty;
+import org.apache.hop.metadata.api.IHopMetadata;
+import org.apache.hop.metadata.api.IHopMetadataProvider;
 import org.lean.core.LeanGeometry;
 import org.lean.core.exception.LeanException;
 import org.lean.core.log.LeanMetricsUtil;
@@ -18,21 +32,6 @@ import org.lean.presentation.page.LeanPage;
 import org.lean.presentation.theme.LeanTheme;
 import org.lean.render.IRenderContext;
 import org.lean.render.context.PresentationRenderContext;
-import org.lean.rest.LeanRestBase;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.apache.batik.svggen.SVGGraphics2D;
-import org.apache.commons.lang.StringUtils;
-import org.apache.hop.core.Const;
-import org.apache.hop.core.logging.LogChannel;
-import org.apache.hop.core.logging.LogChannelInterface;
-import org.apache.hop.core.logging.LoggingObjectInterface;
-import org.apache.hop.core.logging.Metrics;
-import org.apache.hop.core.metrics.MetricsSnapshotType;
-import org.apache.hop.metastore.api.IMetaStore;
-import org.apache.hop.metastore.persist.MetaStoreAttribute;
-import org.apache.hop.metastore.persist.MetaStoreElementType;
 
 import javax.ws.rs.Path;
 import java.awt.*;
@@ -42,36 +41,38 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
-@MetaStoreElementType(
+
+@HopMetadata(
+  key = "presentation",
   name = "Presentation",
-  description = "Top level document of the presentation metadata" )
+  description = "Top level document of the presentation metadata"
+)
 @Path( "presentations" )
-public class LeanPresentation extends LeanRestBase<LeanPresentation> implements IHasIdentity {
+public class LeanPresentation implements IHasIdentity, IHopMetadata {
   private String name;
 
-  @MetaStoreAttribute
+  @HopMetadataProperty
   private String description;
 
-  @MetaStoreAttribute
+  @HopMetadataProperty
   private List<LeanPage> pages;
 
-  @MetaStoreAttribute
+  @HopMetadataProperty
   private LeanPage header;
 
-  @MetaStoreAttribute
+  @HopMetadataProperty
   private LeanPage footer;
 
-  @MetaStoreAttribute
+  @HopMetadataProperty
   private List<LeanTheme> themes;
 
-  @MetaStoreAttribute
+  @HopMetadataProperty
   private String defaultThemeName;
 
-  @MetaStoreAttribute( factoryNameReference = true, factoryNameKey = Constants.METASTORE_FACTORY_NAME_CONNECTORS, factorySharedIndicatorName = "shared" )
+  @HopMetadataProperty( storeWithName = true )
   private List<LeanConnector> connectors;
 
   public LeanPresentation() {
-    super( LeanPresentation.class, "Presentation" );
     pages = new ArrayList<>();
     connectors = new ArrayList<>();
     themes = new ArrayList<>();
@@ -83,7 +84,6 @@ public class LeanPresentation extends LeanRestBase<LeanPresentation> implements 
    * @param p
    */
   public LeanPresentation( LeanPresentation p ) {
-    super( LeanPresentation.class, p.name );
     this.name = p.name;
     this.description = p.description;
     this.header = p.header == null ? null : new LeanPage( p.header );
@@ -115,19 +115,19 @@ public class LeanPresentation extends LeanRestBase<LeanPresentation> implements 
     return new ObjectMapper().readValue( jsonString, LeanPresentation.class );
   }
 
-    /**
-     * Perform the layout of this presentation.
-     *
-     * @param parent        the parent logging object
-     * @param renderContext The rendering context
-     * @param metaStore     The metaStore to reference external metadata with
-     * @return The layout results
-     * @throws LeanException
-     */
-  public LeanLayoutResults doLayout( LoggingObjectInterface parent, IRenderContext renderContext, IMetaStore metaStore ) throws LeanException {
+  /**
+   * Perform the layout of this presentation.
+   *
+   * @param parent           the parent logging object
+   * @param renderContext    The rendering context
+   * @param metadataProvider The metadata provider to reference external metadata with
+   * @return The layout results
+   * @throws LeanException
+   */
+  public LeanLayoutResults doLayout( ILoggingObject parent, IRenderContext renderContext, IHopMetadataProvider metadataProvider ) throws LeanException {
 
-    LogChannelInterface log = new LogChannel( getName(), parent, true );
-    PresentationDataContext presentationDataContext = new PresentationDataContext( this, metaStore );
+    ILogChannel log = new LogChannel( getName(), parent, true );
+    PresentationDataContext presentationDataContext = new PresentationDataContext( this, metadataProvider );
     LeanLayoutResults results = new LeanLayoutResults( log );
 
     log.logBasic( "Started layout of presentation" );
@@ -164,15 +164,15 @@ public class LeanPresentation extends LeanRestBase<LeanPresentation> implements 
    * Render this presentation by rendering all the render pages in the layout results...
    * At the end, we'll have some stuff drawn on the Graphics Context of each render page...
    *
-   * @param results   Where to store rendering results
-   * @param metaStore The metaStore to reference external metadata with
+   * @param results          Where to store rendering results
+   * @param metadataProvider The metadata provider to reference external metadata with
    * @return The presentation rendering log channel
    * @throws LeanException in case something goes wrong
    */
-  public LogChannelInterface render( LeanLayoutResults results, IMetaStore metaStore ) throws LeanException {
+  public ILogChannel render( LeanLayoutResults results, IHopMetadataProvider metadataProvider ) throws LeanException {
 
-    LogChannelInterface log = results.getLog();
-    PresentationDataContext presentationDataContext = new PresentationDataContext( this, metaStore );
+    ILogChannel log = results.getLog();
+    PresentationDataContext presentationDataContext = new PresentationDataContext( this, metadataProvider );
     PresentationRenderContext presentationRenderContext = new PresentationRenderContext( this );
 
     log.logBasic( "Started rendering presentation" );
@@ -273,7 +273,7 @@ public class LeanPresentation extends LeanRestBase<LeanPresentation> implements 
   /**
    * Render the header and footers on top of the render page...
    */
-  private void renderHeaderFooter( LogChannelInterface log, LeanRenderPage renderPage, AffineTransform parentTransform, IDataContext presentationDataContext, IRenderContext renderContext )
+  private void renderHeaderFooter( ILogChannel log, LeanRenderPage renderPage, AffineTransform parentTransform, IDataContext presentationDataContext, IRenderContext renderContext )
     throws LeanException {
     LeanPage page = renderPage.getPage();
     LeanSVGGraphics2D gc = renderPage.getGc();

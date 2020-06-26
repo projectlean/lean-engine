@@ -1,6 +1,6 @@
 package org.lean.core;
 
-import org.apache.hop.metastore.persist.MetaStoreAttribute;
+import org.apache.hop.metadata.api.HopMetadataProperty;
 
 /**
  * To attach the location of one component to another
@@ -11,16 +11,16 @@ public class LeanAttachment {
     DEFAULT, TOP, BOTTOM, LEFT, RIGHT, CENTER,
   }
 
-  @MetaStoreAttribute
+  @HopMetadataProperty
   private String componentName;
 
-  @MetaStoreAttribute
+  @HopMetadataProperty
   private int percentage;
 
-  @MetaStoreAttribute
+  @HopMetadataProperty
   private int offset;
 
-  @MetaStoreAttribute
+  @HopMetadataProperty
   private Alignment alignment;
 
   public LeanAttachment() {
@@ -50,7 +50,7 @@ public class LeanAttachment {
     this.alignment = alignment;
   }
 
-  public LeanAttachment( LeanAttachment attachment) {
+  public LeanAttachment( LeanAttachment attachment ) {
     this.componentName = attachment.componentName;
     this.percentage = attachment.percentage;
     this.offset = attachment.offset;

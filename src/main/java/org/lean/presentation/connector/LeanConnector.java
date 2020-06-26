@@ -1,32 +1,38 @@
 package org.lean.presentation.connector;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import org.apache.hop.core.RowMetaAndData;
+import org.apache.hop.core.row.IRowMeta;
+import org.apache.hop.metadata.api.HopMetadata;
+import org.apache.hop.metadata.api.HopMetadataProperty;
 import org.lean.core.ILeanRowListener;
 import org.lean.core.exception.LeanException;
 import org.lean.presentation.connector.type.ILeanConnector;
 import org.lean.presentation.datacontext.IDataContext;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import org.apache.hop.core.RowMetaAndData;
-import org.apache.hop.core.row.RowMetaInterface;
-import org.apache.hop.metastore.persist.MetaStoreAttribute;
-import org.apache.hop.metastore.persist.MetaStoreElementType;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
-@MetaStoreElementType( name = "Connector", description = "Connector between components and data sources" )
+@HopMetadata(
+  key = "connector",
+  name = "Connector",
+  description = "Connector between components and data sources"
+)
 public class LeanConnector {
 
-  /** The name of the connector*/
+  /**
+   * The name of the connector
+   */
   @JsonProperty
   private String name;
 
-  @MetaStoreAttribute
+  @HopMetadataProperty
   @JsonProperty
   private ILeanConnector connector;
 
-  @MetaStoreAttribute
+  @HopMetadataProperty
   @JsonProperty
   private boolean shared;
 
@@ -41,11 +47,12 @@ public class LeanConnector {
 
   /**
    * Create a new connector by copying over the details of the given connector
+   *
    * @param c
    */
   public LeanConnector( LeanConnector c ) {
     this.name = c.name;
-    this.connector = c.connector==null ? null : c.connector.clone();
+    this.connector = c.connector == null ? null : c.connector.clone();
     this.shared = c.shared;
   }
 
@@ -53,7 +60,6 @@ public class LeanConnector {
    * Uses addDataListener() to retrieve all the rows from the data stream...
    *
    * @return all the rows from the connector
-   *
    * @throws LeanException
    */
   public List<RowMetaAndData> retrieveRows( IDataContext dataContext ) throws LeanException {
@@ -75,23 +81,25 @@ public class LeanConnector {
 
       // Start streaming data
       //
-      connector.startStreaming(dataContext);
+      connector.startStreaming( dataContext );
 
       // Wait for it to end.
       //
-      while ( finishedQueue.poll( 1L, TimeUnit.DAYS ) == null );
+      while ( finishedQueue.poll( 1L, TimeUnit.DAYS ) == null ) {
+        ;
+      }
 
       connector.waitUntilFinished();
 
-      connector.removeDataListener(listener);
+      connector.removeDataListener( listener );
 
       return rows;
-    } catch(Exception e) {
-      throw new LeanException( "Error getting all rows from connector", e);
+    } catch ( Exception e ) {
+      throw new LeanException( "Error getting all rows from connector", e );
     }
   }
 
-  public RowMetaInterface describeOutput(IDataContext dataContext) throws LeanException {
+  public IRowMeta describeOutput( IDataContext dataContext ) throws LeanException {
     return connector.describeOutput( dataContext );
   }
 

@@ -1,5 +1,13 @@
 package org.lean.util;
 
+import org.apache.hop.core.database.DatabaseMetaPlugin;
+import org.apache.hop.core.database.DatabasePluginType;
+import org.apache.hop.core.exception.HopPluginException;
+import org.apache.hop.core.plugins.PluginRegistry;
+import org.apache.hop.databases.h2.H2DatabaseMeta;
+import org.apache.hop.databases.mysql.MySqlDatabaseMeta;
+import org.apache.hop.databases.oracle.OracleDatabaseMeta;
+import org.apache.hop.metadata.api.IHopMetadataProvider;
 import org.lean.core.LeanAttachment;
 import org.lean.core.LeanColorRGB;
 import org.lean.presentation.LeanPresentation;
@@ -14,24 +22,38 @@ import org.lean.presentation.theme.LeanTheme;
 
 public class BasePresentationUtil {
 
+  protected IHopMetadataProvider metadataProvider;
+
+  public BasePresentationUtil( IHopMetadataProvider metadataProvider ) {
+    this.metadataProvider = metadataProvider;
+  }
+
   public static final String HEADER_MESSAGE_LABEL = "HeaderLabel";
   public static String CONNECTOR_SAMPLE_ROWS = "Sample rows";
 
-  public static LeanPresentation[] getAvailablePresentations() throws Exception {
+  public static void registerTestPlugins() throws HopPluginException {
+    PluginRegistry.getInstance().registerPluginClass( H2DatabaseMeta.class.getName(), DatabasePluginType.class, DatabaseMetaPlugin.class );
+    PluginRegistry.getInstance().registerPluginClass( OracleDatabaseMeta.class.getName(), DatabasePluginType.class, DatabaseMetaPlugin.class );
+    PluginRegistry.getInstance().registerPluginClass( MySqlDatabaseMeta.class.getName(), DatabasePluginType.class, DatabaseMetaPlugin.class );
+  }
+
+  public LeanPresentation[] getAvailablePresentations() throws Exception {
     int nr = 1;
     return new LeanPresentation[] {
-      LabelPresentationUtil.createLabelPresentation( 500 * nr++ ),
-      LineChartPresentationUtil.createLineChartPresentation( 500 * nr++ ),
-      LineChartPresentationUtil.createLineChartSeriesPresentation( 500 * nr++ ),
-      LineChartPresentationUtil.createLineChartNoLabelsPresentation( 500 * nr++ ),
-      ComboPresentationUtil.createComboPresentation( 500 * nr++ ),
-      CompositePresentationUtil.createSimpleCompositePresentation( 500 * nr++ ),
-      CrosstabPresentationUtil.createCrosstabPresentation( 500 * nr++ ),
-      CrosstabPresentationUtil.createCrosstabPresentationOnlyVerticalDimensions( 500 * nr++ ),
-      CrosstabPresentationUtil.createCrosstabPresentationOnlyHorizontalDimensions( 500 * nr++ ),
-      CrosstabPresentationUtil.createCrosstabPresentationOnlyFacts( 500 * nr++ ),
-      GroupCompositePresentationUtil.createGroupCompositePresentation( 500 * nr++ ),
-      GroupPresentationUtil.createSimpleGroupedLabelPresentation( 500 * nr++ ),
+      new BarChartPresentationUtil( metadataProvider).createBarChartPresentation( 100*nr ),
+      new BarChartPresentationUtil( metadataProvider).createStackedBarChartPresentation( 100*nr ),
+      new LabelPresentationUtil(metadataProvider).createLabelPresentation( 100 * nr++ ),
+      new LineChartPresentationUtil(metadataProvider).createLineChartPresentation( 100 * nr++ ),
+      new LineChartPresentationUtil(metadataProvider).createLineChartSeriesPresentation( 100 * nr++ ),
+      new LineChartPresentationUtil(metadataProvider).createLineChartNoLabelsPresentation( 100 * nr++ ),
+      new ComboPresentationUtil(metadataProvider).createComboPresentation( 100 * nr++ ),
+      new CompositePresentationUtil(metadataProvider).createSimpleCompositePresentation( 100 * nr++ ),
+      new CrosstabPresentationUtil(metadataProvider).createCrosstabPresentation( 100 * nr++ ),
+      new CrosstabPresentationUtil(metadataProvider).createCrosstabPresentationOnlyVerticalDimensions( 100 * nr++ ),
+      new CrosstabPresentationUtil(metadataProvider).createCrosstabPresentationOnlyHorizontalDimensions( 100 * nr++ ),
+      new CrosstabPresentationUtil(metadataProvider).createCrosstabPresentationOnlyFacts( 100 * nr++ ),
+      new GroupCompositePresentationUtil(metadataProvider).createGroupCompositePresentation( 100 * nr++ ),
+      new GroupPresentationUtil(metadataProvider).createSimpleGroupedLabelPresentation( 100 * nr++ ),
     };
   }
 
@@ -166,5 +188,21 @@ public class BasePresentationUtil {
     labelLayout.setRight( new LeanAttachment( null, 0, 0, LeanAttachment.Alignment.RIGHT ) );
     labelComponent.setLayout( labelLayout );
     return labelComponent;
+  }
+
+  /**
+   * Gets metadataProvider
+   *
+   * @return value of metadataProvider
+   */
+  public IHopMetadataProvider getMetadataProvider() {
+    return metadataProvider;
+  }
+
+  /**
+   * @param metadataProvider The metadataProvider to set
+   */
+  public void setMetadataProvider( IHopMetadataProvider metadataProvider ) {
+    this.metadataProvider = metadataProvider;
   }
 }

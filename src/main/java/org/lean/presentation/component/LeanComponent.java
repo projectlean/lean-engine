@@ -1,5 +1,13 @@
 package org.lean.presentation.component;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.apache.hop.core.logging.ILogChannel;
+import org.apache.hop.core.logging.LogChannel;
+import org.apache.hop.core.logging.LoggingObject;
+import org.apache.hop.metadata.api.HopMetadata;
+import org.apache.hop.metadata.api.HopMetadataProperty;
+import org.apache.hop.metadata.api.IHopMetadata;
+import org.apache.hop.metadata.api.IHopMetadataProvider;
 import org.lean.core.LeanSize;
 import org.lean.core.exception.LeanException;
 import org.lean.presentation.LeanPresentation;
@@ -13,13 +21,6 @@ import org.lean.presentation.page.LeanPage;
 import org.lean.presentation.theme.LeanTheme;
 import org.lean.render.IRenderContext;
 import org.lean.render.context.SimpleRenderContext;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import org.apache.hop.core.logging.LogChannel;
-import org.apache.hop.core.logging.LogChannelInterface;
-import org.apache.hop.core.logging.LoggingObject;
-import org.apache.hop.metastore.api.IMetaStore;
-import org.apache.hop.metastore.persist.MetaStoreAttribute;
-import org.apache.hop.metastore.persist.MetaStoreElementType;
 
 import java.util.List;
 
@@ -28,30 +29,29 @@ import java.util.List;
  *
  * @author matt
  */
-@MetaStoreElementType( name = "Component", description = "Component container with a name, description, location, ..." )
-public class LeanComponent {
+public class LeanComponent implements IHopMetadata {
 
   /**
    * The name of the component
    */
   private String name;
 
-  @MetaStoreAttribute
+  @HopMetadataProperty
   private LeanLayout layout;
 
-  @MetaStoreAttribute
+  @HopMetadataProperty
   private LeanSize size;
 
-  @MetaStoreAttribute
+  @HopMetadataProperty
   private ILeanComponent component;
 
-  @MetaStoreAttribute
+  @HopMetadataProperty
   private boolean shared;
 
-  @MetaStoreAttribute
+  @HopMetadataProperty
   private String rotation;
 
-  @MetaStoreAttribute
+  @HopMetadataProperty
   private String transparency;
 
   public LeanComponent() {
@@ -107,7 +107,8 @@ public class LeanComponent {
    * @param page             the page
    * @param dataContext      The data context to use
    */
-  public void processAndLayout( LogChannelInterface log, LeanPresentation leanPresentation, LeanPage page, RenderPageDataContext dataContext, IRenderContext renderContext, LeanLayoutResults footerResults ) throws
+  public void processAndLayout( ILogChannel log, LeanPresentation leanPresentation, LeanPage page, RenderPageDataContext dataContext, IRenderContext renderContext, LeanLayoutResults footerResults )
+    throws
     LeanException {
     component.setLogChannel( log );
     component.processSourceData( leanPresentation, page, this, dataContext, renderContext, footerResults );
@@ -120,10 +121,10 @@ public class LeanComponent {
    * @param width
    * @param height
    * @param connectors The connectors to use to make this component work
-   * @param themes The themes to reference
+   * @param themes     The themes to reference
    * @return
    */
-  public String getSvgXml( int width, int height, List<LeanConnector> connectors, List<LeanTheme> themes, IMetaStore metaStore ) throws LeanException {
+  public String getSvgXml( int width, int height, List<LeanConnector> connectors, List<LeanTheme> themes, IHopMetadataProvider metadataProvider ) throws LeanException {
 
     LeanPresentation presentation = new LeanPresentation();
     presentation.setName( name );
@@ -141,9 +142,9 @@ public class LeanComponent {
 
     IRenderContext renderContext = new SimpleRenderContext( width, height, themes );
     LoggingObject loggingObject = new LoggingObject( "componentRender" );
-    LogChannelInterface log = LogChannel.GENERAL;
-    LeanLayoutResults results = presentation.doLayout( loggingObject, renderContext, metaStore );
-    presentation.render( results, metaStore );
+    ILogChannel log = LogChannel.GENERAL;
+    LeanLayoutResults results = presentation.doLayout( loggingObject, renderContext, metadataProvider );
+    presentation.render( results, metadataProvider );
 
     if ( results.getRenderPages().size() == 0 ) {
       throw new LeanException( "No output pages generated" );

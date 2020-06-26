@@ -1,5 +1,6 @@
 package org.lean.util;
 
+import org.apache.hop.metadata.api.IHopMetadataProvider;
 import org.lean.core.LeanAttachment;
 import org.lean.core.LeanFont;
 import org.lean.core.LeanHorizontalAlignment;
@@ -17,7 +18,11 @@ public class CompositePresentationUtil extends BasePresentationUtil {
   public static final String COMPONENT_NAME_LABEL1 = "Label1";
   public static final String COMPONENT_NAME_LABEL2 = "Label2";
 
-  public static LeanPresentation createSimpleCompositePresentation( int nr ) throws Exception {
+  public CompositePresentationUtil( IHopMetadataProvider metadataProvider ) {
+    super( metadataProvider );
+  }
+
+  public LeanPresentation createSimpleCompositePresentation( int nr ) throws Exception {
 
     LeanPresentation presentation = createBasePresentation(
       "Composite simple (" + nr + ")",

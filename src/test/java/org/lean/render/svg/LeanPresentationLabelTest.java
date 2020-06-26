@@ -9,7 +9,7 @@ public class LeanPresentationLabelTest extends LeanPresentationTestBase {
   @Test
   public void testLabelRender() throws Exception {
 
-    LeanPresentation presentation = LabelPresentationUtil.createLabelPresentation( 1000 );
+    LeanPresentation presentation = new LabelPresentationUtil( metadataProvider ).createLabelPresentation( 1000 );
     testRendering( presentation, "label_test");
   }
 }

@@ -2,7 +2,7 @@ package org.lean.core;
 
 import org.lean.core.exception.LeanException;
 import org.lean.presentation.datacontext.IDataContext;
-import org.apache.hop.core.row.RowMetaInterface;
+import org.apache.hop.core.row.IRowMeta;
 
 public interface ILeanDataStreaming {
 
@@ -41,6 +41,6 @@ public interface ILeanDataStreaming {
    * @param dataContext the data context
    * @throws LeanException
    */
-  public RowMetaInterface describeOutput(IDataContext dataContext) throws LeanException;
+  public IRowMeta describeOutput(IDataContext dataContext) throws LeanException;
 
 }

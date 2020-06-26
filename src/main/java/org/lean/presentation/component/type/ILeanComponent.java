@@ -14,7 +14,7 @@ import org.lean.presentation.page.LeanPage;
 import org.lean.render.IRenderContext;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import org.apache.hop.core.logging.LogChannelInterface;
+import org.apache.hop.core.logging.ILogChannel;
 
 /**
  * This interface identifies component type plugin classes. These contain the specific attributes of a component.
@@ -69,10 +69,10 @@ public interface ILeanComponent extends Cloneable {
   void render( LeanComponentLayoutResult layoutResult, LeanLayoutResults results, IRenderContext renderContext) throws LeanException;
 
   @JsonIgnore
-  LogChannelInterface getLogChannel();
+  ILogChannel getLogChannel();
 
   @JsonIgnore
-  void setLogChannel( LogChannelInterface log );
+  void setLogChannel( ILogChannel log );
 
   /**
    * @return a copy of this components metadata

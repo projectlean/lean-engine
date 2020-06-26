@@ -1,9 +1,9 @@
 package org.lean.core.log;
 
 import org.lean.core.exception.LeanException;
-import org.apache.hop.core.logging.LogChannelInterface;
+import org.apache.hop.core.logging.ILogChannel;
 import org.apache.hop.core.logging.MetricsRegistry;
-import org.apache.hop.core.metrics.MetricsSnapshotInterface;
+import org.apache.hop.core.metrics.IMetricsSnapshot;
 
 import java.util.Queue;
 import java.util.concurrent.atomic.AtomicLong;
@@ -27,7 +27,7 @@ public class LeanMetricsUtil {
    * @throws LeanException in case the logChannel, start or end code couldn't be found in the registry
    * @return
    */
-  public static long getLastDuration( LogChannelInterface log, String startMetricsCode, String finishMetricsCode ) throws LeanException {
+  public static long getLastDuration( ILogChannel log, String startMetricsCode, String finishMetricsCode ) throws LeanException {
 
     String logChannelId = log.getLogChannelId();
 
@@ -36,7 +36,7 @@ public class LeanMetricsUtil {
     final AtomicLong startTime = new AtomicLong( -1L );
     final AtomicLong endTime = new AtomicLong( -1L );
 
-    Queue<MetricsSnapshotInterface> snapshotList = registry.getSnapshotList( logChannelId );
+    Queue<IMetricsSnapshot> snapshotList = registry.getSnapshotList( logChannelId );
     if (snapshotList==null) {
       throw new LeanException( "Unable to find metrics snapshot list for log channel ID "+logChannelId );
     }

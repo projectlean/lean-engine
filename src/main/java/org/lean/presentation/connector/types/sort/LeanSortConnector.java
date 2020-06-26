@@ -1,5 +1,10 @@
 package org.lean.presentation.connector.types.sort;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import org.apache.hop.core.exception.HopValueException;
+import org.apache.hop.core.row.IRowMeta;
+import org.apache.hop.metadata.api.HopMetadataProperty;
 import org.lean.core.ILeanRowListener;
 import org.lean.core.LeanColumn;
 import org.lean.core.LeanSortMethod;
@@ -8,11 +13,6 @@ import org.lean.presentation.connector.LeanConnector;
 import org.lean.presentation.connector.type.ILeanConnector;
 import org.lean.presentation.connector.type.LeanBaseConnector;
 import org.lean.presentation.datacontext.IDataContext;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import org.apache.hop.core.exception.HopValueException;
-import org.apache.hop.core.row.RowMetaInterface;
-import org.apache.hop.metastore.persist.MetaStoreAttribute;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -27,10 +27,10 @@ import java.util.concurrent.TimeUnit;
 @JsonDeserialize( as = LeanSortConnector.class )
 public class LeanSortConnector extends LeanBaseConnector implements ILeanConnector {
 
-  @MetaStoreAttribute
+  @HopMetadataProperty
   private List<LeanColumn> columns;
 
-  @MetaStoreAttribute
+  @HopMetadataProperty
   private List<LeanSortMethod> sortMethods;
 
   @JsonIgnore
@@ -49,29 +49,29 @@ public class LeanSortConnector extends LeanBaseConnector implements ILeanConnect
     this.sortMethods = sortMethods;
   }
 
-  public LeanSortConnector(LeanSortConnector c) {
-    super(c);
+  public LeanSortConnector( LeanSortConnector c ) {
+    super( c );
     columns = new ArrayList<>();
-    for (LeanColumn column : c.columns) {
-      this.columns.add(new LeanColumn( column ));
+    for ( LeanColumn column : c.columns ) {
+      this.columns.add( new LeanColumn( column ) );
     }
     sortMethods = new ArrayList<>();
-    for (LeanSortMethod method : c.sortMethods) {
-      this.sortMethods.add(new LeanSortMethod(method));
+    for ( LeanSortMethod method : c.sortMethods ) {
+      this.sortMethods.add( new LeanSortMethod( method ) );
     }
   }
 
   public LeanSortConnector clone() {
-    return new LeanSortConnector(this);
+    return new LeanSortConnector( this );
   }
 
 
-  @Override public RowMetaInterface describeOutput( IDataContext dataContext ) throws LeanException {
+  @Override public IRowMeta describeOutput( IDataContext dataContext ) throws LeanException {
     LeanConnector connector = dataContext.getConnector( getSourceConnectorName() );
     if ( connector == null ) {
       throw new LeanException( "Unable to find source '" + getSourceConnectorName() + "' for sort connector" );
     }
-    RowMetaInterface sourceRowMeta = connector.getConnector().describeOutput( dataContext );
+    IRowMeta sourceRowMeta = connector.getConnector().describeOutput( dataContext );
     return sourceRowMeta;
   }
 
@@ -91,21 +91,21 @@ public class LeanSortConnector extends LeanBaseConnector implements ILeanConnect
 
     // What does the input look like?
     //
-    final RowMetaInterface inputRowMeta = connector.describeOutput( dataContext );
-    final RowMetaInterface outputRowMeta = inputRowMeta.clone();
+    final IRowMeta inputRowMeta = connector.describeOutput( dataContext );
+    final IRowMeta outputRowMeta = inputRowMeta.clone();
 
     final List<Object[]> rows = new ArrayList<>();
-    final int[] fieldIndexes = new int[columns.size()];
+    final int[] fieldIndexes = new int[ columns.size() ];
 
-    for (int i=0;i<fieldIndexes.length;i++) {
+    for ( int i = 0; i < fieldIndexes.length; i++ ) {
       LeanColumn column = columns.get( i );
       LeanSortMethod sortMethod = sortMethods.get( i );
-      fieldIndexes[i] = inputRowMeta.indexOfValue( column.getColumnName());
-      if (fieldIndexes[i]<0) {
-        throw new LeanException( "Sort column '"+column.getColumnName() );
+      fieldIndexes[ i ] = inputRowMeta.indexOfValue( column.getColumnName() );
+      if ( fieldIndexes[ i ] < 0 ) {
+        throw new LeanException( "Sort column '" + column.getColumnName() );
       }
 
-      outputRowMeta.getValueMeta( fieldIndexes[i] ).setSortedDescending( !sortMethod.isAscending() );
+      outputRowMeta.getValueMeta( fieldIndexes[ i ] ).setSortedDescending( !sortMethod.isAscending() );
 
     }
 
@@ -114,7 +114,7 @@ public class LeanSortConnector extends LeanBaseConnector implements ILeanConnect
     connector.getConnector().addRowListener( new ILeanRowListener() {
       private Object[] previousRow = null;
 
-      @Override public void rowReceived( RowMetaInterface rowMeta, Object[] rowData ) throws LeanException {
+      @Override public void rowReceived( IRowMeta rowMeta, Object[] rowData ) throws LeanException {
 
         if ( rowData == null ) {
           // Sort the rows list
@@ -129,14 +129,14 @@ public class LeanSortConnector extends LeanBaseConnector implements ILeanConnect
                 }
               }
             } );
-          } catch(Exception e) {
-            throw new LeanException( "Error sorting rows", e);
+          } catch ( Exception e ) {
+            throw new LeanException( "Error sorting rows", e );
           }
 
           // Write the rows
           //
-          for (Object[] row : rows) {
-            passToRowListeners( outputRowMeta, row);
+          for ( Object[] row : rows ) {
+            passToRowListeners( outputRowMeta, row );
           }
 
           // Rows are no longer needed, GC them immediately
@@ -147,7 +147,7 @@ public class LeanSortConnector extends LeanBaseConnector implements ILeanConnect
           return;
         }
 
-        rows.add(rowData);
+        rows.add( rowData );
       }
 
     } );

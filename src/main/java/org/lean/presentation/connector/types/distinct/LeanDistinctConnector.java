@@ -9,7 +9,7 @@ import org.lean.presentation.datacontext.IDataContext;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import org.apache.hop.core.exception.HopValueException;
-import org.apache.hop.core.row.RowMetaInterface;
+import org.apache.hop.core.row.IRowMeta;
 
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.TimeUnit;
@@ -29,12 +29,12 @@ public class LeanDistinctConnector extends LeanBaseConnector implements ILeanCon
     finishedQueue = null;
   }
 
-  @Override public RowMetaInterface describeOutput( IDataContext dataContext ) throws LeanException {
+  @Override public IRowMeta describeOutput( IDataContext dataContext ) throws LeanException {
     LeanConnector connector = dataContext.getConnector( getSourceConnectorName() );
     if ( connector == null ) {
       throw new LeanException( "Unable to find connector source '" + getSourceConnectorName() + "' for distinct connector" );
     }
-    RowMetaInterface sourceRowMeta = connector.getConnector().describeOutput( dataContext );
+    IRowMeta sourceRowMeta = connector.getConnector().describeOutput( dataContext );
     return sourceRowMeta;
   }
 
@@ -63,7 +63,7 @@ public class LeanDistinctConnector extends LeanBaseConnector implements ILeanCon
 
     // What does the input look like?
     //
-    final RowMetaInterface inputRowMeta = connector.describeOutput( dataContext );
+    final IRowMeta inputRowMeta = connector.describeOutput( dataContext );
 
     AtomicBoolean firstRow = new AtomicBoolean( true );
 
@@ -72,7 +72,7 @@ public class LeanDistinctConnector extends LeanBaseConnector implements ILeanCon
     connector.getConnector().addRowListener( new ILeanRowListener() {
       private Object[] previousRow = null;
 
-      @Override public void rowReceived( RowMetaInterface rowMeta, Object[] rowData ) throws LeanException {
+      @Override public void rowReceived( IRowMeta rowMeta, Object[] rowData ) throws LeanException {
 
         if ( rowData == null ) {
           outputDone();

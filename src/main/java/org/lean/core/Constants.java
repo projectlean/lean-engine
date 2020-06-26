@@ -7,8 +7,6 @@ public class Constants {
   public static final String VARIABLE_PAGE_NUMBER = "PAGE_NUMBER";
   public static final String VARIABLE_SYSTEM_DATE = "SYSTEM_DATE";
 
-  public static String NAMESPACE = "Lean";
-
   /** The name of the standard components to load into the Lean environment */
   public static final String XML_FILE_LEAN_COMPONENT_PLUGINS = "lean_components.xml";
 

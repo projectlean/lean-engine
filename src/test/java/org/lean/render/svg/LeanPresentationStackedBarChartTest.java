@@ -9,7 +9,7 @@ public class LeanPresentationStackedBarChartTest extends LeanPresentationTestBas
   @Test
   public void testBarChartRender() throws Exception {
 
-    LeanPresentation presentation = BarChartPresentationUtil.createStackedBarChartPresentation( 4300 );
+    LeanPresentation presentation = new BarChartPresentationUtil( metadataProvider ).createStackedBarChartPresentation( 4300 );
     testRendering(presentation, "bar_chart_stacked_test");
   }
 

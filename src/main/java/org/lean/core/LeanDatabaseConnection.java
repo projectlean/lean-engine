@@ -1,48 +1,48 @@
 package org.lean.core;
 
+import org.apache.hop.core.database.DatabaseMeta;
+import org.apache.hop.metadata.api.HopMetadata;
+import org.apache.hop.metadata.api.HopMetadataProperty;
+import org.apache.hop.metadata.api.IHopMetadata;
 import org.lean.core.exception.LeanException;
 import org.lean.core.metastore.IHasIdentity;
-import org.lean.rest.LeanRestBase;
-import org.apache.hop.core.database.DatabaseMeta;
-import org.apache.hop.metastore.persist.MetaStoreAttribute;
-import org.apache.hop.metastore.persist.MetaStoreElementType;
 
 import javax.ws.rs.Path;
 
 /**
  * For now we assume sane defaults like JDBC, no generic connections, ...
- *
  */
-@MetaStoreElementType(
+@HopMetadata(
+  key = "lean-database-connection",
   name = "Lean Database Connection",
-  description = "A description of a connection to a relational database")
+  description = "A description of a connection to a relational database"
+)
 @Path( "databases" )
-public class LeanDatabaseConnection extends LeanRestBase<LeanDatabaseConnection> implements IHasIdentity {
+public class LeanDatabaseConnection implements IHopMetadata, IHasIdentity {
   private String name;
 
   /**
    * This is a reference to Hop database type codes (MYSQL, POSTGRESQL, MSSQL, ORACLE, ...)
    */
-  @MetaStoreAttribute
+  @HopMetadataProperty
   private String databaseTypeCode;
 
-  @MetaStoreAttribute
+  @HopMetadataProperty
   private String hostname;
 
-  @MetaStoreAttribute
+  @HopMetadataProperty
   private String port;
 
-  @MetaStoreAttribute
+  @HopMetadataProperty
   private String databaseName;
 
-  @MetaStoreAttribute
+  @HopMetadataProperty
   private String username;
 
-  @MetaStoreAttribute(password = true)
+  @HopMetadataProperty( password = true )
   private String password;
 
   public LeanDatabaseConnection() {
-    super(LeanDatabaseConnection.class, "Database Connection");
   }
 
   public LeanDatabaseConnection( String name, String databaseTypeCode, String hostname, String port, String databaseName, String username, String password ) {
@@ -59,7 +59,7 @@ public class LeanDatabaseConnection extends LeanRestBase<LeanDatabaseConnection>
   public DatabaseMeta createDatabaseMeta() throws LeanException {
     try {
       return new DatabaseMeta( name, databaseTypeCode, "JDBC", hostname, databaseName, port, username, password );
-    } catch(Exception e) {
+    } catch ( Exception e ) {
       throw new LeanException( "Unable to create (convert to) Hop database connection object", e );
     }
   }

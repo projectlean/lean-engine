@@ -1,5 +1,14 @@
 package org.lean.presentation.component.types.chart;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.apache.batik.svggen.SVGGraphics2D;
+import org.apache.commons.lang.StringUtils;
+import org.apache.hop.core.Const;
+import org.apache.hop.core.exception.HopException;
+import org.apache.hop.core.exception.HopValueException;
+import org.apache.hop.core.row.IValueMeta;
+import org.apache.hop.core.row.value.ValueMetaNumber;
+import org.apache.hop.metadata.api.HopMetadataProperty;
 import org.lean.core.LeanDimension;
 import org.lean.core.LeanFact;
 import org.lean.core.LeanSize;
@@ -14,49 +23,40 @@ import org.lean.presentation.datacontext.IDataContext;
 import org.lean.presentation.layout.LeanLayoutResults;
 import org.lean.presentation.page.LeanPage;
 import org.lean.render.IRenderContext;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import org.apache.batik.svggen.SVGGraphics2D;
-import org.apache.commons.lang.StringUtils;
-import org.apache.hop.core.Const;
-import org.apache.hop.core.exception.HopException;
-import org.apache.hop.core.exception.HopValueException;
-import org.apache.hop.core.row.ValueMetaInterface;
-import org.apache.hop.core.row.value.ValueMetaNumber;
-import org.apache.hop.metastore.persist.MetaStoreAttribute;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public abstract class LeanBaseChartComponent extends LeanBaseAggregatingComponent implements ILeanComponent {
 
-  @MetaStoreAttribute
+  @HopMetadataProperty
   protected int horizontalMargin;
 
-  @MetaStoreAttribute
+  @HopMetadataProperty
   protected int verticalMargin;
 
-  @MetaStoreAttribute
+  @HopMetadataProperty
   protected boolean showingHorizontalLabels;
 
-  @MetaStoreAttribute
+  @HopMetadataProperty
   protected boolean showingVerticalLabels;
 
-  @MetaStoreAttribute
+  @HopMetadataProperty
   protected boolean showingAxisTicks;
 
-  @MetaStoreAttribute
+  @HopMetadataProperty
   protected int dotSize;
 
-  @MetaStoreAttribute
+  @HopMetadataProperty
   protected String title;
 
-  @MetaStoreAttribute
+  @HopMetadataProperty
   protected String lineWidth;
 
-  @MetaStoreAttribute
+  @HopMetadataProperty
   protected boolean usingZeroBaseline;
 
-  @MetaStoreAttribute
+  @HopMetadataProperty
   protected boolean showingLegend;
 
   // Calculated at runtime
@@ -261,7 +261,7 @@ public abstract class LeanBaseChartComponent extends LeanBaseAggregatingComponen
 
       // Do we have any facts to look up: only 1 fact supported for now.
       //
-      ValueMetaInterface valueMeta = inputRowMeta.getValueMeta( factIndexes.get( factIndex ) );
+      IValueMeta valueMeta = inputRowMeta.getValueMeta( factIndexes.get( factIndex ) );
 
       double totalValue = 0;
 
@@ -271,7 +271,7 @@ public abstract class LeanBaseChartComponent extends LeanBaseAggregatingComponen
 
         List<String> factLabels = details.factLabels.get( series );
         List<Object> factValues = details.factValues.get( series );
-        List<ValueMetaInterface> factValueMetas = details.factValueMetas.get( series );
+        List<IValueMeta> factValueMetas = details.factValueMetas.get( series );
 
         // The lookup key for the combination of horizontal and vertical dimensions...
         //
@@ -354,7 +354,7 @@ public abstract class LeanBaseChartComponent extends LeanBaseAggregatingComponen
     int maxLegendLabelWidth = 0;
     int maxLegendLabelHeight = 0;
     int nrLabels = 0;
-    if (showingLegend) {
+    if ( showingLegend ) {
       nrLabels = sortedHorizontalCombinations.size();
       for ( List<String> verticalCombination : sortedVerticalCombinations ) {
         String legendLabel = getCombinationLabel( verticalCombination );
@@ -378,13 +378,13 @@ public abstract class LeanBaseChartComponent extends LeanBaseAggregatingComponen
     details.legendLabelGeos = legendLabelGeos;
     details.maxLegendLabelWidth = maxLegendLabelWidth;
     details.maxLegendLabelHeight = maxLegendLabelHeight;
-    details.legendMarkerSize = maxLegendLabelHeight*2/3;
+    details.legendMarkerSize = maxLegendLabelHeight * 2 / 3;
 
-    details.legendWidth = width - 2*horizontalMargin;
-    details.maxNrLegendColumns = (int)Math.floor( (double)details.legendWidth / (maxLegendLabelWidth+2*horizontalMargin+details.legendMarkerSize) );
-    details.nrLegendColumns = Math.min(details.legendLabels.size(), details.maxNrLegendColumns );
-    if (details.nrLegendColumns>0) {
-      details.nrLegendRows = 1 + (int) Math.floor( (double)nrLabels / details.nrLegendColumns );
+    details.legendWidth = width - 2 * horizontalMargin;
+    details.maxNrLegendColumns = (int) Math.floor( (double) details.legendWidth / ( maxLegendLabelWidth + 2 * horizontalMargin + details.legendMarkerSize ) );
+    details.nrLegendColumns = Math.min( details.legendLabels.size(), details.maxNrLegendColumns );
+    if ( details.nrLegendColumns > 0 ) {
+      details.nrLegendRows = 1 + (int) Math.floor( (double) nrLabels / details.nrLegendColumns );
     } else {
       details.nrLegendRows = 0;
     }
@@ -392,7 +392,7 @@ public abstract class LeanBaseChartComponent extends LeanBaseAggregatingComponen
 
     // OK, now we continue...
     //
-    details.overshoot = (double)height / 20;
+    details.overshoot = (double) height / 20;
     details.partHeight = ( height - verticalMargin * 3 - details.maxLabelHeight - details.overshoot * 2 - details.titleHeight - details.legendHeight );
     if ( usingZeroBaseline ) {
       details.partHeight += details.overshoot;
@@ -417,10 +417,6 @@ public abstract class LeanBaseChartComponent extends LeanBaseAggregatingComponen
     }
     return label.toString();
   }
-
-
-
-
 
 
   /**

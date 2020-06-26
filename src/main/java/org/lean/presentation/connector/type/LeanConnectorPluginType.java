@@ -7,14 +7,14 @@ import org.apache.hop.core.exception.HopException;
 import org.apache.hop.core.exception.HopPluginException;
 import org.apache.hop.core.plugins.PluginAnnotationType;
 import org.apache.hop.core.plugins.PluginMainClassType;
-import org.apache.hop.core.plugins.PluginTypeInterface;
+import org.apache.hop.core.plugins.IPluginType;
 
 import java.lang.annotation.Annotation;
 import java.util.Map;
 
 @PluginMainClassType( ILeanConnector.class )
 @PluginAnnotationType( LeanConnectorPlugin.class )
-public class LeanConnectorPluginType extends BaseLeanPluginType implements PluginTypeInterface {
+public class LeanConnectorPluginType extends BaseLeanPluginType<LeanConnectorPlugin> implements IPluginType<LeanConnectorPlugin> {
 
   private static LeanConnectorPluginType pluginType;
 
@@ -23,7 +23,7 @@ public class LeanConnectorPluginType extends BaseLeanPluginType implements Plugi
     populateFolders( "connectors" );
   }
 
-  protected LeanConnectorPluginType( Class<? extends Annotation> pluginType, String id, String name ) {
+  protected LeanConnectorPluginType( Class<LeanConnectorPlugin> pluginType, String id, String name ) {
     super( pluginType, id, name );
   }
 
@@ -35,17 +35,17 @@ public class LeanConnectorPluginType extends BaseLeanPluginType implements Plugi
   }
 
   @Override
-  protected void addExtraClasses( Map<Class<?>, String> arg0, Class<?> arg1, Annotation arg2 ) {
+  protected void addExtraClasses( Map<Class<?>, String> arg0, Class<?> arg1, LeanConnectorPlugin leanConnectorPlugin ) {
   }
 
   @Override
-  protected String extractID( Annotation annotation ) {
-    return ( (LeanConnectorPlugin) annotation ).id();
+  protected String extractID( LeanConnectorPlugin annotation ) {
+    return annotation.id();
   }
 
   @Override
-  protected String extractName( Annotation annotation ) {
-    return ( (LeanConnectorPlugin) annotation ).name();
+  protected String extractName( LeanConnectorPlugin annotation ) {
+    return annotation.name();
   }
 
 

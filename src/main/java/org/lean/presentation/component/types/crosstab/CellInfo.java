@@ -4,7 +4,7 @@ import org.lean.core.LeanColumn;
 import org.lean.core.LeanHorizontalAlignment;
 import org.lean.core.LeanTextGeometry;
 import org.lean.core.LeanVerticalAlignment;
-import org.apache.hop.core.row.ValueMetaInterface;
+import org.apache.hop.core.row.IValueMeta;
 
 public class CellInfo {
   public LeanTextGeometry geometry;
@@ -12,7 +12,7 @@ public class CellInfo {
   public LeanColumn column;
   public LeanVerticalAlignment verticalAlignment;
   public LeanHorizontalAlignment horizontalAlignment;
-  public ValueMetaInterface valueMeta;
+  public IValueMeta valueMeta;
   public Object valueData;
 
   public CellInfo() {

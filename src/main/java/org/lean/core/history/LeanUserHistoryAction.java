@@ -1,18 +1,18 @@
 package org.lean.core.history;
 
-import org.apache.hop.metastore.persist.MetaStoreAttribute;
+import org.apache.hop.metadata.api.HopMetadataProperty;
 
 import java.util.Date;
 import java.util.Objects;
 
 public class LeanUserHistoryAction {
-  @MetaStoreAttribute
+  @HopMetadataProperty
   private String objectType;
 
-  @MetaStoreAttribute
+  @HopMetadataProperty
   private String objectName;
 
-  @MetaStoreAttribute
+  @HopMetadataProperty
   private Date actionDate;
 
   public LeanUserHistoryAction() {
@@ -20,7 +20,7 @@ public class LeanUserHistoryAction {
   }
 
   public LeanUserHistoryAction( String objectType, String objectName ) {
-    this(objectType, objectName, new Date());
+    this( objectType, objectName, new Date() );
   }
 
   public LeanUserHistoryAction( String objectType, String objectName, Date actionDate ) {

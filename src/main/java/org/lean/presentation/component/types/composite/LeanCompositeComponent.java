@@ -1,5 +1,7 @@
 package org.lean.presentation.component.types.composite;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import org.apache.hop.metadata.api.HopMetadataProperty;
 import org.lean.core.LeanAttachment;
 import org.lean.core.LeanGeometry;
 import org.lean.core.LeanSize;
@@ -14,8 +16,6 @@ import org.lean.presentation.layout.LeanLayout;
 import org.lean.presentation.layout.LeanLayoutResults;
 import org.lean.presentation.page.LeanPage;
 import org.lean.render.IRenderContext;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import org.apache.hop.metastore.persist.MetaStoreAttribute;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,6 +27,7 @@ import java.util.List;
  * <p>
  * First we get the rows for all the components in the group:
  * <p>
+ *
  * @see ILeanComponent#processSourceData(LeanPresentation, LeanPage, LeanComponent, IDataContext, IRenderContext, LeanLayoutResults)
  * <p>
  * Then we calculate the expected size of the composite.
@@ -41,36 +42,35 @@ import java.util.List;
  * Finally, have all the child composites render themselves
  * <p>
  * @see ILeanComponent#render(LeanComponentLayoutResult, LeanLayoutResults, IRenderContext)
- *
  */
 @JsonDeserialize( as = LeanCompositeComponent.class )
 public class LeanCompositeComponent extends LeanBaseComponent implements ILeanComponent {
 
   public static final String DATA_COMPOSITE_DETAILS = "DATA_COMPOSITE_DETAILS";
 
-  @MetaStoreAttribute
+  @HopMetadataProperty
   private List<LeanComponent> children;
 
   public LeanCompositeComponent() {
-    super("LeanCompositeComponent" );
+    super( "LeanCompositeComponent" );
     children = new ArrayList<>();
   }
 
-  public LeanCompositeComponent( List<LeanComponent> children) {
+  public LeanCompositeComponent( List<LeanComponent> children ) {
     this();
     this.children = children;
   }
 
-  public LeanCompositeComponent(LeanCompositeComponent c) {
-    super("LeanCompositeComponent", c);
-    this.children = new ArrayList<>(  );
-    for (LeanComponent child: c.children) {
-      this.children.add(new LeanComponent( child ));
+  public LeanCompositeComponent( LeanCompositeComponent c ) {
+    super( "LeanCompositeComponent", c );
+    this.children = new ArrayList<>();
+    for ( LeanComponent child : c.children ) {
+      this.children.add( new LeanComponent( child ) );
     }
   }
 
   public LeanCompositeComponent clone() {
-    return new LeanCompositeComponent(this);
+    return new LeanCompositeComponent( this );
   }
 
   /**
@@ -108,7 +108,7 @@ public class LeanCompositeComponent extends LeanBaseComponent implements ILeanCo
       // relative position versus the composite borders.
       // With this new unique name it's safe to use the composite Layout results objects
       //
-      String childComponentName = component.getName() + "-child(" + child.getName() +")";
+      String childComponentName = component.getName() + "-child(" + child.getName() + ")";
 
       // Create a new component to render
       //
@@ -130,7 +130,7 @@ public class LeanCompositeComponent extends LeanBaseComponent implements ILeanCo
 
       // Adjust layout: position from page (null) to parent row component
       //
-      if (childLayout.getBottom()!=null) {
+      if ( childLayout.getBottom() != null ) {
         throw new LeanException( "The bottom of a composite can't be referenced since its size is dynamic and unknown upfront." );
       }
       LeanLayout componentLayout = component.getLayout();
@@ -139,30 +139,30 @@ public class LeanCompositeComponent extends LeanBaseComponent implements ILeanCo
       // Reference the top of the composite instead
       //
       LeanAttachment componentTop = componentLayout.getTop();
-      if (componentTop!=null) {
+      if ( componentTop != null ) {
         LeanAttachment childTop = childLayout.getTop();
-        if (childTop!=null && childTop.getComponentName()==null) {
-          childLayout.setTop(new LeanAttachment( componentTop.getComponentName(), childTop.getPercentage(), childTop.getOffset(), componentTop.getAlignment()));
+        if ( childTop != null && childTop.getComponentName() == null ) {
+          childLayout.setTop( new LeanAttachment( componentTop.getComponentName(), childTop.getPercentage(), childTop.getOffset(), componentTop.getAlignment() ) );
         }
       }
       // Is the child referencing the left of the page?
       // Reference the left side of the composite instead
       //
       LeanAttachment componentLeft = componentLayout.getLeft();
-      if (componentLeft!=null) {
+      if ( componentLeft != null ) {
         LeanAttachment childLeft = childLayout.getLeft();
-        if (childLeft!=null && childLeft.getComponentName()==null) {
-          childLayout.setLeft(new LeanAttachment( componentLeft.getComponentName(), childLeft.getPercentage(), childLeft.getOffset(), componentLeft.getAlignment()));
+        if ( childLeft != null && childLeft.getComponentName() == null ) {
+          childLayout.setLeft( new LeanAttachment( componentLeft.getComponentName(), childLeft.getPercentage(), childLeft.getOffset(), componentLeft.getAlignment() ) );
         }
       }
       // Is the child referencing the right of the page?
       // Reference the right side of the composite instead
       //
       LeanAttachment componentRight = componentLayout.getRight();
-      if (componentRight!=null) {
+      if ( componentRight != null ) {
         LeanAttachment childRight = childLayout.getRight();
-        if (childRight!=null && childRight.getComponentName()==null) {
-          childLayout.setRight(new LeanAttachment( componentRight.getComponentName(), childRight.getPercentage(), childRight.getOffset(), componentRight.getAlignment()));
+        if ( childRight != null && childRight.getComponentName() == null ) {
+          childLayout.setRight( new LeanAttachment( componentRight.getComponentName(), childRight.getPercentage(), childRight.getOffset(), componentRight.getAlignment() ) );
         }
       }
 
@@ -184,11 +184,11 @@ public class LeanCompositeComponent extends LeanBaseComponent implements ILeanCo
 
     // We can't simply change the name.  Make sure all references in the other children are updated!
     //
-    for (int x=0;x<children.size();x++) {
+    for ( int x = 0; x < children.size(); x++ ) {
       String oldName = children.get( x ).getName();
       String newName = details.childDetails.get( x ).childComponent.getName();
 
-      for (int i=0;i<details.childDetails.size();i++) {
+      for ( int i = 0; i < details.childDetails.size(); i++ ) {
         LeanComponent childCopy = details.childDetails.get( i ).childComponent;
         childCopy.getLayout().replaceReferences( oldName, newName );
       }
@@ -204,7 +204,8 @@ public class LeanCompositeComponent extends LeanBaseComponent implements ILeanCo
   }
 
   @Override
-  public LeanSize getExpectedSize( LeanPresentation presentation, LeanPage page, LeanComponent component, IDataContext dataContext, IRenderContext renderContext, LeanLayoutResults results ) throws LeanException {
+  public LeanSize getExpectedSize( LeanPresentation presentation, LeanPage page, LeanComponent component, IDataContext dataContext, IRenderContext renderContext, LeanLayoutResults results )
+    throws LeanException {
 
     // Unless we have a fixed size, we can't know the size until after layout
     //
@@ -216,7 +217,8 @@ public class LeanCompositeComponent extends LeanBaseComponent implements ILeanCo
   }
 
   @Override
-  public void doLayout( LeanPresentation presentation, LeanPage page, LeanComponent component, IDataContext dataContext, IRenderContext renderContext, LeanLayoutResults results ) throws LeanException {
+  public void doLayout( LeanPresentation presentation, LeanPage page, LeanComponent component, IDataContext dataContext, IRenderContext renderContext, LeanLayoutResults results )
+    throws LeanException {
 
     // Get these results back
     //
@@ -228,8 +230,8 @@ public class LeanCompositeComponent extends LeanBaseComponent implements ILeanCo
 
     // Here we can simply do the layout of every child
     //
-    for (int i=0;i<details.childDetails.size();i++) {
-      ChildDetails childDetails = details.childDetails.get(i);
+    for ( int i = 0; i < details.childDetails.size(); i++ ) {
+      ChildDetails childDetails = details.childDetails.get( i );
 
       LeanComponent childComponent = childDetails.childComponent;
       ILeanComponent childIComponent = childComponent.getComponent();
@@ -239,7 +241,7 @@ public class LeanCompositeComponent extends LeanBaseComponent implements ILeanCo
       // So we start again at the top...
       //
       int pageNr = results.getCurrentRenderPage( page ).getPageNumber();
-      if (pageNr!=previousPageNr) {
+      if ( pageNr != previousPageNr ) {
         compositeGeometry = new LeanGeometry( 0, 0, 0, 0 );
       }
 
@@ -249,9 +251,9 @@ public class LeanCompositeComponent extends LeanBaseComponent implements ILeanCo
 
       // Compute the lowest surface area of this composite
       //
-      compositeGeometry.lowest(childGeometry);
+      compositeGeometry.lowest( childGeometry );
 
-      previousPageNr=pageNr;
+      previousPageNr = pageNr;
     }
 
     // Save the total composite geometry also in the results
@@ -268,7 +270,7 @@ public class LeanCompositeComponent extends LeanBaseComponent implements ILeanCo
     LeanGeometry componentGeometry = layoutResult.getGeometry();
     CompositeDetails details = (CompositeDetails) results.getDataSet( component, DATA_COMPOSITE_DETAILS );
 
-    for (int i=0;i<children.size();i++) {
+    for ( int i = 0; i < children.size(); i++ ) {
       LeanComponent child = children.get( i );
       ILeanComponent childIComponent = child.getComponent();
       ChildDetails childDetails = details.childDetails.get( i );

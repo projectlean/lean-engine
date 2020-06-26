@@ -1,5 +1,6 @@
 package org.lean.util;
 
+import org.apache.hop.metadata.api.IHopMetadataProvider;
 import org.lean.core.AggregationMethod;
 import org.lean.core.LeanAttachment;
 import org.lean.core.LeanDimension;
@@ -16,10 +17,13 @@ import java.util.Arrays;
 
 public class BarChartPresentationUtil extends BasePresentationUtil {
 
-
   public static final String LINE_CHART_NAME = "BarChart";
 
-  public static LeanPresentation createBarChartPresentation( int nr ) throws Exception {
+  public BarChartPresentationUtil( IHopMetadataProvider metadataProvider ) {
+    super( metadataProvider );
+  }
+
+  public LeanPresentation createBarChartPresentation( int nr ) throws Exception {
     LeanPresentation presentation = createBasePresentation(
       "BarChart (" + nr +")",
       "BarChart " + nr + " description",
@@ -46,7 +50,7 @@ public class BarChartPresentationUtil extends BasePresentationUtil {
     return presentation;
   }
 
-  public static LeanPresentation createStackedBarChartPresentation( int nr ) throws Exception {
+  public LeanPresentation createStackedBarChartPresentation( int nr ) throws Exception {
     LeanPresentation presentation = createBarChartPresentation( nr );
 
     LeanBarChartComponent chart = (LeanBarChartComponent) presentation.getPages().get(0).findComponent( LINE_CHART_NAME ).getComponent();
@@ -64,7 +68,7 @@ public class BarChartPresentationUtil extends BasePresentationUtil {
   }
 
 
-  public static LeanBarChartComponent createColorRandomBarChart() {
+  public LeanBarChartComponent createColorRandomBarChart() {
     LeanBarChartComponent chart = new LeanBarChartComponent( CONNECTOR_SAMPLE_ROWS );
     chart.setHorizontalDimensions( Arrays.asList(
       new LeanDimension( "color", "Color", LeanHorizontalAlignment.CENTER, LeanVerticalAlignment.MIDDLE)

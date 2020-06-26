@@ -1,5 +1,14 @@
 package org.lean.presentation.component.types.table;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import org.apache.batik.svggen.SVGGraphics2D;
+import org.apache.commons.lang.StringUtils;
+import org.apache.hop.core.RowMetaAndData;
+import org.apache.hop.core.exception.HopValueException;
+import org.apache.hop.core.row.IRowMeta;
+import org.apache.hop.core.row.IValueMeta;
+import org.apache.hop.core.row.RowMeta;
+import org.apache.hop.metadata.api.HopMetadataProperty;
 import org.lean.core.LeanColorRGB;
 import org.lean.core.LeanColumn;
 import org.lean.core.LeanFont;
@@ -20,15 +29,6 @@ import org.lean.presentation.layout.LeanRenderPage;
 import org.lean.presentation.page.LeanPage;
 import org.lean.presentation.theme.LeanTheme;
 import org.lean.render.IRenderContext;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import org.apache.batik.svggen.SVGGraphics2D;
-import org.apache.commons.lang.StringUtils;
-import org.apache.hop.core.RowMetaAndData;
-import org.apache.hop.core.exception.HopValueException;
-import org.apache.hop.core.row.RowMeta;
-import org.apache.hop.core.row.RowMetaInterface;
-import org.apache.hop.core.row.ValueMetaInterface;
-import org.apache.hop.metastore.persist.MetaStoreAttribute;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -41,35 +41,35 @@ public class LeanTableComponent extends LeanBaseComponent implements ILeanCompon
   private static final String DATA_START_ROW = "DATA_START_ROW";
   private static final String DATA_END_ROW = "DATA_END_ROW";
 
-  @MetaStoreAttribute
+  @HopMetadataProperty
   private List<LeanColumn> columnSelection;
 
-  @MetaStoreAttribute
+  @HopMetadataProperty
   private LeanColorRGB gridColor;
 
-  @MetaStoreAttribute
+  @HopMetadataProperty
   private int horizontalMargin;
 
-  @MetaStoreAttribute
+  @HopMetadataProperty
   private int verticalMargin;
 
-  @MetaStoreAttribute
+  @HopMetadataProperty
   private boolean evenHeights;
 
-  @MetaStoreAttribute
+  @HopMetadataProperty
   private boolean headerOnEveryPage;
 
-  @MetaStoreAttribute
+  @HopMetadataProperty
   private boolean header;
 
-  @MetaStoreAttribute
+  @HopMetadataProperty
   private LeanFont headerFont;
 
-  @MetaStoreAttribute
+  @HopMetadataProperty
   private String gridLineWidth;
 
   public LeanTableComponent() {
-    super("LeanTableComponent");
+    super( "LeanTableComponent" );
     columnSelection = new ArrayList<>();
   }
 
@@ -79,11 +79,11 @@ public class LeanTableComponent extends LeanBaseComponent implements ILeanCompon
     this.columnSelection = columnSelection;
   }
 
-  public LeanTableComponent( LeanTableComponent c) {
+  public LeanTableComponent( LeanTableComponent c ) {
     super( "LeanTableComponent", c );
-    this.columnSelection = new ArrayList<>(  );
-    for (LeanColumn lc : c.columnSelection ) {
-      this.columnSelection.add(new LeanColumn( lc ));
+    this.columnSelection = new ArrayList<>();
+    for ( LeanColumn lc : c.columnSelection ) {
+      this.columnSelection.add( new LeanColumn( lc ) );
     }
     this.gridColor = c.gridColor == null ? null : new LeanColorRGB( c.gridColor );
     this.horizontalMargin = c.horizontalMargin;
@@ -91,11 +91,11 @@ public class LeanTableComponent extends LeanBaseComponent implements ILeanCompon
     this.evenHeights = c.evenHeights;
     this.headerOnEveryPage = c.headerOnEveryPage;
     this.header = c.header;
-    this.headerFont = c.headerFont == null ? null  : new LeanFont( c.headerFont );
+    this.headerFont = c.headerFont == null ? null : new LeanFont( c.headerFont );
   }
 
   public LeanTableComponent clone() {
-    return new LeanTableComponent(this);
+    return new LeanTableComponent( this );
   }
 
 
@@ -110,7 +110,7 @@ public class LeanTableComponent extends LeanBaseComponent implements ILeanCompon
 
     // Get the rows
     //
-    details.rows = connector.retrieveRows(dataContext);
+    details.rows = connector.retrieveRows( dataContext );
 
     // Calculate the width and height of the text in the given font
     //
@@ -153,7 +153,8 @@ public class LeanTableComponent extends LeanBaseComponent implements ILeanCompon
    * @return
    * @throws LeanException
    */
-  public LeanSize getExpectedSize( LeanPresentation presentation, LeanPage page, LeanComponent component, IDataContext dataContext, IRenderContext renderContext, LeanLayoutResults results ) throws LeanException {
+  public LeanSize getExpectedSize( LeanPresentation presentation, LeanPage page, LeanComponent component, IDataContext dataContext, IRenderContext renderContext, LeanLayoutResults results )
+    throws LeanException {
 
     if ( component.isDynamic() ) {
 
@@ -180,15 +181,15 @@ public class LeanTableComponent extends LeanBaseComponent implements ILeanCompon
 
     // In case we have no specified columns, we take all the input data...
     //
-    if (columnSelection.size()==0) {
+    if ( columnSelection.size() == 0 ) {
       LeanConnector connector = dataContext.getConnector( sourceConnectorName );
-      if (connector==null) {
-        throw new LeanException( "Unable to find connector '"+ sourceConnectorName +"'" );
+      if ( connector == null ) {
+        throw new LeanException( "Unable to find connector '" + sourceConnectorName + "'" );
       }
-      RowMetaInterface inputFields = connector.getConnector().describeOutput( dataContext );
-      for (ValueMetaInterface inputField : inputFields.getValueMetaList()) {
+      IRowMeta inputFields = connector.getConnector().describeOutput( dataContext );
+      for ( IValueMeta inputField : inputFields.getValueMetaList() ) {
         LeanColumn column = new LeanColumn( inputField.getName() );
-        columnSelection.add(column);
+        columnSelection.add( column );
       }
     }
 
@@ -207,14 +208,14 @@ public class LeanTableComponent extends LeanBaseComponent implements ILeanCompon
     boolean addFragment = true;
     int partNumber = 1;
 
-    int remainingHeight = presentation.getUsableHeight(page) - expectedGeometry.getY();
+    int remainingHeight = presentation.getUsableHeight( page ) - expectedGeometry.getY();
 
 
     List<List<LeanTextGeometry>> columnSizesList = details.columnSizesList;
     List<List<String>> rowStringsList = details.rowStringsList;
     List<Integer> maxWidths = details.maxWidths;
     List<Integer> maxHeights = details.maxHeights;
-    RowMetaInterface rowMeta = details.rowMeta;
+    IRowMeta rowMeta = details.rowMeta;
 
     // Loop over all the rows, see how many we can fit onto this page, then create another one.
     //
@@ -234,12 +235,12 @@ public class LeanTableComponent extends LeanBaseComponent implements ILeanCompon
         // Save previous until the previous row...
         //
         LeanGeometry partGeometry = expectedGeometry.clone();
-        partHeight-=rowHeight;
+        partHeight -= rowHeight;
 
-        if (header && headerOnEveryPage && partNumber>1) {
+        if ( header && headerOnEveryPage && partNumber > 1 ) {
           // The part is actually a bit taller...
           //
-          partHeight += maxHeights.get(0)+2*verticalMargin;
+          partHeight += maxHeights.get( 0 ) + 2 * verticalMargin;
         }
         partGeometry.setHeight( partHeight );
 
@@ -250,13 +251,13 @@ public class LeanTableComponent extends LeanBaseComponent implements ILeanCompon
         // Create a new page
         //
         partNumber++;
-        renderPage = results.addNewPage( page, renderPage.getPageNumber()+1 );
-        remainingHeight = presentation.getUsableHeight(page);
+        renderPage = results.addNewPage( page, renderPage.getPageNumber() + 1 );
+        remainingHeight = presentation.getUsableHeight( page );
 
-        if (header && headerOnEveryPage) {
+        if ( header && headerOnEveryPage ) {
           // Reserve room for a header on the new page...
           //
-          remainingHeight -= maxHeights.get(0);
+          remainingHeight -= maxHeights.get( 0 );
         }
 
         // keep track for the new part...
@@ -271,10 +272,10 @@ public class LeanTableComponent extends LeanBaseComponent implements ILeanCompon
     //
     if ( partHeight > 0 ) {
       LeanGeometry partGeometry = expectedGeometry.clone();
-      if (header && headerOnEveryPage && partNumber>1) {
+      if ( header && headerOnEveryPage && partNumber > 1 ) {
         // The part is actually a bit taller...
         //
-        partHeight += maxHeights.get(0)+2*verticalMargin;
+        partHeight += maxHeights.get( 0 ) + 2 * verticalMargin;
       }
       partGeometry.setHeight( partHeight );
 
@@ -300,7 +301,7 @@ public class LeanTableComponent extends LeanBaseComponent implements ILeanCompon
 
     renderPage.getLayoutResults().add( result );
 
-    renderPage.addDrawnItem( component.getName(), partNumber, "ComponentPart", null, 0, 0, partGeometry);
+    renderPage.addDrawnItem( component.getName(), partNumber, "ComponentPart", null, 0, 0, partGeometry );
   }
 
   @Override public void render( LeanComponentLayoutResult layoutResult, LeanLayoutResults results, IRenderContext renderContext ) throws LeanException {
@@ -327,16 +328,16 @@ public class LeanTableComponent extends LeanBaseComponent implements ILeanCompon
     //
     int y = componentGeometry.getY();
 
-    if (header && headerOnEveryPage && startRow>0) {
+    if ( header && headerOnEveryPage && startRow > 0 ) {
       // Render the header, data is on row 0
       //
       int maxHeight = maxHeights.get( 0 );
-      y=renderLine(gc, y, 0, maxHeight, rowStringsList, columnSizesList, componentGeometry, maxWidths, true, renderContext);
+      y = renderLine( gc, y, 0, maxHeight, rowStringsList, columnSizesList, componentGeometry, maxWidths, true, renderContext );
     }
 
     for ( int rowNr = startRow; rowNr < endRow; rowNr++ ) {
       int maxHeight = maxHeights.get( rowNr );
-      y=renderLine(gc, y, rowNr, maxHeight, rowStringsList, columnSizesList, componentGeometry, maxWidths, rowNr==0, renderContext);
+      y = renderLine( gc, y, rowNr, maxHeight, rowStringsList, columnSizesList, componentGeometry, maxWidths, rowNr == 0, renderContext );
     }
 
     drawBorder( gc, componentGeometry, renderContext );
@@ -355,11 +356,11 @@ public class LeanTableComponent extends LeanBaseComponent implements ILeanCompon
       LeanTextGeometry textGeometry = columnSizes.get( c );
       String text = rowStrings.get( c );
 
-      enableColor( gc, lookupDefaultColor(renderContext) );
-      if ( header && ( rowNr == 0 || headerOnEveryPage && firstRow )) {
+      enableColor( gc, lookupDefaultColor( renderContext ) );
+      if ( header && ( rowNr == 0 || headerOnEveryPage && firstRow ) ) {
         enableFont( gc, headerFont );
       } else {
-        enableFont( gc, lookupDefaultFont(renderContext) );
+        enableFont( gc, lookupDefaultFont( renderContext ) );
       }
 
       switch ( leanColumn.getHorizontalAlignment() ) {
@@ -375,13 +376,13 @@ public class LeanTableComponent extends LeanBaseComponent implements ILeanCompon
           break;
       }
 
-      enableColor( gc, lookupGridColor(renderContext) );
+      enableColor( gc, lookupGridColor( renderContext ) );
       Stroke oldStroke = gc.getStroke();
-      if (StringUtils.isNotEmpty(gridLineWidth)) {
+      if ( StringUtils.isNotEmpty( gridLineWidth ) ) {
         gc.setStroke( new BasicStroke( Float.valueOf( gridLineWidth ) ) );
       }
       gc.drawRect( x, y, maxWidth + horizontalMargin * 2, maxHeight + verticalMargin * 2 );
-      if (StringUtils.isNotEmpty(gridLineWidth)) {
+      if ( StringUtils.isNotEmpty( gridLineWidth ) ) {
         gc.setStroke( oldStroke );
       }
 
@@ -401,23 +402,23 @@ public class LeanTableComponent extends LeanBaseComponent implements ILeanCompon
     return null;
   }
 
-  private RowMetaInterface getRowsAndFieldInformation( SVGGraphics2D gc, List<RowMetaAndData> rows, List<List<LeanTextGeometry>> columnSizesList, List<List<String>> rowStringsList,
-                                                       List<Integer> maxWidths, List<Integer> maxHeights, IRenderContext renderContext ) throws LeanException {
+  private IRowMeta getRowsAndFieldInformation( SVGGraphics2D gc, List<RowMetaAndData> rows, List<List<LeanTextGeometry>> columnSizesList, List<List<String>> rowStringsList,
+                                               List<Integer> maxWidths, List<Integer> maxHeights, IRenderContext renderContext ) throws LeanException {
     // No rows: all done
     //
     if ( rows.size() == 0 ) {
       return null;
     }
 
-    RowMetaInterface rowMetaInput = rows.get( 0 ).getRowMeta();
-    RowMetaInterface rowMeta = new RowMeta();
+    IRowMeta rowMetaInput = rows.get( 0 ).getRowMeta();
+    IRowMeta rowMeta = new RowMeta();
     int columnIndexes[] = new int[ columnSelection.size() ];
 
     for ( int i = 0; i < columnSelection.size(); i++ ) {
       LeanColumn leanColumn = columnSelection.get( i );
       int valueMetaIndex = rowMetaInput.indexOfValue( leanColumn.getColumnName() );
       if ( valueMetaIndex >= 0 ) {
-        ValueMetaInterface valueMeta = rowMetaInput.getValueMeta( valueMetaIndex ).clone();
+        IValueMeta valueMeta = rowMetaInput.getValueMeta( valueMetaIndex ).clone();
         columnIndexes[ i ] = valueMetaIndex;
         rowMeta.addValueMeta( valueMeta );
       } else {
@@ -425,10 +426,10 @@ public class LeanTableComponent extends LeanBaseComponent implements ILeanCompon
       }
     }
 
-    for (int i=0;i<columnIndexes.length;i++) {
-      ValueMetaInterface valueMeta = rowMetaInput.getValueMeta( columnIndexes[i] );
+    for ( int i = 0; i < columnIndexes.length; i++ ) {
+      IValueMeta valueMeta = rowMetaInput.getValueMeta( columnIndexes[ i ] );
       LeanColumn leanColumn = columnSelection.get( i );
-      if (StringUtils.isNotEmpty( leanColumn.getFormatMask()) ) {
+      if ( StringUtils.isNotEmpty( leanColumn.getFormatMask() ) ) {
         valueMeta.setConversionMask( leanColumn.getFormatMask() );
       }
     }
@@ -450,7 +451,7 @@ public class LeanTableComponent extends LeanBaseComponent implements ILeanCompon
       int maxHeight = 0;
       for ( int i = 0; i < columnSelection.size(); i++ ) {
         LeanColumn leanColumn = columnSelection.get( i );
-        ValueMetaInterface valueMeta = rowMeta.getValueMeta( columnIndexes[ i ] );
+        IValueMeta valueMeta = rowMeta.getValueMeta( columnIndexes[ i ] );
 
         String text;
         if ( StringUtils.isNotEmpty( leanColumn.getHeaderValue() ) ) {
@@ -486,17 +487,17 @@ public class LeanTableComponent extends LeanBaseComponent implements ILeanCompon
       int maxHeight = 0;
       for ( int i = 0; i < columnIndexes.length; i++ ) {
         LeanColumn leanColumn = columnSelection.get( i );
-        ValueMetaInterface valueMeta = rowMeta.getValueMeta(i);
+        IValueMeta valueMeta = rowMeta.getValueMeta( i );
 
         String text;
         try {
-          text = valueMeta.getString( row.getData()[columnIndexes[ i ]] );
+          text = valueMeta.getString( row.getData()[ columnIndexes[ i ] ] );
         } catch ( HopValueException e ) {
           text = e.getMessage();
         }
         rowStrings.add( text );
 
-        enableFont( gc, lookupDefaultFont(renderContext) );
+        enableFont( gc, lookupDefaultFont( renderContext ) );
         LeanTextGeometry textGeometry = calculateTextGeometry( gc, text );
 
         columnSizes.add( textGeometry );
@@ -553,12 +554,11 @@ public class LeanTableComponent extends LeanBaseComponent implements ILeanCompon
     if ( theme != null ) {
       return theme.lookupGridColor();
     }
-    if (getDefaultColor()!=null) {
+    if ( getDefaultColor() != null ) {
       return getDefaultColor();
     }
     throw new LeanException( "No grid color nor default color defined (no theme used or found)" );
   }
-
 
 
   /**

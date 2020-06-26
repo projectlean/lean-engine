@@ -1,20 +1,32 @@
 package org.lean.presentation.connector.types.sql;
 
+import junit.framework.TestCase;
+import org.apache.hop.core.database.DatabaseMetaPlugin;
+import org.apache.hop.core.database.DatabasePluginType;
+import org.apache.hop.core.database.IDatabase;
+import org.apache.hop.core.plugins.PluginRegistry;
+import org.apache.hop.core.variables.IVariables;
+import org.apache.hop.core.variables.Variables;
+import org.apache.hop.databases.h2.H2DatabaseMeta;
+import org.apache.hop.databases.mysql.MySqlDatabaseMeta;
+import org.apache.hop.databases.oracle.OracleDatabaseMeta;
+import org.apache.hop.metadata.api.IHopMetadataProvider;
+import org.apache.hop.metadata.api.IHopMetadataSerializer;
+import org.apache.hop.metadata.serializer.memory.MemoryMetadataProvider;
 import org.lean.core.LeanDatabaseConnection;
 import org.lean.core.LeanEnvironment;
-import org.lean.core.metastore.LeanMetaStore;
-import org.lean.core.metastore.LeanMetaStoreUtil;
-import org.lean.core.metastore.MetaStoreFactory;
+import org.lean.core.exception.LeanException;
+import org.lean.presentation.connector.LeanConnector;
+import org.lean.presentation.datacontext.IDataContext;
+import org.lean.util.BasePresentationUtil;
 import org.lean.util.TablePresentationUtil;
-import junit.framework.TestCase;
-import org.apache.hop.metastore.api.IMetaStore;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class LeanSqlConnectorTest extends TestCase {
 
-  private IMetaStore metaStore;
+  private IHopMetadataProvider metadataProvider;
 
   private static int rowCount = 50;
   private static String tableName = "SQL_TEST_TABLE";
@@ -23,41 +35,59 @@ public class LeanSqlConnectorTest extends TestCase {
 
   @Override protected void setUp() throws Exception {
 
-    metaStore = LeanMetaStoreUtil.createTestMetaStore( "Test" );
-    LeanEnvironment.init( metaStore );
-    MetaStoreFactory<LeanDatabaseConnection> dbFactory = (MetaStoreFactory<LeanDatabaseConnection>) LeanMetaStore.getFactory( LeanDatabaseConnection.class );
+    metadataProvider = new MemoryMetadataProvider();
+    LeanEnvironment.init();
+
+    // Add the database plugins from the test classpath
+    //
+    BasePresentationUtil.registerTestPlugins();
+
+    IHopMetadataSerializer<LeanDatabaseConnection> dbSerializer = metadataProvider.getSerializer( LeanDatabaseConnection.class );
 
     // Create a table and put a bunch of rows in it...
     //
     connection = TablePresentationUtil.populateTestTable( tableName, rowCount );
-    dbFactory.saveElement( connection );
+    dbSerializer.save( connection );
   }
 
   @Override protected void tearDown() throws Exception {
-    LeanMetaStoreUtil.cleanupTestMetaStore( metaStore );
   }
 
   public void testStartStreaming() throws Exception {
 
     // Now we can reference the connection in the connector
     //
-    String sql = "SELECT * FROM "+tableName;
+    String sql = "SELECT * FROM " + tableName;
 
-    LeanSqlConnector leanSqlConnector = new LeanSqlConnector( connection.getName(), sql );
+    final LeanSqlConnector leanSqlConnector = new LeanSqlConnector( connection.getName(), sql );
 
     AtomicInteger rowCounter = new AtomicInteger( 0 );
     AtomicBoolean endReceived = new AtomicBoolean( false );
 
-    leanSqlConnector.addRowListener( (rowMeta, rowData) -> {
-      if (rowMeta!=null && rowData!=null) {
+    leanSqlConnector.addRowListener( ( rowMeta, rowData ) -> {
+      if ( rowMeta != null && rowData != null ) {
         rowCounter.incrementAndGet();
       }
-      if (rowMeta==null && rowData==null) {
+      if ( rowMeta == null && rowData == null ) {
         endReceived.set( true );
       }
     } );
 
-    leanSqlConnector.startStreaming( null );
+    IDataContext dataContext = new IDataContext() {
+      @Override public LeanConnector getConnector( String name ) throws LeanException {
+        return new LeanConnector(name, leanSqlConnector);
+      }
+
+      @Override public IVariables getVariableSpace() {
+        return Variables.getADefaultVariableSpace();
+      }
+
+      @Override public IHopMetadataProvider getMetadataProvider() {
+        return metadataProvider;
+      }
+    };
+
+    leanSqlConnector.startStreaming( dataContext );
     leanSqlConnector.waitUntilFinished();
 
     assertTrue( endReceived.get() );

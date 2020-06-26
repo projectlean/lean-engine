@@ -1,40 +1,35 @@
 package org.lean.presentation;
 
-import org.lean.core.Constants;
-import org.lean.core.LeanEnvironment;
-import org.lean.core.metastore.LeanMetaStoreUtil;
-import org.lean.core.metastore.MetaStoreFactory;
-import org.lean.util.BasePresentationUtil;
-import org.lean.util.TestUtil;
+import org.apache.hop.metadata.api.IHopMetadataProvider;
+import org.apache.hop.metadata.api.IHopMetadataSerializer;
+import org.apache.hop.metadata.serializer.memory.MemoryMetadataProvider;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.apache.hop.metastore.api.IMetaStore;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import org.lean.core.LeanEnvironment;
+import org.lean.util.BasePresentationUtil;
+import org.lean.util.TestUtil;
 
 public class LeanPresentationJsonTest {
 
-  private IMetaStore metaStore;
+  private IHopMetadataProvider metadataProvider;
 
   @Before
   public void setUp() throws Exception {
-    metaStore = LeanMetaStoreUtil.createTestMetaStore( "Test" );
-    LeanEnvironment.init( metaStore );
+    metadataProvider = new MemoryMetadataProvider();
+    LeanEnvironment.init();
   }
 
   @After
   public void tearDown() throws Exception {
-    LeanMetaStoreUtil.cleanupTestMetaStore( metaStore );
   }
 
   @Test
   public void testJson() throws Exception {
 
-    LeanPresentation[] presentations = BasePresentationUtil.getAvailablePresentations();
+    LeanPresentation[] presentations = new BasePresentationUtil( metadataProvider ).getAvailablePresentations();
 
-    for (LeanPresentation presentation : presentations) {
+    for ( LeanPresentation presentation : presentations ) {
       String jsonString = presentation.toJsonString();
       LeanPresentation verify = LeanPresentation.fromJsonString( jsonString );
       TestUtil.assertEqualPresentations( presentation, verify );
@@ -44,13 +39,14 @@ public class LeanPresentationJsonTest {
   @Test
   public void testMetaStore() throws Exception {
 
-    MetaStoreFactory<LeanPresentation> factory = new MetaStoreFactory<>( LeanPresentation.class, metaStore, Constants.NAMESPACE );
-    LeanPresentation[] presentations = BasePresentationUtil.getAvailablePresentations();
+    IHopMetadataSerializer<LeanPresentation> presentationSerializer = metadataProvider.getSerializer( LeanPresentation.class );
 
-    for (LeanPresentation presentation : presentations) {
+    LeanPresentation[] presentations = new BasePresentationUtil( metadataProvider ).getAvailablePresentations();
 
-      factory.saveElement( presentation );
-      LeanPresentation verify = factory.loadElement( presentation.getName() );
+    for ( LeanPresentation presentation : presentations ) {
+
+      presentationSerializer.save( presentation );
+      LeanPresentation verify = presentationSerializer.load( presentation.getName() );
 
       TestUtil.assertEqualPresentations( presentation, verify );
     }

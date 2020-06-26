@@ -1,21 +1,21 @@
 package org.lean.presentation.datacontext;
 
+import org.apache.hop.core.variables.IVariables;
+import org.apache.hop.core.variables.Variables;
+import org.apache.hop.metadata.api.IHopMetadataProvider;
 import org.lean.core.Constants;
 import org.lean.core.exception.LeanException;
 import org.lean.presentation.connector.LeanConnector;
 import org.lean.presentation.layout.LeanRenderPage;
-import org.apache.hop.core.variables.VariableSpace;
-import org.apache.hop.core.variables.Variables;
-import org.apache.hop.metastore.api.IMetaStore;
 
 public class RenderPageDataContext implements IDataContext {
 
   private IDataContext parentDataContext;
   private LeanRenderPage renderPage;
 
-  private VariableSpace variableSpace;
+  private IVariables variableSpace;
 
-  public RenderPageDataContext( IDataContext parentDataContext, LeanRenderPage renderPage) {
+  public RenderPageDataContext( IDataContext parentDataContext, LeanRenderPage renderPage ) {
     this.parentDataContext = parentDataContext;
     this.renderPage = renderPage;
 
@@ -24,7 +24,7 @@ public class RenderPageDataContext implements IDataContext {
 
     // Inject page specific variables
     //
-    variableSpace.setVariable( Constants.VARIABLE_PAGE_NUMBER, Integer.toString(renderPage.getPageNumber()) );
+    variableSpace.setVariable( Constants.VARIABLE_PAGE_NUMBER, Integer.toString( renderPage.getPageNumber() ) );
   }
 
 
@@ -34,8 +34,8 @@ public class RenderPageDataContext implements IDataContext {
     // Create a copy every time someone asks for a connector.
     // This ensures that querying is safe
     //
-    if (connector!=null) {
-      connector = new LeanConnector(connector);
+    if ( connector != null ) {
+      connector = new LeanConnector( connector );
     }
     return connector;
   }
@@ -77,18 +77,18 @@ public class RenderPageDataContext implements IDataContext {
    *
    * @return value of variableSpace
    */
-  @Override public VariableSpace getVariableSpace() {
+  @Override public IVariables getVariableSpace() {
     return variableSpace;
   }
 
   /**
    * @param variableSpace The variableSpace to set
    */
-  public void setVariableSpace( VariableSpace variableSpace ) {
+  public void setVariableSpace( IVariables variableSpace ) {
     this.variableSpace = variableSpace;
   }
 
-  @Override public IMetaStore getMetaStore() {
-    return parentDataContext.getMetaStore();
+  @Override public IHopMetadataProvider getMetadataProvider() {
+    return parentDataContext.getMetadataProvider();
   }
 }
