@@ -1,10 +1,9 @@
 package org.lean.presentation.layout;
 
+import org.apache.hop.core.svg.HopSvgGraphics2D;
 import org.lean.core.LeanGeometry;
 import org.lean.core.draw.DrawnItem;
 import org.lean.core.exception.LeanException;
-import org.lean.core.svg.LeanSVGGraphics2D;
-import org.lean.core.svg.SvgUtil;
 import org.lean.presentation.LeanComponentLayoutResult;
 import org.lean.presentation.component.LeanComponent;
 import org.lean.presentation.page.LeanPage;
@@ -31,7 +30,7 @@ public class LeanRenderPage {
   /**
    * The graphics context
    */
-  private LeanSVGGraphics2D gc;
+  private HopSvgGraphics2D gc;
 
   /**
    * All the component fragments on this page
@@ -48,7 +47,7 @@ public class LeanRenderPage {
     this();
     this.page = page;
 
-    gc = SvgUtil.createGc();
+    gc = HopSvgGraphics2D.newDocument();
 
     // Set the imageSize to be the imageSize of the page...
     //
@@ -88,7 +87,7 @@ public class LeanRenderPage {
    */
   public List<String> lookupComponentName( int x, int y ) {
 
-    int realX = page.getLeftMargin()+x;
+    int realX = page.getLeftMargin() + x;
     int realY = page.getTopMargin() + y;
 
     List<String> componentNames = new ArrayList<>();
@@ -139,14 +138,14 @@ public class LeanRenderPage {
    *
    * @return value of gc
    */
-  public LeanSVGGraphics2D getGc() {
+  public HopSvgGraphics2D getGc() {
     return gc;
   }
 
   /**
    * @param gc The gc to set
    */
-  public void setGc( LeanSVGGraphics2D gc ) {
+  public void setGc( HopSvgGraphics2D gc ) {
     this.gc = gc;
   }
 

@@ -11,6 +11,7 @@ import org.apache.hop.core.logging.ILoggingObject;
 import org.apache.hop.core.logging.LogChannel;
 import org.apache.hop.core.logging.Metrics;
 import org.apache.hop.core.metrics.MetricsSnapshotType;
+import org.apache.hop.core.svg.HopSvgGraphics2D;
 import org.apache.hop.metadata.api.HopMetadata;
 import org.apache.hop.metadata.api.HopMetadataProperty;
 import org.apache.hop.metadata.api.IHopMetadata;
@@ -19,7 +20,6 @@ import org.lean.core.LeanGeometry;
 import org.lean.core.exception.LeanException;
 import org.lean.core.log.LeanMetricsUtil;
 import org.lean.core.metastore.IHasIdentity;
-import org.lean.core.svg.LeanSVGGraphics2D;
 import org.lean.presentation.component.LeanComponent;
 import org.lean.presentation.component.type.ILeanComponent;
 import org.lean.presentation.connector.LeanConnector;
@@ -49,6 +49,8 @@ import java.util.List;
 )
 @Path( "presentations" )
 public class LeanPresentation implements IHasIdentity, IHopMetadata {
+
+  @HopMetadataProperty
   private String name;
 
   @HopMetadataProperty
@@ -276,7 +278,7 @@ public class LeanPresentation implements IHasIdentity, IHopMetadata {
   private void renderHeaderFooter( ILogChannel log, LeanRenderPage renderPage, AffineTransform parentTransform, IDataContext presentationDataContext, IRenderContext renderContext )
     throws LeanException {
     LeanPage page = renderPage.getPage();
-    LeanSVGGraphics2D gc = renderPage.getGc();
+    HopSvgGraphics2D gc = renderPage.getGc();
 
     // What is the render context for header and footer?
     //
