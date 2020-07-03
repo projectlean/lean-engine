@@ -6,11 +6,11 @@ import org.apache.batik.util.SVGConstants;
 import org.apache.batik.util.XMLResourceDescriptor;
 import org.apache.commons.lang.StringUtils;
 import org.apache.hop.core.Const;
+import org.apache.hop.core.svg.HopSvgGraphics2D;
 import org.apache.hop.metadata.api.HopMetadataProperty;
 import org.lean.core.LeanGeometry;
 import org.lean.core.LeanSize;
 import org.lean.core.exception.LeanException;
-import org.lean.core.svg.LeanSVGGraphics2D;
 import org.lean.presentation.LeanComponentLayoutResult;
 import org.lean.presentation.LeanPresentation;
 import org.lean.presentation.component.LeanComponent;
@@ -121,7 +121,7 @@ public class LeanSvgComponent extends LeanBaseComponent implements ILeanComponen
     LeanGeometry componentGeometry = layoutResult.getGeometry();
     LeanComponent component = layoutResult.getComponent();
 
-    LeanSVGGraphics2D gc = layoutResult.getRenderPage().getGc();
+    HopSvgGraphics2D gc = layoutResult.getRenderPage().getGc();
 
     // Draw background for the full imageSize of the component area
     //
@@ -132,44 +132,19 @@ public class LeanSvgComponent extends LeanBaseComponent implements ILeanComponen
     SvgDetails details = (SvgDetails) results.getDataSet( component, DATA_SVG_DETAILS );
     Node imageSvgNode = details.svgDocument.getRootElement();
 
-    // This allow us to make the image smaller or larger
+    // Embed the SVG into the presentation
     //
-    AffineTransform oldTransform = gc.getTransform();
-    gc.scale( details.scaleFactor, details.scaleFactor );
-
-    // Don't scale the location...
-    int x = (int) ( componentGeometry.getX() / details.scaleFactor );
-    int y = (int) ( componentGeometry.getY() / details.scaleFactor );
-
-    // Now insert the SVG image...
-    //
-    Document domFactory = gc.getDOMFactory();
-
-    Element svgSvg = domFactory.createElementNS( SVGConstants.SVG_NAMESPACE_URI, SVGConstants.SVG_SVG_TAG );
-
-    svgSvg.setAttributeNS( null, SVGConstants.SVG_X_ATTRIBUTE, Integer.toString( componentGeometry.getX() ) );
-    svgSvg.setAttributeNS( null, SVGConstants.SVG_Y_ATTRIBUTE, Integer.toString( componentGeometry.getY() ) );
-    svgSvg.setAttributeNS( null, SVGConstants.SVG_WIDTH_ATTRIBUTE, Integer.toString( details.originalSize.getWidth() ) );
-    svgSvg.setAttributeNS( null, SVGConstants.SVG_HEIGHT_ATTRIBUTE, Integer.toString( details.originalSize.getHeight() ) );
-    svgSvg.setAttributeNS( null, SVGConstants.SVG_TRANSFORM_ATTRIBUTE, scalePercent + "% " + scalePercent + "%" );
-
-    // Add all the elements from the SVG Image...
-    //
-    NodeList childNodes = details.svgDocument.getRootElement().getChildNodes();
-    for ( int c = 0; c < childNodes.getLength(); c++ ) {
-      Node childNode = childNodes.item( c );
-
-      // Copy this node over to the svgSvg element
-      //
-      Node childNodeCopy = domFactory.importNode( childNode, true );
-      svgSvg.appendChild( childNodeCopy );
-    }
-
-    gc.getDomGroupManager().addElement( svgSvg, DRAW );
-
-    // Set the drawing scale back to normal
-    //
-    gc.setTransform( oldTransform );
+    gc.embedSvg(
+      imageSvgNode,
+      filename,
+      componentGeometry.getX(),
+      componentGeometry.getY(),
+      details.imageSize.getWidth(),
+      details.imageSize.getHeight(),
+      (float)details.scaleFactor,
+      (float)details.scaleFactor,
+      0d
+    );
 
     if ( isBorder() ) {
       enableColor( gc, lookupBorderColor( renderContext ) );

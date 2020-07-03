@@ -27,6 +27,7 @@ public class LeanConnector implements IHopMetadata {
    * The name of the connector
    */
   @JsonProperty
+  @HopMetadataProperty
   private String name;
 
   @HopMetadataProperty

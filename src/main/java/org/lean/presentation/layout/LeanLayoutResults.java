@@ -1,16 +1,16 @@
 package org.lean.presentation.layout;
 
-import org.lean.core.LeanGeometry;
-import org.lean.core.exception.LeanException;
-import org.lean.core.svg.LeanSVGGraphics2D;
-import org.lean.presentation.component.LeanComponent;
-import org.lean.presentation.page.LeanPage;
 import org.apache.batik.transcoder.TranscoderInput;
 import org.apache.batik.transcoder.TranscoderOutput;
 import org.apache.fop.svg.PDFTranscoder;
+import org.apache.hop.core.logging.ILogChannel;
+import org.apache.hop.core.svg.HopSvgGraphics2D;
 import org.apache.pdfbox.io.MemoryUsageSetting;
 import org.apache.pdfbox.multipdf.PDFMergerUtility;
-import org.apache.hop.core.logging.ILogChannel;
+import org.lean.core.LeanGeometry;
+import org.lean.core.exception.LeanException;
+import org.lean.presentation.component.LeanComponent;
+import org.lean.presentation.page.LeanPage;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -92,7 +92,7 @@ public class LeanLayoutResults {
     return renderPage;
   }
 
-  public void replaceGCForHeaderFooter( LeanSVGGraphics2D gc ) throws LeanException {
+  public void replaceGCForHeaderFooter( HopSvgGraphics2D gc ) throws LeanException {
 
     if ( renderPages.size() > 1 ) {
       throw new LeanException( "Multi-page headers or footers are not supported!" );
@@ -164,7 +164,7 @@ public class LeanLayoutResults {
       try {
         FileOutputStream stream = new FileOutputStream( svgFilename );
         try {
-          stream.write(renderPage.getSvgXml().getBytes("UTF-8"));
+          stream.write( renderPage.getSvgXml().getBytes( "UTF-8" ) );
           stream.flush();
         } catch ( Exception e ) {
           throw new LeanException( "Unable to convert rendering to SVG XML", e );

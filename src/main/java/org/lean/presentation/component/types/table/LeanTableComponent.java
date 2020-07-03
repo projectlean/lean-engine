@@ -8,6 +8,7 @@ import org.apache.hop.core.exception.HopValueException;
 import org.apache.hop.core.row.IRowMeta;
 import org.apache.hop.core.row.IValueMeta;
 import org.apache.hop.core.row.RowMeta;
+import org.apache.hop.core.svg.HopSvgGraphics2D;
 import org.apache.hop.metadata.api.HopMetadataProperty;
 import org.lean.core.LeanColorRGB;
 import org.lean.core.LeanColumn;
@@ -16,7 +17,6 @@ import org.lean.core.LeanGeometry;
 import org.lean.core.LeanSize;
 import org.lean.core.LeanTextGeometry;
 import org.lean.core.exception.LeanException;
-import org.lean.core.svg.SvgUtil;
 import org.lean.presentation.LeanComponentLayoutResult;
 import org.lean.presentation.LeanPresentation;
 import org.lean.presentation.component.LeanComponent;
@@ -114,7 +114,7 @@ public class LeanTableComponent extends LeanBaseComponent implements ILeanCompon
 
     // Calculate the width and height of the text in the given font
     //
-    SVGGraphics2D gc = SvgUtil.createGc();
+    SVGGraphics2D gc = HopSvgGraphics2D.newDocument();
 
     // Get sizes and string values
     //
