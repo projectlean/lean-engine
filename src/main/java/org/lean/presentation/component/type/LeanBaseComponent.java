@@ -88,6 +88,7 @@ public abstract class LeanBaseComponent implements ILeanComponent {
     this.backGroundColor = c.backGroundColor == null ? null : new LeanColorRGB( c.backGroundColor );
     this.border = c.border;
     this.borderColor = c.borderColor == null ? null : new LeanColorRGB( c.borderColor );
+    this.themeName = c.themeName;
   }
 
   public abstract LeanBaseComponent clone();
@@ -540,7 +541,7 @@ public abstract class LeanBaseComponent implements ILeanComponent {
     if ( theme != null ) {
       return theme.getDefaultColor();
     }
-    throw new LeanException( "There is no default color set (no theme found or found)" );
+    throw new LeanException( "There is no default color set (no theme found)" );
 
   }
 
@@ -580,7 +581,7 @@ public abstract class LeanBaseComponent implements ILeanComponent {
     if ( theme != null ) {
       return theme.getDefaultFont();
     }
-    throw new LeanException( "There is no default font set (no theme found or found)" );
+    throw new LeanException( "There is no default font set (no theme found)" );
   }
 
 

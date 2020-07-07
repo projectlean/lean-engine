@@ -142,7 +142,9 @@ public class LeanGroupComponent extends LeanBaseComponent implements ILeanCompon
     // Sort the columns
     // Get distinct values (optional)
     //
-    connectors.add( new LeanSelectionConnector( columnSelection ) );
+    if (!columnSelection.isEmpty()) {
+      connectors.add( new LeanSelectionConnector( columnSelection ) );
+    }
     if ( !columnSorts.isEmpty() ) {
       connectors.add( new LeanSortConnector( columnSelection, columnSorts ) );
     }
@@ -152,14 +154,23 @@ public class LeanGroupComponent extends LeanBaseComponent implements ILeanCompon
 
     // Chain the operations
     //
-    LeanChainConnector chain = new LeanChainConnector( sourceConnectorName, connectors );
-    ChainDataContext chainContext = chain.createChainContext( dataContext );
-    LeanConnector lastConnector = chainContext.getLastConnector();
+    LeanConnector selectedConnector;
+    IDataContext selectedDataContext;
+
+    if (!connectors.isEmpty()) {
+      LeanChainConnector chain = new LeanChainConnector( sourceConnectorName, connectors );
+      ChainDataContext chainContext = chain.createChainContext( dataContext );
+      selectedConnector = chainContext.getLastConnector();
+      selectedDataContext = chainContext;
+    } else {
+      selectedConnector = connector;
+      selectedDataContext = dataContext;
+    }
 
     // Get the rows from source and selected, sorted, distinct
     //
-    synchronized ( lastConnector.getConnector() ) {
-      details.rows = lastConnector.retrieveRows( chainContext );
+    synchronized ( selectedConnector.getConnector() ) {
+      details.rows = selectedConnector.retrieveRows( selectedDataContext );
     }
 
     // Calculate total size, do call to processRowData of child

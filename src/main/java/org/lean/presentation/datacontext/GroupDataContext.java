@@ -37,7 +37,7 @@ public class GroupDataContext implements IDataContext {
     // Set variables with the names of the fields in the group
     //
     for ( int i = 0; i < groupRow.getRowMeta().size(); i++ ) {
-      IValueMeta groupRowValue = groupRow.getRowMeta().getValueMetaList().get( 0 );
+      IValueMeta groupRowValue = groupRow.getRowMeta().getValueMetaList().get( i );
       try {
         String value = groupRow.getString( i, "" );
         String variable = groupRowValue.getName().replace( " ", "_" );
