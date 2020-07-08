@@ -82,15 +82,15 @@ public class LeanPage {
     }
   }
 
-  public static LeanPage getHeaderFooter( boolean portrait, int size ) {
+  public static LeanPage getHeaderFooter( int pageNumber, boolean portrait, int size ) {
     // Exclude the margins of parent page!
     //
     int width = 794 - 25 - 25;
     int height = 1123 - 25 - 25;
     if ( portrait ) {
-      return new LeanPage( -1, width, size, 0, 0, 0, 0 );
+      return new LeanPage( pageNumber, width, size, 0, 0, 0, 0 );
     } else {
-      return new LeanPage( -1, height, size, 0, 0, 0, 0 );
+      return new LeanPage( pageNumber, height, size, 0, 0, 0, 0 );
     }
   }
 

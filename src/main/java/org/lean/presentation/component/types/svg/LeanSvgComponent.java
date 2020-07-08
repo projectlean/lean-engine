@@ -7,6 +7,10 @@ import org.apache.batik.util.XMLResourceDescriptor;
 import org.apache.commons.lang.StringUtils;
 import org.apache.hop.core.Const;
 import org.apache.hop.core.svg.HopSvgGraphics2D;
+import org.apache.hop.core.svg.SvgCache;
+import org.apache.hop.core.svg.SvgCacheEntry;
+import org.apache.hop.core.svg.SvgFile;
+import org.apache.hop.core.variables.IVariables;
 import org.apache.hop.metadata.api.HopMetadataProperty;
 import org.lean.core.LeanGeometry;
 import org.lean.core.LeanSize;
@@ -69,40 +73,30 @@ public class LeanSvgComponent extends LeanBaseComponent implements ILeanComponen
       throw new LeanException( "No image file specified" );
     }
 
+    IVariables variables = dataContext.getVariableSpace();
+
     SvgDetails details = new SvgDetails();
+
+    // The real filename after variable substitution?
+    //
+    String realFilename = variables.environmentSubstitute( filename );
 
     // Load the SVG XML document
     //
     try {
-      String parser = XMLResourceDescriptor.getXMLParserClassName();
-      SAXSVGDocumentFactory factory = new SAXSVGDocumentFactory( parser );
-      try {
-        InputStream svgStream = Thread.currentThread().getContextClassLoader().getResourceAsStream( filename );
-
-        if ( svgStream == null ) {
-          throw new LeanException( "Unable to find file '" + filename + "'" );
-        }
-        details.svgDocument = factory.createSVGDocument( filename, svgStream );
-      } catch ( IOException e ) {
-        System.out.println( e.getMessage() );
-      }
+      SvgCacheEntry svgCacheEntry = SvgCache.loadSvg( new SvgFile( realFilename, getClass().getClassLoader() ) );
+      details.originalSize = new LeanSize((int)svgCacheEntry.getWidth(), (int)svgCacheEntry.getHeight());
+      details.svgDocument = svgCacheEntry.getSvgDocument();
     } catch ( Exception e ) {
-      throw new LeanException( "Unable to load SVG file '" + filename + "'", e );
+      throw new LeanException( "Unable to load SVG file '" + realFilename + "'", e );
     }
 
-    Element elSVG = details.svgDocument.getRootElement();
-    String widthString = elSVG.getAttribute( "width" );
-    String heightString = elSVG.getAttribute( "height" );
-    int width = Const.toInt( widthString.replace( "px", "" ), -1 );
-    int height = Const.toInt( heightString.replace( "px", "" ), -1 );
-    if ( width < 0 || height < 0 ) {
-      throw new LeanException( "Unable to find valid width or height in SVG document " + filename );
-    }
+    details.scaleFactor = Const.toDouble( variables.environmentSubstitute(scalePercent), 100.0 ) / 100;
 
-    details.scaleFactor = (double) Const.toDouble( scalePercent, 100.0 ) / 100;
-
-    details.originalSize = new LeanSize( width, height );
-    details.imageSize = new LeanSize( (int) ( width * details.scaleFactor ), (int) ( height * details.scaleFactor ) );
+    details.imageSize = new LeanSize(
+      (int) ( details.originalSize.getWidth() * details.scaleFactor ),
+      (int) ( details.originalSize.getHeight() * details.scaleFactor )
+    );
 
     // Don't calculate this twice...
     //
@@ -111,8 +105,15 @@ public class LeanSvgComponent extends LeanBaseComponent implements ILeanComponen
 
   public LeanSize getExpectedSize( LeanPresentation leanPresentation, LeanPage page, LeanComponent component, IDataContext dataContext, IRenderContext renderContext, LeanLayoutResults results )
     throws LeanException {
+
     SvgDetails details = (SvgDetails) results.getDataSet( component, DATA_SVG_DETAILS );
     return details.imageSize;
+  }
+
+  @Override
+  public LeanGeometry getExpectedGeometry( LeanPresentation presentation, LeanPage page, LeanComponent component, IDataContext dataContext, IRenderContext renderContext, LeanLayoutResults results )
+    throws LeanException {
+    return super.getExpectedGeometry( presentation, page, component, dataContext, renderContext, results );
   }
 
   public void render( LeanComponentLayoutResult layoutResult, LeanLayoutResults results, IRenderContext renderContext ) throws LeanException {
@@ -141,8 +142,8 @@ public class LeanSvgComponent extends LeanBaseComponent implements ILeanComponen
       componentGeometry.getY(),
       details.imageSize.getWidth(),
       details.imageSize.getHeight(),
-      (float)details.scaleFactor,
-      (float)details.scaleFactor,
+      (float) details.scaleFactor,
+      (float) details.scaleFactor,
       0d
     );
 

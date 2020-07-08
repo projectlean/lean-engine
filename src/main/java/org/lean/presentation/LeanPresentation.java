@@ -415,10 +415,23 @@ public class LeanPresentation implements IHasIdentity, IHopMetadata {
     int height = page.getHeight();
     height -= page.getTopMargin();
     height -= page.getBottomMargin();
-    height -= getHeaderHeight();
-    height -= getFooterHeight();
+    if ( !isHeader( page ) && !isFooter( page ) ) {
+      height -= getHeaderHeight();
+    }
+    if ( !isHeader( page ) && !isFooter( page ) ) {
+      height -= getFooterHeight();
+    }
     return height;
   }
+
+  public boolean isHeader( LeanPage page ) {
+    return getHeader() != null && getHeader().equals( page );
+  }
+
+  public boolean isFooter( LeanPage page ) {
+    return getFooter() != null && getFooter().equals( page );
+  }
+
 
   @JsonIgnore
   public int getHeaderHeight() {
