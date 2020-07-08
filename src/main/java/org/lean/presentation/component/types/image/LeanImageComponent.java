@@ -66,6 +66,10 @@ public class LeanImageComponent extends LeanBaseComponent implements ILeanCompon
     //
     try {
       URL resource = this.getClass().getClassLoader().getResource( filename );
+      if (resource==null) {
+        throw new LeanException("Unable to find image file '"+filename+"'");
+      }
+
       details.image = ImageIO.read( resource.openStream() );
     } catch ( IOException e ) {
       throw new LeanException( "Unable to load image file '" + filename + "'", e );

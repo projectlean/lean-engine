@@ -13,6 +13,7 @@ import org.lean.core.LeanColorRGB;
 import org.lean.presentation.LeanPresentation;
 import org.lean.presentation.component.LeanComponent;
 import org.lean.presentation.component.types.label.LeanLabelComponent;
+import org.lean.presentation.component.types.svg.LeanSvgComponent;
 import org.lean.presentation.connector.LeanConnector;
 import org.lean.presentation.connector.type.ILeanConnector;
 import org.lean.presentation.connector.types.sampledata.LeanSampleDataConnector;
@@ -97,7 +98,7 @@ public class BasePresentationUtil {
   protected static void addHeaderFooter( LeanPresentation presentation, String headerMessage, boolean portrait ) {
     // Add a header with a logo at the top of the page
     //
-    LeanPage header = LeanPage.getHeaderFooter( portrait, 50 );
+    LeanPage header = LeanPage.getHeaderFooter( -1, portrait, 50 );
     header.getComponents().add( createHeaderImageComponent() );
     header.getComponents().add( createHeaderLabelComponent( headerMessage ) );
     header.getComponents().add( createPresentationNameLabelComponent() );
@@ -105,7 +106,7 @@ public class BasePresentationUtil {
 
     // Add a footer with a single label at the bottom of the page.
     //
-    LeanPage footer = LeanPage.getHeaderFooter( portrait, 25 );
+    LeanPage footer = LeanPage.getHeaderFooter( -2, portrait, 25 );
     footer.getComponents().add( createPageNumberLabelComponent() );
     footer.getComponents().add( createSysdateLabelComponent() );
     presentation.setFooter( footer );
@@ -127,15 +128,13 @@ public class BasePresentationUtil {
   } */
 
   protected static LeanComponent createHeaderImageComponent() {
-    LeanLabelComponent leanLabel = new LeanLabelComponent();
-    leanLabel.setLabel( "Lean" );
+    LeanSvgComponent leanLabel = new LeanSvgComponent("lean-logo.svg");
+    leanLabel.setScalePercent( "50" );
     leanLabel.setBorder( false );
-    leanLabel.setDefaultColor( new LeanColorRGB( 255, 0, 0 ) );
     LeanComponent imageComponent = new LeanComponent( "Logo", leanLabel );
-    imageComponent.setSize( null );
     LeanLayout imageLayout = new LeanLayout();
-    imageLayout.setTop( new LeanAttachment( null, 0, 0, LeanAttachment.Alignment.TOP ) ); // Top of the page
-    imageLayout.setRight( new LeanAttachment( null, 0, 0, LeanAttachment.Alignment.RIGHT ) ); // Right of the page
+    imageLayout.setRight( new LeanAttachment( null, 0, 0, LeanAttachment.Alignment.RIGHT ) ); // Right of the header/page
+    imageLayout.setTop( new LeanAttachment( null, 0, 0, LeanAttachment.Alignment.TOP ) ); // Top of the header/page
     imageComponent.setLayout( imageLayout );
 
     return imageComponent;

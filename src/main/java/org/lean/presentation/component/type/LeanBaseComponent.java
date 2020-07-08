@@ -117,7 +117,7 @@ public abstract class LeanBaseComponent implements ILeanComponent {
       width = component.getSize().getWidth();
       height = component.getSize().getHeight();
     } else {
-      // Calculate the imageSize based on the content
+      // Calculate the size based on the content
       //
       LeanSize expectedSize = getExpectedSize( presentation, page, component, dataContext, renderContext, results );
 
