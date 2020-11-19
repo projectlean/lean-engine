@@ -1,5 +1,6 @@
 package org.lean.util;
 
+import org.apache.hop.core.svg.SvgImage;
 import org.apache.hop.metadata.api.IHopMetadataProvider;
 import org.lean.core.AggregationMethod;
 import org.lean.core.LeanAttachment;
@@ -14,6 +15,7 @@ import org.lean.presentation.component.LeanComponent;
 import org.lean.presentation.component.types.chart.LeanLineChartComponent;
 import org.lean.presentation.component.types.crosstab.LeanCrosstabComponent;
 import org.lean.presentation.component.types.label.LeanLabelComponent;
+import org.lean.presentation.component.types.svg.LeanSvgComponent;
 import org.lean.presentation.layout.LeanLayout;
 import org.lean.presentation.page.LeanPage;
 
@@ -124,14 +126,19 @@ public class ComboPresentationUtil extends BasePresentationUtil {
     // Add a rotated LEAN! label in the background
     //
     {
-      LeanLabelComponent rotatedLabel = new LeanLabelComponent();
-      rotatedLabel.setLabel( "LEAN!" );
-      rotatedLabel.setDefaultFont( new LeanFont( "Arial", "120", true, true ) );
-      rotatedLabel.setDefaultColor( new LeanColorRGB( "#665191" ) );
+      LeanSvgComponent rotatedLabel = new LeanSvgComponent("lean-logo.svg");
+      rotatedLabel.setScalePercent( "125" );
+      rotatedLabel.setBorder( false );
+      LeanComponent imageComponent = new LeanComponent( "Logo", rotatedLabel );
+      LeanLayout imageLayout = new LeanLayout();
+      imageLayout.setRight( new LeanAttachment( null, 0, 0, LeanAttachment.Alignment.RIGHT ) ); // Right of the header/page
+      imageLayout.setTop( new LeanAttachment( null, 0, 0, LeanAttachment.Alignment.TOP ) ); // Top of the header/page
+      imageComponent.setLayout( imageLayout );
+
       LeanComponent labelComponent = new LeanComponent( "RotatedLabel", rotatedLabel );
       LeanLayout labelLayout = new LeanLayout();
-      labelLayout.setLeft( new LeanAttachment( "Crosstab", 0, 0, LeanAttachment.Alignment.RIGHT ) );
-      labelLayout.setTop( new LeanAttachment( "Crosstab", 0, 50, LeanAttachment.Alignment.BOTTOM ) );
+      labelLayout.setLeft( new LeanAttachment( "Crosstab", 0, 50, LeanAttachment.Alignment.RIGHT ) );
+      labelLayout.setTop( new LeanAttachment( "Crosstab", 0, 35, LeanAttachment.Alignment.BOTTOM ) );
       labelLayout.setBottom( new LeanAttachment( null, 0, 0, LeanAttachment.Alignment.BOTTOM ) );
       labelLayout.setRight( new LeanAttachment( null, 0, 0, LeanAttachment.Alignment.RIGHT ) );
       labelComponent.setLayout( labelLayout );
