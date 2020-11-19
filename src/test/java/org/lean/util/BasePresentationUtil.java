@@ -129,7 +129,7 @@ public class BasePresentationUtil {
 
   protected static LeanComponent createHeaderImageComponent() {
     LeanSvgComponent leanLabel = new LeanSvgComponent("lean-logo.svg");
-    leanLabel.setScalePercent( "50" );
+    leanLabel.setScalePercent( "25" );
     leanLabel.setBorder( false );
     LeanComponent imageComponent = new LeanComponent( "Logo", leanLabel );
     LeanLayout imageLayout = new LeanLayout();
