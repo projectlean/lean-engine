@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apache.hop.core.RowMetaAndData;
 import org.apache.hop.core.row.IRowMeta;
 import org.apache.hop.metadata.api.HopMetadata;
+import org.apache.hop.metadata.api.HopMetadataBase;
 import org.apache.hop.metadata.api.HopMetadataProperty;
 import org.apache.hop.metadata.api.IHopMetadata;
 import org.lean.core.ILeanRowListener;
@@ -21,7 +22,7 @@ import java.util.concurrent.TimeUnit;
   name = "Connector",
   description = "Connector between components and data sources"
 )
-public class LeanConnector implements IHopMetadata {
+public class LeanConnector extends HopMetadataBase implements IHopMetadata {
 
   /**
    * The name of the connector

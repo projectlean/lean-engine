@@ -1,6 +1,7 @@
 package org.lean.presentation.theme;
 
 import org.apache.hop.metadata.api.HopMetadata;
+import org.apache.hop.metadata.api.HopMetadataBase;
 import org.apache.hop.metadata.api.HopMetadataProperty;
 import org.apache.hop.metadata.api.IHopMetadata;
 import org.lean.core.Constants;
@@ -17,10 +18,7 @@ import java.util.List;
   name = "Lean Theme",
   description = "A theme with colors and fonts to use as default in the components"
 )
-public class LeanTheme implements IHopMetadata {
-
-  @HopMetadataProperty
-  protected String name;
+public class LeanTheme extends HopMetadataBase implements IHopMetadata {
 
   @HopMetadataProperty
   protected String description;
@@ -283,23 +281,6 @@ public class LeanTheme implements IHopMetadata {
       return titleFont;
     }
     return defaultFont;
-  }
-
-
-  /**
-   * Gets name
-   *
-   * @return value of name
-   */
-  public String getName() {
-    return name;
-  }
-
-  /**
-   * @param name The name to set
-   */
-  public void setName( String name ) {
-    this.name = name;
   }
 
   /**

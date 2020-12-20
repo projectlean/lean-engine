@@ -20,7 +20,7 @@ public class RenderPageDataContext implements IDataContext {
     this.renderPage = renderPage;
 
     variableSpace = new Variables();
-    variableSpace.copyVariablesFrom( parentDataContext.getVariableSpace() );
+    variableSpace.copyFrom( parentDataContext.getVariableSpace() );
 
     // Inject page specific variables
     //

@@ -15,6 +15,7 @@ import org.lean.presentation.LeanPresentation;
 import org.lean.presentation.component.LeanComponent;
 import org.lean.presentation.component.type.ILeanComponent;
 import org.lean.presentation.component.type.LeanBaseComponent;
+import org.lean.presentation.component.type.LeanComponentPlugin;
 import org.lean.presentation.datacontext.IDataContext;
 import org.lean.presentation.layout.LeanLayoutResults;
 import org.lean.presentation.layout.LeanRenderPage;
@@ -22,6 +23,11 @@ import org.lean.presentation.page.LeanPage;
 import org.lean.render.IRenderContext;
 
 @JsonDeserialize( as = LeanLabelComponent.class )
+@LeanComponentPlugin(
+  id="LeanLabelComponent",
+  name = "Label",
+  description = "A Label to decorate your presentations"
+)
 public class LeanLabelComponent extends LeanBaseComponent implements ILeanComponent {
 
   public static final String DATA_TEXT_GEOMETRY = "Text Geometry";
@@ -74,7 +80,7 @@ public class LeanLabelComponent extends LeanBaseComponent implements ILeanCompon
 
     // Calculate the string
     //
-    String text = dataContext.getVariableSpace().environmentSubstitute( label );
+    String text = dataContext.getVariableSpace().resolve( label );
 
     LeanTextGeometry textGeometry = calculateTextGeometry( gc, text );
 

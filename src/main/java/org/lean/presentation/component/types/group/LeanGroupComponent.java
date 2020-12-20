@@ -14,6 +14,7 @@ import org.lean.presentation.LeanPresentation;
 import org.lean.presentation.component.LeanComponent;
 import org.lean.presentation.component.type.ILeanComponent;
 import org.lean.presentation.component.type.LeanBaseComponent;
+import org.lean.presentation.component.type.LeanComponentPlugin;
 import org.lean.presentation.connector.LeanConnector;
 import org.lean.presentation.connector.type.ILeanConnector;
 import org.lean.presentation.connector.types.chain.LeanChainConnector;
@@ -53,6 +54,11 @@ import java.util.List;
  * @see ILeanComponent#render(LeanComponentLayoutResult, LeanLayoutResults, IRenderContext)
  */
 @JsonDeserialize( as = LeanGroupComponent.class )
+@LeanComponentPlugin(
+  id = "LeanGroupComponent",
+  name = "Group",
+  description = "A way to render another component multiple times creating groups of data"
+)
 public class LeanGroupComponent extends LeanBaseComponent implements ILeanComponent {
 
   public static final String DATA_GROUP_DETAILS = "DATA_GROUP_DETAILS";

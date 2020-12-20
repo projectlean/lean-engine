@@ -45,7 +45,7 @@ public class LeanPresentationTestBase {
     metadataProvider = new MemoryMetadataProvider();
     LeanEnvironment.init();
 
-    PluginRegistry.getInstance().registerPluginClass( H2DatabaseMeta.class.getName(), DatabasePluginType.class, DatabaseMetaPlugin.class );
+    // PluginRegistry.getInstance().registerPluginClass( H2DatabaseMeta.class.getName(), DatabasePluginType.class, DatabaseMetaPlugin.class );
 
 
     parent = new LoggingObject( "Presentation unit test" );

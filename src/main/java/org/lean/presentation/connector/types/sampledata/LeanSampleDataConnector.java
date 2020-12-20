@@ -14,6 +14,7 @@ import org.lean.core.ILeanRowListener;
 import org.lean.core.exception.LeanException;
 import org.lean.presentation.connector.type.ILeanConnector;
 import org.lean.presentation.connector.type.LeanBaseConnector;
+import org.lean.presentation.connector.type.LeanConnectorPlugin;
 import org.lean.presentation.datacontext.IDataContext;
 
 import java.util.Arrays;
@@ -22,6 +23,11 @@ import java.util.List;
 import java.util.Random;
 
 @JsonDeserialize( as = LeanSampleDataConnector.class )
+@LeanConnectorPlugin(
+  id="SampleDataConnector",
+  name="Dummy",
+  description = "A sample data connector giving back a configurable list of sample rows"
+)
 public class LeanSampleDataConnector extends LeanBaseConnector implements ILeanConnector {
 
   @HopMetadataProperty

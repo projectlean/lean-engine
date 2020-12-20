@@ -5,6 +5,7 @@ import org.apache.hop.core.logging.ILogChannel;
 import org.apache.hop.core.logging.LogChannel;
 import org.apache.hop.core.logging.LoggingObject;
 import org.apache.hop.metadata.api.HopMetadata;
+import org.apache.hop.metadata.api.HopMetadataBase;
 import org.apache.hop.metadata.api.HopMetadataProperty;
 import org.apache.hop.metadata.api.IHopMetadata;
 import org.apache.hop.metadata.api.IHopMetadataProvider;
@@ -29,12 +30,7 @@ import java.util.List;
  *
  * @author matt
  */
-public class LeanComponent implements IHopMetadata {
-
-  /**
-   * The name of the component
-   */
-  private String name;
+public class LeanComponent extends HopMetadataBase implements IHopMetadata {
 
   @HopMetadataProperty
   private LeanLayout layout;
@@ -152,21 +148,6 @@ public class LeanComponent implements IHopMetadata {
     LeanRenderPage renderPage = results.getRenderPages().get( 0 );
 
     return renderPage.getSvgXml();
-  }
-
-
-  /**
-   * @return the name
-   */
-  public String getName() {
-    return name;
-  }
-
-  /**
-   * @param name the name to set
-   */
-  public void setName( String name ) {
-    this.name = name;
   }
 
   /**

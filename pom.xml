@@ -4,7 +4,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>org.lean</groupId>
-  <version>0.0.9-SNAPSHOT</version>
+  <version>0.0.10-SNAPSHOT</version>
   <artifactId>lean-engine</artifactId>
   <name>${project.artifactId}</name>
   <description>Lean Engine for ANalytics</description>
@@ -20,11 +20,13 @@
     </license>
   </licenses>
   <properties>
-    <hop.version>0.50-SNAPSHOT</hop.version>
+    <hop.version>0.60-SNAPSHOT</hop.version>
 
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>1.8</maven.compiler.target>
     <maven.build.timestamp.format>yyyy-MM-dd hh.mm.ss</maven.build.timestamp.format>
+
+    <jandex-maven-plugin.version>1.0.8</jandex-maven-plugin.version>
 
     <mockito-all.version>1.9.5</mockito-all.version>
     <junit.version>4.4</junit.version>
@@ -138,7 +140,7 @@
     <dependency>
       <groupId>org.apache.pdfbox</groupId>
       <artifactId>pdfbox</artifactId>
-      <version>2.0.17</version>
+      <version>2.0.21</version>
     </dependency>
 
     <!-- https://mvnrepository.com/artifact/com.github.insubstantial/flamingo -->
@@ -240,7 +242,6 @@
     </testResources>
 
     <plugins>
-
       <plugin>
         <artifactId>maven-dependency-plugin</artifactId>
         <executions>
@@ -257,6 +258,21 @@
         </executions>
       </plugin>
 
+      <plugin>
+        <groupId>org.jboss.jandex</groupId>
+        <artifactId>jandex-maven-plugin</artifactId>
+        <version>${jandex-maven-plugin.version}</version>
+        <executions>
+          <execution>
+            <id>make-index</id>
+            <goals>
+              <goal>jandex</goal>
+            </goals>
+            <configuration>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
 <!--
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>

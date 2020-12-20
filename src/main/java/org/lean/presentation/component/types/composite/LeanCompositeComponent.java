@@ -11,6 +11,7 @@ import org.lean.presentation.LeanPresentation;
 import org.lean.presentation.component.LeanComponent;
 import org.lean.presentation.component.type.ILeanComponent;
 import org.lean.presentation.component.type.LeanBaseComponent;
+import org.lean.presentation.component.type.LeanComponentPlugin;
 import org.lean.presentation.datacontext.IDataContext;
 import org.lean.presentation.layout.LeanLayout;
 import org.lean.presentation.layout.LeanLayoutResults;
@@ -44,6 +45,11 @@ import java.util.List;
  * @see ILeanComponent#render(LeanComponentLayoutResult, LeanLayoutResults, IRenderContext)
  */
 @JsonDeserialize( as = LeanCompositeComponent.class )
+@LeanComponentPlugin(
+  id="LeanCompositeComponent",
+  name="Composite",
+  description="In this component you can place other components"
+)
 public class LeanCompositeComponent extends LeanBaseComponent implements ILeanComponent {
 
   public static final String DATA_COMPOSITE_DETAILS = "DATA_COMPOSITE_DETAILS";

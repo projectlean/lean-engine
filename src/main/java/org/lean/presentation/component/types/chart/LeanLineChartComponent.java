@@ -16,6 +16,7 @@ import org.lean.core.exception.LeanException;
 import org.lean.presentation.LeanComponentLayoutResult;
 import org.lean.presentation.component.LeanComponent;
 import org.lean.presentation.component.type.ILeanComponent;
+import org.lean.presentation.component.type.LeanComponentPlugin;
 import org.lean.presentation.layout.LeanLayoutResults;
 import org.lean.presentation.theme.LeanTheme;
 import org.lean.render.IRenderContext;
@@ -27,6 +28,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 @JsonDeserialize( as = LeanLineChartComponent.class )
+@LeanComponentPlugin(
+  id= "LeanLineChartComponent",
+  name="Line chart",
+  description = "A line chart component"
+)
 public class LeanLineChartComponent extends LeanBaseChartComponent implements ILeanComponent {
 
   @HopMetadataProperty

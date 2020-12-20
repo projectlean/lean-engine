@@ -22,6 +22,7 @@ import org.lean.presentation.LeanPresentation;
 import org.lean.presentation.component.LeanComponent;
 import org.lean.presentation.component.type.ILeanComponent;
 import org.lean.presentation.component.type.LeanBaseComponent;
+import org.lean.presentation.component.type.LeanComponentPlugin;
 import org.lean.presentation.connector.LeanConnector;
 import org.lean.presentation.datacontext.IDataContext;
 import org.lean.presentation.layout.LeanLayoutResults;
@@ -35,6 +36,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 @JsonDeserialize( as = LeanTableComponent.class )
+@LeanComponentPlugin(
+  id= "LeanTableComponent",
+  name="Table",
+  description = "A table component"
+)
 public class LeanTableComponent extends LeanBaseComponent implements ILeanComponent {
 
   public static final String DATA_TABLE_DETAILS = "table_details";

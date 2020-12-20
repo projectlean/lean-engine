@@ -13,6 +13,7 @@ import org.lean.presentation.LeanPresentation;
 import org.lean.presentation.component.LeanComponent;
 import org.lean.presentation.component.type.ILeanComponent;
 import org.lean.presentation.component.type.LeanBaseComponent;
+import org.lean.presentation.component.type.LeanComponentPlugin;
 import org.lean.presentation.datacontext.IDataContext;
 import org.lean.presentation.layout.LeanLayoutResults;
 import org.lean.presentation.page.LeanPage;
@@ -24,6 +25,11 @@ import java.io.IOException;
 import java.net.URL;
 
 @JsonDeserialize( as = LeanImageComponent.class )
+@LeanComponentPlugin(
+  id= "LeanImageComponent",
+  name="Image",
+  description = "An image component"
+)
 public class LeanImageComponent extends LeanBaseComponent implements ILeanComponent {
 
   public static final String DATA_IMAGE_DETAILS = "Image Details";

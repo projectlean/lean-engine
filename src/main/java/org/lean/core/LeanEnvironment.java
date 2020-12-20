@@ -36,26 +36,11 @@ public class LeanEnvironment {
 
         PluginRegistry.init( true );
 
-      } catch ( HopPluginException e ) {
+      } catch ( Exception e ) {
         throw new LeanException( "Unable to initialize plugin registry", e );
       }
 
       initialized = true;
     }
-  }
-
-  public static void addPluginClasses( Class<? extends IPluginType> pluginTypeClass, Class<?> mainPluginClass ) throws HopPluginException {
-
-    PluginRegistry registry = PluginRegistry.getInstance();
-
-    IPluginType pluginType = registry.getPluginType( pluginTypeClass );
-
-    PluginAnnotationType pluginAnnotationType = pluginTypeClass.getAnnotation( PluginAnnotationType.class );
-    Class<? extends Annotation> annotationClass = pluginAnnotationType.value();
-    Annotation pluginAnnotation = mainPluginClass.getAnnotation( annotationClass );
-    if ( pluginAnnotation == null ) {
-      throw new HopPluginException( "The plugin annotation " + annotationClass.getName() + " was not found in class" + mainPluginClass.getName() );
-    }
-    pluginType.handlePluginAnnotation( mainPluginClass, pluginAnnotation, new ArrayList<>(), true, null );
   }
 }

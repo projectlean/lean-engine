@@ -8,6 +8,7 @@ import org.lean.core.exception.LeanException;
 import org.lean.presentation.connector.LeanConnector;
 import org.lean.presentation.connector.type.ILeanConnector;
 import org.lean.presentation.connector.type.LeanBaseConnector;
+import org.lean.presentation.connector.type.LeanConnectorPlugin;
 import org.lean.presentation.connector.types.passthrough.PassthroughRowListener;
 import org.lean.presentation.datacontext.ChainDataContext;
 import org.lean.presentation.datacontext.IDataContext;
@@ -18,6 +19,11 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
 @JsonDeserialize( as = LeanChainConnector.class )
+@LeanConnectorPlugin(
+  id="ChainConnector",
+  name="Chain connectors",
+  description = "Chain multiple connectors, encapsulate in a single connector"
+)
 public class LeanChainConnector extends LeanBaseConnector implements ILeanConnector {
 
   public static final String STRING_LAST_CONNECTOR_NAME = "_RESULT_OF_CHAIN_";

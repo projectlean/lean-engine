@@ -20,6 +20,7 @@ import org.lean.presentation.LeanPresentation;
 import org.lean.presentation.component.LeanComponent;
 import org.lean.presentation.component.type.ILeanComponent;
 import org.lean.presentation.component.type.LeanBaseComponent;
+import org.lean.presentation.component.type.LeanComponentPlugin;
 import org.lean.presentation.datacontext.IDataContext;
 import org.lean.presentation.layout.LeanLayoutResults;
 import org.lean.presentation.layout.LeanRenderPage;
@@ -37,6 +38,11 @@ import java.io.InputStream;
 import static org.apache.batik.svggen.DOMGroupManager.DRAW;
 
 @JsonDeserialize( as = LeanSvgComponent.class )
+@LeanComponentPlugin(
+  id= "LeanSvgComponent",
+  name="SVG",
+  description = "An SVG component"
+)
 public class LeanSvgComponent extends LeanBaseComponent implements ILeanComponent {
 
   public static final String DATA_SVG_DETAILS = "SVG Details";
@@ -79,7 +85,7 @@ public class LeanSvgComponent extends LeanBaseComponent implements ILeanComponen
 
     // The real filename after variable substitution?
     //
-    String realFilename = variables.environmentSubstitute( filename );
+    String realFilename = variables.resolve( filename );
 
     // Load the SVG XML document
     //
@@ -91,7 +97,7 @@ public class LeanSvgComponent extends LeanBaseComponent implements ILeanComponen
       throw new LeanException( "Unable to load SVG file '" + realFilename + "'", e );
     }
 
-    details.scaleFactor = Const.toDouble( variables.environmentSubstitute(scalePercent), 100.0 ) / 100;
+    details.scaleFactor = Const.toDouble( variables.resolve(scalePercent), 100.0 ) / 100;
 
     details.imageSize = new LeanSize(
       (int) ( details.originalSize.getWidth() * details.scaleFactor ),

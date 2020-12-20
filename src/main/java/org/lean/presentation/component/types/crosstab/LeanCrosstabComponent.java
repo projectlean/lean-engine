@@ -21,6 +21,7 @@ import org.lean.presentation.LeanComponentLayoutResult;
 import org.lean.presentation.LeanPresentation;
 import org.lean.presentation.component.LeanComponent;
 import org.lean.presentation.component.type.ILeanComponent;
+import org.lean.presentation.component.type.LeanComponentPlugin;
 import org.lean.presentation.connector.LeanConnector;
 import org.lean.presentation.datacontext.IDataContext;
 import org.lean.presentation.layout.LeanLayoutResults;
@@ -37,6 +38,11 @@ import java.util.Map;
 import java.util.Set;
 
 @JsonDeserialize( as = LeanCrosstabComponent.class )
+@LeanComponentPlugin(
+  id= "LeanCrosstabComponent",
+  name="Crosstab",
+  description = "A crosstab component"
+)
 public class LeanCrosstabComponent extends LeanBaseAggregatingComponent implements ILeanComponent {
 
   // TODO Implement sub-totals, multiple totals

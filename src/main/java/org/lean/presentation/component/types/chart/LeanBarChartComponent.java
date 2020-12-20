@@ -15,6 +15,7 @@ import org.lean.presentation.LeanComponentLayoutResult;
 import org.lean.presentation.LeanPresentation;
 import org.lean.presentation.component.LeanComponent;
 import org.lean.presentation.component.type.ILeanComponent;
+import org.lean.presentation.component.type.LeanComponentPlugin;
 import org.lean.presentation.datacontext.IDataContext;
 import org.lean.presentation.layout.LeanLayoutResults;
 import org.lean.presentation.page.LeanPage;
@@ -25,6 +26,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 @JsonDeserialize( as = LeanBarChartComponent.class )
+@LeanComponentPlugin(
+  id= "LeanBarChartComponent",
+  name="Bar Chart",
+  description = "A bar chart component"
+)
 public class LeanBarChartComponent extends LeanBaseChartComponent implements ILeanComponent {
 
   /**
