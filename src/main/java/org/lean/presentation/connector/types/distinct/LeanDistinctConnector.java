@@ -5,6 +5,7 @@ import org.lean.core.exception.LeanException;
 import org.lean.presentation.connector.LeanConnector;
 import org.lean.presentation.connector.type.ILeanConnector;
 import org.lean.presentation.connector.type.LeanBaseConnector;
+import org.lean.presentation.connector.type.LeanConnectorPlugin;
 import org.lean.presentation.datacontext.IDataContext;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -19,6 +20,11 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * Select distinct values from a source connector
  */
 @JsonDeserialize( as = LeanDistinctConnector.class )
+@LeanConnectorPlugin(
+  id="DistinctConnector",
+  name="Select distinct rows",
+  description = "Only outputs unique rows"
+)
 public class LeanDistinctConnector extends LeanBaseConnector implements ILeanConnector {
 
   @JsonIgnore

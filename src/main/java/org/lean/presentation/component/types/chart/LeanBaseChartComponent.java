@@ -118,7 +118,7 @@ public abstract class LeanBaseChartComponent extends LeanBaseAggregatingComponen
 
     // Calculate the title based on data context
     //
-    titleText = dataContext.getVariableSpace().environmentSubstitute( title );
+    titleText = dataContext.getVariableSpace().resolve( title );
   }
 
   protected void validateSettings() throws LeanException {

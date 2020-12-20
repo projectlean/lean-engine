@@ -4,6 +4,7 @@ import org.lean.core.exception.LeanException;
 import org.lean.presentation.connector.LeanConnector;
 import org.lean.presentation.connector.type.ILeanConnector;
 import org.lean.presentation.connector.type.LeanBaseConnector;
+import org.lean.presentation.connector.type.LeanConnectorPlugin;
 import org.lean.presentation.datacontext.IDataContext;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -13,6 +14,11 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
 @JsonDeserialize( as = LeanPassthroughConnector.class )
+@LeanConnectorPlugin(
+  id="PassthroughConnector",
+  name="A passthrough connector",
+  description = "Simply passes all the rows of the selected data source"
+)
 public class LeanPassthroughConnector extends LeanBaseConnector implements ILeanConnector {
 
   @JsonIgnore

@@ -12,11 +12,17 @@ import org.lean.core.LeanDatabaseConnection;
 import org.lean.core.exception.LeanException;
 import org.lean.presentation.connector.type.ILeanConnector;
 import org.lean.presentation.connector.type.LeanBaseConnector;
+import org.lean.presentation.connector.type.LeanConnectorPlugin;
 import org.lean.presentation.datacontext.IDataContext;
 
 import java.sql.ResultSet;
 
 @JsonDeserialize( as = LeanSqlConnector.class )
+@LeanConnectorPlugin(
+  id="SqlConnector",
+  name="Execute a SQL query",
+  description = "Reads data from a relational database using a SQL query"
+)
 public class LeanSqlConnector extends LeanBaseConnector implements ILeanConnector {
 
   @HopMetadataProperty

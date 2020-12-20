@@ -2,6 +2,7 @@ package org.lean.core;
 
 import org.apache.hop.core.database.DatabaseMeta;
 import org.apache.hop.metadata.api.HopMetadata;
+import org.apache.hop.metadata.api.HopMetadataBase;
 import org.apache.hop.metadata.api.HopMetadataProperty;
 import org.apache.hop.metadata.api.IHopMetadata;
 import org.lean.core.exception.LeanException;
@@ -18,8 +19,7 @@ import javax.ws.rs.Path;
   description = "A description of a connection to a relational database"
 )
 @Path( "databases" )
-public class LeanDatabaseConnection implements IHopMetadata, IHasIdentity {
-  private String name;
+public class LeanDatabaseConnection extends HopMetadataBase implements IHopMetadata, IHasIdentity {
 
   /**
    * This is a reference to Hop database type codes (MYSQL, POSTGRESQL, MSSQL, ORACLE, ...)
@@ -62,22 +62,6 @@ public class LeanDatabaseConnection implements IHopMetadata, IHasIdentity {
     } catch ( Exception e ) {
       throw new LeanException( "Unable to create (convert to) Hop database connection object", e );
     }
-  }
-
-  /**
-   * Gets name
-   *
-   * @return value of name
-   */
-  public String getName() {
-    return name;
-  }
-
-  /**
-   * @param name The name to set
-   */
-  public void setName( String name ) {
-    this.name = name;
   }
 
   /**

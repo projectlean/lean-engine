@@ -43,5 +43,9 @@ public class LeanEnvironmentTest {
 
     List<IPlugin> connectorPlugins = registry.getPlugins( LeanConnectorPluginType.class );
     assertTrue( "Plugins list empty", !connectorPlugins.isEmpty() );
+
+    // Check the metadata plugins
+    //
+
   }
 }

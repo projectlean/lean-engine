@@ -32,7 +32,7 @@ public class GroupDataContext implements IDataContext {
     this.groupRow = groupRow;
 
     variableSpace = new Variables();
-    variableSpace.initializeVariablesFrom( parentDataContext.getVariableSpace() );
+    variableSpace.initializeFrom( parentDataContext.getVariableSpace() );
 
     // Set variables with the names of the fields in the group
     //

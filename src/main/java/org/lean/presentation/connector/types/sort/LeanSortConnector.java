@@ -12,6 +12,7 @@ import org.lean.core.exception.LeanException;
 import org.lean.presentation.connector.LeanConnector;
 import org.lean.presentation.connector.type.ILeanConnector;
 import org.lean.presentation.connector.type.LeanBaseConnector;
+import org.lean.presentation.connector.type.LeanConnectorPlugin;
 import org.lean.presentation.datacontext.IDataContext;
 
 import java.util.ArrayList;
@@ -25,6 +26,11 @@ import java.util.concurrent.TimeUnit;
  * Sort rows from a source connector using a selection of columns
  */
 @JsonDeserialize( as = LeanSortConnector.class )
+@LeanConnectorPlugin(
+  id="SortConnector",
+  name="Sort rows",
+  description = "Sorts all rows"
+)
 public class LeanSortConnector extends LeanBaseConnector implements ILeanConnector {
 
   @HopMetadataProperty

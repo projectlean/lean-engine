@@ -13,6 +13,7 @@ import org.lean.core.exception.LeanException;
 import org.lean.presentation.connector.LeanConnector;
 import org.lean.presentation.connector.type.ILeanConnector;
 import org.lean.presentation.connector.type.LeanBaseConnector;
+import org.lean.presentation.connector.type.LeanConnectorPlugin;
 import org.lean.presentation.datacontext.IDataContext;
 
 import java.util.ArrayList;
@@ -24,6 +25,11 @@ import java.util.concurrent.TimeUnit;
  * Select a bunch of columns from a source connector
  */
 @JsonDeserialize( as = LeanSelectionConnector.class )
+@LeanConnectorPlugin(
+  id="SelectionConnector",
+  name="Select fields",
+  description = "Makes a selection of fields from a source connector"
+)
 public class LeanSelectionConnector extends LeanBaseConnector implements ILeanConnector {
 
   @HopMetadataProperty

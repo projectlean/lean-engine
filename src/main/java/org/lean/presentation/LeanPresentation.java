@@ -13,6 +13,7 @@ import org.apache.hop.core.logging.Metrics;
 import org.apache.hop.core.metrics.MetricsSnapshotType;
 import org.apache.hop.core.svg.HopSvgGraphics2D;
 import org.apache.hop.metadata.api.HopMetadata;
+import org.apache.hop.metadata.api.HopMetadataBase;
 import org.apache.hop.metadata.api.HopMetadataProperty;
 import org.apache.hop.metadata.api.IHopMetadata;
 import org.apache.hop.metadata.api.IHopMetadataProvider;
@@ -48,10 +49,7 @@ import java.util.List;
   description = "Top level document of the presentation metadata"
 )
 @Path( "presentations" )
-public class LeanPresentation implements IHasIdentity, IHopMetadata {
-
-  @HopMetadataProperty
-  private String name;
+public class LeanPresentation extends HopMetadataBase implements IHasIdentity, IHopMetadata {
 
   @HopMetadataProperty
   private String description;
@@ -458,20 +456,6 @@ public class LeanPresentation implements IHasIdentity, IHopMetadata {
       }
     }
     return null;
-  }
-
-  /**
-   * @return the name
-   */
-  public String getName() {
-    return name;
-  }
-
-  /**
-   * @param name the name to set
-   */
-  public void setName( String name ) {
-    this.name = name;
   }
 
   /**
