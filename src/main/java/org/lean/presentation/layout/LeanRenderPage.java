@@ -75,7 +75,7 @@ public class LeanRenderPage {
   }
 
   public void addComponentDrawnItem( LeanComponent component, LeanGeometry componentGeometry ) {
-    addDrawnItem( component.getName(), 0, "Component", null, 0, 0, componentGeometry );
+    addDrawnItem( component.getName(), 0, "Component", component.getComponent().getPluginId(), 0, 0, componentGeometry );
   }
 
   /**

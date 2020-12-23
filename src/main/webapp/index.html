@@ -1,8 +1,55 @@
 <HTML>
-  <H1>Lean</H1>
-  <p>
-    Presentation REST service is under lean/presentation relative to this page.<br>
-    Metadata is kept in the global temp folder for now, usually something like /tmp/tomcat8-tomcat8-tmp<br>
+<H1>Lean Presentation Viewer</H1>
+<p>
 
-  </p>
+<p id="info" >Mouse over the presentation to see info about the drawn items</p>
+<div style="border:2px solid gray;background: white">
+
+  <img id="presentation" src="/lean/presentationSvg">
+</div>
+
+<script defer="defer">
+  let presentation = document.getElementById("presentation");
+  let info = document.getElementById('info');
+  let infoShown = false;
+  presentation.addEventListener("click", event => {
+    getDrawnItemMessage(event.offsetX, event.offsetY);
+  }, true);
+
+  let message = "-";
+
+  presentation.onload = () => {
+    callREST();
+  }
+
+  presentation.onmouseover = event=> {
+    if (!infoShown) {
+      infoShown = true;
+      info.innerText = message;
+    }
+  }
+  presentation.onmousemove = event=> {
+    if (infoShown) {
+      getDrawnItemMessage(event.offsetX, event.offsetY);
+      info.innerText = message;
+    }
+  }
+  presentation.onmouseout = event=> {
+    if (infoShown) {
+      infoShown = false;
+    }
+  }
+
+  function getDrawnItemMessage(x, y) {
+    var xhr = new XMLHttpRequest();
+    xhr.onload = () => {
+      if (xhr.status == 200) {
+        message = xhr.response;
+      }
+    };
+    xhr.open("GET", "/lean/presentationDrawnItem?x=" + x + "&y=" + y, true);
+    xhr.send(null);
+  }
+</script>
+</p>
 </HTML>

@@ -15,10 +15,17 @@ public class DrawnItem {
   private LeanGeometry geometry;
   private DrawnContext context;
 
-  public DrawnItem() {
-  }
+  public DrawnItem() {}
 
-  public DrawnItem( String componentName, int partNumber, String type, String name, int rowNr, int colNr, LeanGeometry geometry, DrawnContext context ) {
+  public DrawnItem(
+      String componentName,
+      int partNumber,
+      String type,
+      String name,
+      int rowNr,
+      int colNr,
+      LeanGeometry geometry,
+      DrawnContext context) {
     this.componentName = componentName;
     this.partNumber = partNumber;
     this.type = type;
@@ -29,29 +36,68 @@ public class DrawnItem {
     this.context = context;
   }
 
-  public DrawnItem( String componentName, int partNumber, String type, String name, int rowNr, int colNr, LeanGeometry geometry ) {
+  public DrawnItem(
+      String componentName,
+      int partNumber,
+      String type,
+      String name,
+      int rowNr,
+      int colNr,
+      LeanGeometry geometry) {
     this(componentName, partNumber, type, name, rowNr, colNr, geometry, null);
   }
 
-  @Override public boolean equals( Object o ) {
-    if ( this == o ) {
+  @Override
+  public String toString() {
+    String string =
+        "DrawnItem{"
+            + "componentName='"
+            + componentName
+            + '\''
+            + ", partNumber="
+            + partNumber
+            + ", type='"
+            + type
+            + '\''
+            + ", name='"
+            + name
+            + '\''
+            + ", rowNr="
+            + rowNr
+            + ", colNr="
+            + colNr
+            + ", geometry="
+            + geometry;
+
+    if (context != null) {
+      string += ", context=" + context;
+    }
+    string += '}';
+
+    return string;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
       return true;
     }
-    if ( o == null || getClass() != o.getClass() ) {
+    if (o == null || getClass() != o.getClass()) {
       return false;
     }
     DrawnItem drawItem = (DrawnItem) o;
-    return partNumber == drawItem.partNumber &&
-      rowNr == drawItem.rowNr &&
-      colNr == drawItem.colNr &&
-      Objects.equals( componentName, drawItem.componentName ) &&
-      Objects.equals( type, drawItem.type ) &&
-      Objects.equals( name, drawItem.name ) &&
-      Objects.equals( geometry, drawItem.geometry );
+    return partNumber == drawItem.partNumber
+        && rowNr == drawItem.rowNr
+        && colNr == drawItem.colNr
+        && Objects.equals(componentName, drawItem.componentName)
+        && Objects.equals(type, drawItem.type)
+        && Objects.equals(name, drawItem.name)
+        && Objects.equals(geometry, drawItem.geometry);
   }
 
-  @Override public int hashCode() {
-    return Objects.hash( componentName, partNumber, type, name, rowNr, colNr, geometry );
+  @Override
+  public int hashCode() {
+    return Objects.hash(componentName, partNumber, type, name, rowNr, colNr, geometry);
   }
 
   /**
@@ -63,10 +109,8 @@ public class DrawnItem {
     return componentName;
   }
 
-  /**
-   * @param componentName The componentName to set
-   */
-  public void setComponentName( String componentName ) {
+  /** @param componentName The componentName to set */
+  public void setComponentName(String componentName) {
     this.componentName = componentName;
   }
 
@@ -79,10 +123,8 @@ public class DrawnItem {
     return partNumber;
   }
 
-  /**
-   * @param partNumber The partNumber to set
-   */
-  public void setPartNumber( int partNumber ) {
+  /** @param partNumber The partNumber to set */
+  public void setPartNumber(int partNumber) {
     this.partNumber = partNumber;
   }
 
@@ -95,10 +137,8 @@ public class DrawnItem {
     return type;
   }
 
-  /**
-   * @param type The type to set
-   */
-  public void setType( String type ) {
+  /** @param type The type to set */
+  public void setType(String type) {
     this.type = type;
   }
 
@@ -111,10 +151,8 @@ public class DrawnItem {
     return name;
   }
 
-  /**
-   * @param name The name to set
-   */
-  public void setName( String name ) {
+  /** @param name The name to set */
+  public void setName(String name) {
     this.name = name;
   }
 
@@ -127,10 +165,8 @@ public class DrawnItem {
     return rowNr;
   }
 
-  /**
-   * @param rowNr The rowNr to set
-   */
-  public void setRowNr( int rowNr ) {
+  /** @param rowNr The rowNr to set */
+  public void setRowNr(int rowNr) {
     this.rowNr = rowNr;
   }
 
@@ -143,10 +179,8 @@ public class DrawnItem {
     return colNr;
   }
 
-  /**
-   * @param colNr The colNr to set
-   */
-  public void setColNr( int colNr ) {
+  /** @param colNr The colNr to set */
+  public void setColNr(int colNr) {
     this.colNr = colNr;
   }
 
@@ -159,10 +193,8 @@ public class DrawnItem {
     return geometry;
   }
 
-  /**
-   * @param geometry The geometry to set
-   */
-  public void setGeometry( LeanGeometry geometry ) {
+  /** @param geometry The geometry to set */
+  public void setGeometry(LeanGeometry geometry) {
     this.geometry = geometry;
   }
 
@@ -175,10 +207,8 @@ public class DrawnItem {
     return context;
   }
 
-  /**
-   * @param context The context to set
-   */
-  public void setContext( DrawnContext context ) {
+  /** @param context The context to set */
+  public void setContext(DrawnContext context) {
     this.context = context;
   }
 }

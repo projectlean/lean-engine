@@ -9,7 +9,7 @@
   <name>${project.artifactId}</name>
   <description>Lean Engine for ANalytics</description>
 
-  <!-- <packaging>war</packaging> -->
+  <packaging>jar</packaging>
 
   <licenses>
     <license>
@@ -19,6 +19,7 @@
       <comments/>
     </license>
   </licenses>
+
   <properties>
     <hop.version>0.60-SNAPSHOT</hop.version>
 
@@ -36,17 +37,15 @@
 
   <repositories>
     <repository>
-      <id>hop</id>
-      <name>Hop Repository</name>
-      <url>https://artifactory.project-hop.org/artifactory/hop-releases/</url>
+      <id>central</id>
+      <url>https://repo1.maven.org/maven2/</url>
+      <name>Maven Central</name>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
       <releases>
         <enabled>true</enabled>
-        <updatePolicy>daily</updatePolicy>
       </releases>
-      <snapshots>
-        <enabled>true</enabled>
-        <updatePolicy>interval:15</updatePolicy>
-      </snapshots>
     </repository>
     <repository>
       <id>eclipse-maven-repo</id>
@@ -61,12 +60,143 @@
     </repository>
   </repositories>
 
+  <build>
+    <defaultGoal>install</defaultGoal>
+
+
+    <sourceDirectory>src/main/java</sourceDirectory>
+
+    <resources>
+      <resource>
+        <directory>src/main/resources</directory>
+        <includes>
+          <include>**/*.properties</include>
+          <include>**/*.xul</include>
+          <include>**/*.xml</include>
+          <include>**/*.svg</include>
+        </includes>
+      </resource>
+
+      <resource>
+        <directory>src/main/webapp</directory>
+        <includes>
+          <include>**/*.*</include>
+        </includes>
+      </resource>
+
+      <resource>
+        <directory>src/main/java</directory>
+        <includes>
+          <include>**/*.properties</include>
+          <include>**/*.xul</include>
+          <include>**/*.xml</include>
+          <include>**/*.svg</include>
+        </includes>
+      </resource>
+
+    </resources>
+
+    <testSourceDirectory>src/test/java</testSourceDirectory>
+    <testResources>
+      <testResource>
+        <directory>src/test/resources</directory>
+      </testResource>
+      <testResource>
+        <directory>src/resources</directory>
+      </testResource>
+    </testResources>
+
+    <plugins>
+      <plugin>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <executions>
+          <execution>
+            <phase>install</phase>
+            <goals>
+              <goal>copy-dependencies</goal>
+            </goals>
+            <configuration>
+              <outputDirectory>${project.build.directory}/lib</outputDirectory>
+              <excludeScope>provided</excludeScope>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <plugin>
+        <groupId>org.jboss.jandex</groupId>
+        <artifactId>jandex-maven-plugin</artifactId>
+        <version>${jandex-maven-plugin.version}</version>
+        <executions>
+          <execution>
+            <id>make-index</id>
+            <goals>
+              <goal>jandex</goal>
+            </goals>
+            <configuration>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <!--
+            <plugin>
+              <groupId>org.apache.maven.plugins</groupId>
+              <artifactId>maven-resources-plugin</artifactId>
+              <executions>
+                <execution>
+                  <id>default-copy-resources</id>
+                  <phase>process-resources</phase>
+                  <goals>
+                    <goal>copy-resources</goal>
+                  </goals>
+                  <configuration>
+                    <overwrite>true</overwrite>
+                    <outputDirectory>${project.build.directory}/${project.artifactId}-${project.version}/WEB-INF/</outputDirectory>
+                    <resources>
+                      <resource>
+                        <directory>${project.basedir}/src/resources</directory>
+                      </resource>
+                    </resources>
+                  </configuration>
+                </execution>
+              </executions>
+            </plugin>
+
+            <plugin>
+              <groupId>org.apache.maven.plugins</groupId>
+              <artifactId>maven-war-plugin</artifactId>
+              <version>3.2.0</version>
+              <configuration>
+                <webResources>
+                  <resource>
+                    <filtering>true</filtering>
+                    <directory>src/main/webapp</directory>
+                    <includes>
+                      <include>**/web.xml</include>
+                    </includes>
+                  </resource>
+                </webResources>
+                <warSourceDirectory>src/main/webapp</warSourceDirectory>
+                <webXml>src/main/webapp/WEB-INF/web.xml</webXml>
+              </configuration>
+            </plugin>
+
+          -->
+
+    </plugins>
+  </build>
+
   <dependencies>
     <dependency>
       <groupId>org.apache.hop</groupId>
       <artifactId>hop-core</artifactId>
       <version>${hop.version}</version>
-      <exclusions><exclusion><groupId>javax.ws.rs</groupId><artifactId>jsr311-api</artifactId></exclusion></exclusions>
+      <exclusions>
+        <exclusion>
+          <groupId>javax.ws.rs</groupId>
+          <artifactId>jsr311-api</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <dependency>
@@ -74,7 +204,12 @@
       <artifactId>hop-databases-h2</artifactId>
       <version>${hop.version}</version>
       <scope>test</scope>
-      <exclusions><exclusion><groupId>javax.ws.rs</groupId><artifactId>jsr311-api</artifactId></exclusion></exclusions>
+      <exclusions>
+        <exclusion>
+          <groupId>javax.ws.rs</groupId>
+          <artifactId>jsr311-api</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <dependency>
@@ -189,196 +324,66 @@
       <artifactId>hop-databases-oracle</artifactId>
       <version>${hop.version}</version>
       <scope>test</scope>
-      <exclusions><exclusion><groupId>javax.ws.rs</groupId><artifactId>jsr311-api</artifactId></exclusion></exclusions>
+      <exclusions>
+        <exclusion>
+          <groupId>javax.ws.rs</groupId>
+          <artifactId>jsr311-api</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>org.apache.hop</groupId>
       <artifactId>hop-databases-mysql</artifactId>
       <version>${hop.version}</version>
       <scope>test</scope>
-      <exclusions><exclusion><groupId>javax.ws.rs</groupId><artifactId>jsr311-api</artifactId></exclusion></exclusions>
+      <exclusions>
+        <exclusion>
+          <groupId>javax.ws.rs</groupId>
+          <artifactId>jsr311-api</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+
+
+    <!-- Jetty server
+      -->
+    <dependency>
+      <groupId>org.eclipse.jetty</groupId>
+      <artifactId>jetty-server</artifactId>
+      <version>9.4.24.v20191120</version>
+    </dependency>
+    <dependency>
+      <groupId>org.eclipse.jetty</groupId>
+      <artifactId>jetty-servlet</artifactId>
+      <version>9.4.22.v20191022</version>
+    </dependency>
+    <dependency>
+      <groupId>org.glassfish.jersey.core</groupId>
+      <artifactId>jersey-server</artifactId>
+      <version>2.22.2</version>
+    </dependency>
+    <dependency>
+      <groupId>org.glassfish.jersey.containers</groupId>
+      <artifactId>jersey-container-servlet-core</artifactId>
+      <version>2.22.2</version>
+    </dependency>
+    <dependency>
+      <groupId>org.glassfish.jersey.containers</groupId>
+      <artifactId>jersey-container-jetty-http</artifactId>
+      <version>2.22.2</version>
+    </dependency>
+    <dependency>
+      <groupId>org.glassfish.jersey.media</groupId>
+      <artifactId>jersey-media-moxy</artifactId>
+      <version>2.22.2</version>
+    </dependency>
+
+    <dependency>
+      <groupId>javax.servlet</groupId>
+      <artifactId>javax.servlet-api</artifactId>
+      <version>4.0.1</version>
     </dependency>
 
   </dependencies>
-
-
-  <build>
-    <defaultGoal>install</defaultGoal>
-
-
-    <sourceDirectory>src/main/java</sourceDirectory>
-
-    <resources>
-      <resource>
-        <directory>src/main/resources</directory>
-        <includes>
-          <include>**/*.properties</include>
-          <include>**/*.xul</include>
-          <include>**/*.xml</include>
-          <include>**/*.svg</include>
-        </includes>
-      </resource>
-
-      <resource>
-        <directory>src/main/java</directory>
-        <includes>
-          <include>**/*.properties</include>
-          <include>**/*.xul</include>
-          <include>**/*.xml</include>
-          <include>**/*.svg</include>
-        </includes>
-      </resource>
-
-    </resources>
-
-    <testSourceDirectory>src/test/java</testSourceDirectory>
-    <testResources>
-      <testResource>
-        <directory>src/test/resources</directory>
-      </testResource>
-      <testResource>
-        <directory>src/resources</directory>
-      </testResource>
-    </testResources>
-
-    <plugins>
-      <plugin>
-        <artifactId>maven-dependency-plugin</artifactId>
-        <executions>
-          <execution>
-            <phase>install</phase>
-            <goals>
-              <goal>copy-dependencies</goal>
-            </goals>
-            <configuration>
-              <outputDirectory>${project.build.directory}/lib</outputDirectory>
-              <excludeScope>provided</excludeScope>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-
-      <plugin>
-        <groupId>org.jboss.jandex</groupId>
-        <artifactId>jandex-maven-plugin</artifactId>
-        <version>${jandex-maven-plugin.version}</version>
-        <executions>
-          <execution>
-            <id>make-index</id>
-            <goals>
-              <goal>jandex</goal>
-            </goals>
-            <configuration>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-<!--
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-resources-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>default-copy-resources</id>
-            <phase>process-resources</phase>
-            <goals>
-              <goal>copy-resources</goal>
-            </goals>
-            <configuration>
-              <overwrite>true</overwrite>
-              <outputDirectory>${project.build.directory}/${project.artifactId}-${project.version}/WEB-INF/</outputDirectory>
-              <resources>
-                <resource>
-                  <directory>${project.basedir}/src/resources</directory>
-                </resource>
-              </resources>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-war-plugin</artifactId>
-        <version>3.2.0</version>
-        <configuration>
-          <webResources>
-            <resource>
-              <filtering>true</filtering>
-              <directory>src/main/webapp</directory>
-              <includes>
-                <include>**/web.xml</include>
-              </includes>
-            </resource>
-          </webResources>
-          <warSourceDirectory>src/main/webapp</warSourceDirectory>
-          <webXml>src/main/webapp/WEB-INF/web.xml</webXml>
-        </configuration>
-      </plugin>
-
-    -->
-
-    </plugins>
-  </build>
-
-  <dependencyManagement>
-    <dependencies>
-      <dependency>
-        <groupId>org.apache.hop</groupId>
-        <artifactId>hop-core</artifactId>
-        <version>${hop.version}</version>
-        <exclusions><exclusion><groupId>javax.ws.rs</groupId><artifactId>jsr311-api</artifactId></exclusion></exclusions>
-      </dependency>
-
-      <dependency>
-        <groupId>org.apache.hop</groupId>
-        <artifactId>hop-databases-h2</artifactId>
-        <version>${hop.version}</version>
-        <scope>test</scope>
-        <exclusions><exclusion><groupId>javax.ws.rs</groupId><artifactId>jsr311-api</artifactId></exclusion></exclusions>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.hop</groupId>
-        <artifactId>hop-databases-oracle</artifactId>
-        <version>${hop.version}</version>
-        <scope>test</scope>
-        <exclusions><exclusion><groupId>javax.ws.rs</groupId><artifactId>jsr311-api</artifactId></exclusion></exclusions>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.hop</groupId>
-        <artifactId>hop-databases-mysql</artifactId>
-        <version>${hop.version}</version>
-        <scope>test</scope>
-        <exclusions><exclusion><groupId>javax.ws.rs</groupId><artifactId>jsr311-api</artifactId></exclusion></exclusions>
-      </dependency>
-
-
-      <dependency>
-        <groupId>org.apache.commons</groupId>
-        <artifactId>commons-math3</artifactId>
-        <version>3.6.1</version>
-      </dependency>
-
-      <dependency>
-        <groupId>junit</groupId>
-        <artifactId>junit</artifactId>
-        <version>${junit.version}</version>
-        <scope>test</scope>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.hop</groupId>
-        <artifactId>hop-databases-h2</artifactId>
-        <version>${hop.version}</version>
-        <scope>test</scope>
-      </dependency>
-      <dependency>
-        <groupId>com.h2database</groupId>
-        <artifactId>h2</artifactId>
-        <version>1.4.197</version>
-        <scope>test</scope>
-        <exclusions><exclusion><groupId>javax.ws.rs</groupId><artifactId>jsr311-api</artifactId></exclusion></exclusions>
-      </dependency>
-    </dependencies>
-  </dependencyManagement>
 
 </project>
