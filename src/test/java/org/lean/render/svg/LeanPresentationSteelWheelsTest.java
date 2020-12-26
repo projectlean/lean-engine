@@ -48,7 +48,6 @@ public class LeanPresentationSteelWheelsTest extends LeanPresentationTestBase {
           presentation.setDefaultThemeName( Constants.DEFAULT_THEME_NAME );
         }
 
-        System.out.println( "Rendering: " + file.toString() );
         testRendering( presentation, baseFilename );
 
       } catch ( Exception e ) {

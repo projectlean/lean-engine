@@ -36,6 +36,7 @@ import javax.ws.rs.core.MediaType;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 
 @HopServerServlet(id = "pipelineImage", name = "Generate a PNG image of a pipeline")
 public class GetPresentationDrawnItemServlet extends HttpServlet {
@@ -69,7 +70,13 @@ public class GetPresentationDrawnItemServlet extends HttpServlet {
 
       LeanRenderPage leanRenderPage = results.getRenderPages().get(0); // page 0 to test
 
-      DrawnItem drawnItem = leanRenderPage.lookupDrawnItem(x, y);
+      DrawnItem drawnItem = leanRenderPage.lookupDrawnItem(x, y, true);
+      if  (drawnItem==null) {
+        drawnItem = leanRenderPage.lookupDrawnItem(x, y, false);
+      }
+      if (drawnItem!=null && drawnItem.getComponentName().equals("LineChart")) {
+        leanRenderPage.lookupDrawnItem(x, y, true);
+      }
 
       String message = "-";
       if (drawnItem != null) {
@@ -78,7 +85,7 @@ public class GetPresentationDrawnItemServlet extends HttpServlet {
 
       svgStream = new ByteArrayOutputStream();
       try {
-        svgStream.write(message.getBytes("UTF-8"));
+        svgStream.write(message.getBytes( StandardCharsets.UTF_8 ));
       } finally {
         svgStream.flush();
       }

@@ -14,8 +14,10 @@ import org.lean.core.LeanColorRGB;
 import org.lean.core.LeanColumn;
 import org.lean.core.LeanFont;
 import org.lean.core.LeanGeometry;
+import org.lean.core.LeanPosition;
 import org.lean.core.LeanSize;
 import org.lean.core.LeanTextGeometry;
+import org.lean.core.draw.DrawnItem.DrawnItemType;
 import org.lean.core.exception.LeanException;
 import org.lean.presentation.LeanComponentLayoutResult;
 import org.lean.presentation.LeanPresentation;
@@ -306,11 +308,9 @@ public class LeanTableComponent extends LeanBaseComponent implements ILeanCompon
     results.addComponentGeometry( component.getName(), partGeometry );
 
     renderPage.getLayoutResults().add( result );
-
-    renderPage.addDrawnItem( component.getName(), partNumber, "ComponentPart", null, 0, 0, partGeometry );
   }
 
-  @Override public void render( LeanComponentLayoutResult layoutResult, LeanLayoutResults results, IRenderContext renderContext ) throws LeanException {
+  @Override public void render( LeanComponentLayoutResult layoutResult, LeanLayoutResults results, IRenderContext renderContext, LeanPosition offSet ) throws LeanException {
 
     LeanComponent component = layoutResult.getComponent();
     LeanGeometry componentGeometry = layoutResult.getGeometry();

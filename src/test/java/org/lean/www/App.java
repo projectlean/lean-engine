@@ -4,11 +4,13 @@ import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.ContextHandlerCollection;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
+import org.junit.Ignore;
 import org.lean.core.LeanEnvironment;
 import org.lean.www.servlets.GetPresentationDrawnItemServlet;
 import org.lean.www.servlets.GetPresentationSvgServlet;
 import org.lean.www.servlets.RootServlet;
 
+@Ignore
 public class App {
   public static void main(String[] args) throws Exception {
     // Boot up Lean...

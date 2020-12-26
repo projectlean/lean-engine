@@ -2,7 +2,7 @@
 <H1>Lean Presentation Viewer</H1>
 <p>
 
-<p id="info" >Mouse over the presentation to see info about the drawn items</p>
+<p id="info" style="width: 100%;height: 50px">Mouse over the presentation to see info about the drawn items</p>
 <div style="border:2px solid gray;background: white">
 
   <img id="presentation" src="/lean/presentationSvg">
@@ -26,6 +26,7 @@
     if (!infoShown) {
       infoShown = true;
       info.innerText = message;
+      document.body.style.cursor = "pointer";
     }
   }
   presentation.onmousemove = event=> {
@@ -37,6 +38,7 @@
   presentation.onmouseout = event=> {
     if (infoShown) {
       infoShown = false;
+      document.body.style.cursor = "auto";
     }
   }
 

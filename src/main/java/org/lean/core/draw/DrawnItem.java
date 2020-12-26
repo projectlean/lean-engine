@@ -4,32 +4,54 @@ import org.lean.core.LeanGeometry;
 
 import java.util.Objects;
 
+// TODO: support Rotation of a drawn item, push up LeanGeometry.contains()
+//
 public class DrawnItem {
 
   private String componentName;
+  private String componentPluginId;
   private int partNumber;
-  private String type;
-  private String name;
+  private DrawnItemType type;
+  private String category;
   private int rowNr;
   private int colNr;
   private LeanGeometry geometry;
   private DrawnContext context;
 
+  public enum DrawnItemType {
+    Component,
+    ComponentItem,
+  }
+
+  public enum Category {
+    ComponentArea,
+    Label,
+    Cell,
+    Header,
+    Title,
+    LegendTitle,
+    LegendEntry,
+    XAxisLabel,
+    YAxisLabel,
+  }
+
   public DrawnItem() {}
 
   public DrawnItem(
       String componentName,
+      String componentPluginId,
       int partNumber,
-      String type,
-      String name,
+      DrawnItemType type,
+      String category,
       int rowNr,
       int colNr,
       LeanGeometry geometry,
       DrawnContext context) {
     this.componentName = componentName;
+    this.componentPluginId = componentPluginId;
     this.partNumber = partNumber;
     this.type = type;
-    this.name = name;
+    this.category = category;
     this.rowNr = rowNr;
     this.colNr = colNr;
     this.geometry = geometry;
@@ -38,13 +60,15 @@ public class DrawnItem {
 
   public DrawnItem(
       String componentName,
+      String componentPluginId,
       int partNumber,
-      String type,
-      String name,
+      DrawnItemType type,
+      String category,
       int rowNr,
       int colNr,
       LeanGeometry geometry) {
-    this(componentName, partNumber, type, name, rowNr, colNr, geometry, null);
+    this(
+        componentName, componentPluginId, partNumber, type, category, rowNr, colNr, geometry, null);
   }
 
   @Override
@@ -54,13 +78,15 @@ public class DrawnItem {
             + "componentName='"
             + componentName
             + '\''
+            + ", componentPluginId='"
+            + componentPluginId
+            + '\''
             + ", partNumber="
             + partNumber
-            + ", type='"
-            + type
-            + '\''
-            + ", name='"
-            + name
+            + ", type="
+            + type.name()
+            + ", category='"
+            + category
             + '\''
             + ", rowNr="
             + rowNr
@@ -77,27 +103,20 @@ public class DrawnItem {
     return string;
   }
 
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) {
+  @Override public boolean equals( Object o ) {
+    if ( this == o ) {
       return true;
     }
-    if (o == null || getClass() != o.getClass()) {
+    if ( o == null || getClass() != o.getClass() ) {
       return false;
     }
-    DrawnItem drawItem = (DrawnItem) o;
-    return partNumber == drawItem.partNumber
-        && rowNr == drawItem.rowNr
-        && colNr == drawItem.colNr
-        && Objects.equals(componentName, drawItem.componentName)
-        && Objects.equals(type, drawItem.type)
-        && Objects.equals(name, drawItem.name)
-        && Objects.equals(geometry, drawItem.geometry);
+    DrawnItem drawnItem = (DrawnItem) o;
+    return partNumber == drawnItem.partNumber && rowNr == drawnItem.rowNr && colNr == drawnItem.colNr && Objects.equals( componentName, drawnItem.componentName ) && Objects
+      .equals( componentPluginId, drawnItem.componentPluginId ) && type == drawnItem.type && Objects.equals( category, drawnItem.category );
   }
 
-  @Override
-  public int hashCode() {
-    return Objects.hash(componentName, partNumber, type, name, rowNr, colNr, geometry);
+  @Override public int hashCode() {
+    return Objects.hash( componentName, componentPluginId, partNumber, type, category, rowNr, colNr );
   }
 
   /**
@@ -112,6 +131,20 @@ public class DrawnItem {
   /** @param componentName The componentName to set */
   public void setComponentName(String componentName) {
     this.componentName = componentName;
+  }
+
+  /**
+   * Gets componentPluginId
+   *
+   * @return value of componentPluginId
+   */
+  public String getComponentPluginId() {
+    return componentPluginId;
+  }
+
+  /** @param componentPluginId The componentPluginId to set */
+  public void setComponentPluginId(String componentPluginId) {
+    this.componentPluginId = componentPluginId;
   }
 
   /**
@@ -133,27 +166,29 @@ public class DrawnItem {
    *
    * @return value of type
    */
-  public String getType() {
+  public DrawnItemType getType() {
     return type;
   }
 
   /** @param type The type to set */
-  public void setType(String type) {
+  public void setType(DrawnItemType type) {
     this.type = type;
   }
 
   /**
-   * Gets name
+   * Gets category
    *
-   * @return value of name
+   * @return value of category
    */
-  public String getName() {
-    return name;
+  public String getCategory() {
+    return category;
   }
 
-  /** @param name The name to set */
-  public void setName(String name) {
-    this.name = name;
+  /**
+   * @param category The category to set
+   */
+  public void setCategory( String category ) {
+    this.category = category;
   }
 
   /**

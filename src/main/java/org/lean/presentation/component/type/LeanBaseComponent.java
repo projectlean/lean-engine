@@ -11,6 +11,7 @@ import org.lean.core.LeanAttachment;
 import org.lean.core.LeanColorRGB;
 import org.lean.core.LeanFont;
 import org.lean.core.LeanGeometry;
+import org.lean.core.LeanPosition;
 import org.lean.core.LeanSize;
 import org.lean.core.LeanTextGeometry;
 import org.lean.core.exception.LeanException;
@@ -484,7 +485,7 @@ public abstract class LeanBaseComponent implements ILeanComponent {
    * Finally...
    * Render the component using the layout results after having done the layout.
    */
-  abstract public void render( LeanComponentLayoutResult layoutResult, LeanLayoutResults results, IRenderContext renderContext ) throws LeanException;
+  abstract public void render( LeanComponentLayoutResult layoutResult, LeanLayoutResults results, IRenderContext renderContext, LeanPosition offSet ) throws LeanException;
 
   protected Font createFont( LeanFont leanFont ) {
     int size = 10;

@@ -36,6 +36,14 @@ public class LeanGeometry implements Cloneable {
     this.height = height;
   }
 
+  public LeanGeometry( LeanGeometry componentGeometry ) {
+    this();
+    this.x = componentGeometry.x;
+    this.y = componentGeometry.y;
+    this.width = componentGeometry.width;
+    this.height = componentGeometry.height;
+  }
+
   @Override public boolean equals( Object o ) {
     if ( this == o ) {
       return true;
@@ -86,6 +94,15 @@ public class LeanGeometry implements Cloneable {
       width = g.width;
       height= g.height;
     }
+  }
+
+  public void translate( int translateX, int translateY ) {
+    x+=translateX;
+    y+=translateY;
+  }
+
+  public void translate(LeanPosition offSet) {
+    translate( offSet.getX(), offSet.getY() );
   }
 
   @Override

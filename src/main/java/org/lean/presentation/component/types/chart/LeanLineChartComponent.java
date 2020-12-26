@@ -11,7 +11,10 @@ import org.apache.hop.core.row.IValueMeta;
 import org.apache.hop.metadata.api.HopMetadataProperty;
 import org.lean.core.LeanColorRGB;
 import org.lean.core.LeanGeometry;
+import org.lean.core.LeanPosition;
 import org.lean.core.LeanTextGeometry;
+import org.lean.core.draw.DrawnContext;
+import org.lean.core.draw.DrawnItem;
 import org.lean.core.exception.LeanException;
 import org.lean.presentation.LeanComponentLayoutResult;
 import org.lean.presentation.component.LeanComponent;
@@ -55,10 +58,11 @@ public class LeanLineChartComponent extends LeanBaseChartComponent implements IL
     return new LeanLineChartComponent( this );
   }
 
-  @Override public void render( LeanComponentLayoutResult layoutResult, LeanLayoutResults results, IRenderContext renderContext ) throws LeanException {
+  @Override public void render( LeanComponentLayoutResult layoutResult, LeanLayoutResults results, IRenderContext renderContext, LeanPosition offSet ) throws LeanException {
     LeanGeometry componentGeometry = layoutResult.getGeometry();
     LeanComponent component = layoutResult.getComponent();
     SVGGraphics2D gc = layoutResult.getRenderPage().getGc();
+    List<DrawnItem> drawnItems = layoutResult.getRenderPage().getDrawnItems();
 
     LeanTheme theme = renderContext.lookupTheme( themeName );
 
@@ -88,6 +92,19 @@ public class LeanLineChartComponent extends LeanBaseChartComponent implements IL
       enableColor( gc, lookupTitleColor( renderContext ) );
       enableFont( gc, lookupTitleFont( renderContext ) );
       gc.drawString( titleText, titleX, titleY );
+
+      drawnItems.add(
+          new DrawnItem(
+              component.getName(),
+              component.getComponent().getPluginId(),
+              layoutResult.getPartNumber(),
+              DrawnItem.DrawnItemType.ComponentItem,
+              DrawnItem.Category.Title.name(),
+            0,
+            0,
+            new LeanGeometry(offSet.getX()+titleX, offSet.getY()+titleY-details.titleGeometry.getHeight(), details.titleGeometry.getWidth(), details.titleGeometry.getHeight()),
+            new DrawnContext(titleText)
+          ));
     }
 
 

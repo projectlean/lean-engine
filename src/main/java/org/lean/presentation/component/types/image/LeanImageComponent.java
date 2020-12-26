@@ -6,6 +6,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.hop.core.Const;
 import org.apache.hop.metadata.api.HopMetadataProperty;
 import org.lean.core.LeanGeometry;
+import org.lean.core.LeanPosition;
 import org.lean.core.LeanSize;
 import org.lean.core.exception.LeanException;
 import org.lean.presentation.LeanComponentLayoutResult;
@@ -103,7 +104,7 @@ public class LeanImageComponent extends LeanBaseComponent implements ILeanCompon
     return details.imageSize;
   }
 
-  public void render( LeanComponentLayoutResult layoutResult, LeanLayoutResults results, IRenderContext renderContext ) throws LeanException {
+  public void render( LeanComponentLayoutResult layoutResult, LeanLayoutResults results, IRenderContext renderContext, LeanPosition offSet ) throws LeanException {
 
     LeanGeometry componentGeometry = layoutResult.getGeometry();
     LeanComponent component = layoutResult.getComponent();

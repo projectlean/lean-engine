@@ -6,6 +6,7 @@ import org.apache.hop.metadata.api.HopMetadataProperty;
 import org.lean.core.LeanAttachment;
 import org.lean.core.LeanColumn;
 import org.lean.core.LeanGeometry;
+import org.lean.core.LeanPosition;
 import org.lean.core.LeanSize;
 import org.lean.core.LeanSortMethod;
 import org.lean.core.exception.LeanException;
@@ -51,7 +52,7 @@ import java.util.List;
  * @see ILeanComponent#doLayout(LeanPresentation, LeanPage, LeanComponent, IDataContext, IRenderContext, LeanLayoutResults)
  * <p>
  * Finally, we render all what we've calculated looping once again over the groups.
- * @see ILeanComponent#render(LeanComponentLayoutResult, LeanLayoutResults, IRenderContext)
+ * @see ILeanComponent#render(LeanComponentLayoutResult, LeanLayoutResults, IRenderContext, LeanPosition)
  */
 @JsonDeserialize( as = LeanGroupComponent.class )
 @LeanComponentPlugin(
@@ -309,7 +310,7 @@ public class LeanGroupComponent extends LeanBaseComponent implements ILeanCompon
 
 
   @Override
-  public void render( LeanComponentLayoutResult layoutResult, LeanLayoutResults results, IRenderContext renderContext ) throws LeanException {
+  public void render( LeanComponentLayoutResult layoutResult, LeanLayoutResults results, IRenderContext renderContext, LeanPosition offSet ) throws LeanException {
 
     LeanComponent component = layoutResult.getComponent();
     LeanGeometry componentGeometry = layoutResult.getGeometry();
@@ -341,7 +342,7 @@ public class LeanGroupComponent extends LeanBaseComponent implements ILeanCompon
 
       // Render the group component on the parent
       //
-      groupComponent.getComponent().render( layoutResult, results, renderContext );
+      groupComponent.getComponent().render( layoutResult, results, renderContext, offSet);
     }
 
 
