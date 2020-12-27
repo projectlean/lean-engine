@@ -1,7 +1,6 @@
 package org.lean.www;
 
 import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.server.handler.ContextHandlerCollection;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.junit.Ignore;
@@ -19,7 +18,8 @@ public class App {
 
     // Root contexts
     //
-    ServletContextHandler contextHandler = new ServletContextHandler( ServletContextHandler.SESSIONS);
+    ServletContextHandler contextHandler =
+        new ServletContextHandler(ServletContextHandler.SESSIONS);
 
     // Add the contextHandler servlet
     //
@@ -27,11 +27,14 @@ public class App {
     contextHandler.addServlet(new ServletHolder(rootServlet), RootServlet.CONTEXT_PATH);
 
     GetPresentationSvgServlet getPresentationSvgServlet = new GetPresentationSvgServlet();
-    contextHandler.addServlet(new ServletHolder(getPresentationSvgServlet), GetPresentationSvgServlet.CONTEXT_PATH);
+    contextHandler.addServlet(
+        new ServletHolder(getPresentationSvgServlet), GetPresentationSvgServlet.CONTEXT_PATH);
 
-    GetPresentationDrawnItemServlet getPresentationDrawnItemServlet = new GetPresentationDrawnItemServlet();
-    contextHandler.addServlet(new ServletHolder(getPresentationDrawnItemServlet), GetPresentationDrawnItemServlet.CONTEXT_PATH);
-
+    GetPresentationDrawnItemServlet getPresentationDrawnItemServlet =
+        new GetPresentationDrawnItemServlet();
+    contextHandler.addServlet(
+        new ServletHolder(getPresentationDrawnItemServlet),
+        GetPresentationDrawnItemServlet.CONTEXT_PATH);
 
     Server jettyServer = new Server(8080);
     jettyServer.setHandler(contextHandler);
