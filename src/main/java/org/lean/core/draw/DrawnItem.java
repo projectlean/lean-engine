@@ -1,5 +1,7 @@
 package org.lean.core.draw;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.lean.core.LeanGeometry;
 
 import java.util.Objects;
@@ -33,6 +35,8 @@ public class DrawnItem {
     LegendEntry,
     XAxisLabel,
     YAxisLabel,
+    ChartSeriesLabel,
+    ChartLabel,
   }
 
   public DrawnItem() {}
@@ -117,6 +121,11 @@ public class DrawnItem {
 
   @Override public int hashCode() {
     return Objects.hash( componentName, componentPluginId, partNumber, type, category, rowNr, colNr );
+  }
+
+  public String toJsonString() throws JsonProcessingException {
+    ObjectMapper objectMapper = new ObjectMapper();
+    return objectMapper.writeValueAsString( this );
   }
 
   /**

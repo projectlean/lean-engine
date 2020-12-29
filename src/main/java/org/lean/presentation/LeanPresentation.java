@@ -29,6 +29,8 @@ import org.lean.presentation.connector.LeanConnector;
 import org.lean.presentation.datacontext.IDataContext;
 import org.lean.presentation.datacontext.PresentationDataContext;
 import org.lean.presentation.datacontext.RenderPageDataContext;
+import org.lean.presentation.interaction.LeanInteraction;
+import org.lean.presentation.interaction.LeanInteractionMethod;
 import org.lean.presentation.layout.LeanLayoutResults;
 import org.lean.presentation.layout.LeanRenderPage;
 import org.lean.presentation.page.LeanPage;
@@ -74,10 +76,14 @@ public class LeanPresentation extends HopMetadataBase implements IHasIdentity, I
   @HopMetadataProperty( storeWithName = true )
   private List<LeanConnector> connectors;
 
+  @HopMetadataProperty
+  private List<LeanInteraction> interactions;
+
   public LeanPresentation() {
     pages = new ArrayList<>();
     connectors = new ArrayList<>();
     themes = new ArrayList<>();
+    interactions = new ArrayList<>();
   }
 
   /**
@@ -86,21 +92,22 @@ public class LeanPresentation extends HopMetadataBase implements IHasIdentity, I
    * @param p
    */
   public LeanPresentation( LeanPresentation p ) {
+    this();
     this.name = p.name;
     this.description = p.description;
     this.header = p.header == null ? null : new LeanPage( p.header );
     this.footer = p.footer == null ? null : new LeanPage( p.footer );
-    this.pages = new ArrayList<>();
     for ( LeanPage page : p.pages ) {
       this.pages.add( new LeanPage( page ) );
     }
-    this.connectors = new ArrayList<>();
     for ( LeanConnector c : p.connectors ) {
       this.connectors.add( new LeanConnector( c ) );
     }
-    this.themes = new ArrayList<>();
     for ( LeanTheme t : p.themes ) {
       this.themes.add( new LeanTheme( t ) );
+    }
+    for (LeanInteraction interaction : interactions) {
+      this.interactions.add( new LeanInteraction(interaction));
     }
   }
 
@@ -478,6 +485,24 @@ public class LeanPresentation extends HopMetadataBase implements IHasIdentity, I
   }
 
   /**
+   * Find the given interaction for the drawn item.
+   * Look in the list of defined interactions for this presentation to see what needs to happen to the particular drawn item.
+   * We assumed it's something
+   *
+   * @param drawnItem
+   * @return
+   */
+  public LeanInteraction findInteraction( LeanInteractionMethod method, DrawnItem drawnItem ) {
+    for (LeanInteraction interaction : interactions) {
+      if (interaction.matches(method, drawnItem)) {
+        return interaction;
+      }
+    }
+    return null;
+  }
+
+
+  /**
    * @return the description
    */
   public String getDescription() {
@@ -584,4 +609,21 @@ public class LeanPresentation extends HopMetadataBase implements IHasIdentity, I
   public void setDefaultThemeName( String defaultThemeName ) {
     this.defaultThemeName = defaultThemeName;
   }
+
+  /**
+   * Gets interactions
+   *
+   * @return value of interactions
+   */
+  public List<LeanInteraction> getInteractions() {
+    return interactions;
+  }
+
+  /**
+   * @param interactions The interactions to set
+   */
+  public void setInteractions( List<LeanInteraction> interactions ) {
+    this.interactions = interactions;
+  }
+
 }

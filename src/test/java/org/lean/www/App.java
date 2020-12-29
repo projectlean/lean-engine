@@ -5,7 +5,7 @@ import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.junit.Ignore;
 import org.lean.core.LeanEnvironment;
-import org.lean.www.servlets.GetPresentationDrawnItemServlet;
+import org.lean.www.servlets.GetPresentationDrawnInfoServlet;
 import org.lean.www.servlets.GetPresentationSvgServlet;
 import org.lean.www.servlets.RootServlet;
 
@@ -30,11 +30,11 @@ public class App {
     contextHandler.addServlet(
         new ServletHolder(getPresentationSvgServlet), GetPresentationSvgServlet.CONTEXT_PATH);
 
-    GetPresentationDrawnItemServlet getPresentationDrawnItemServlet =
-        new GetPresentationDrawnItemServlet();
+    GetPresentationDrawnInfoServlet getPresentationDrawnInfoServlet =
+        new GetPresentationDrawnInfoServlet();
     contextHandler.addServlet(
-        new ServletHolder(getPresentationDrawnItemServlet),
-        GetPresentationDrawnItemServlet.CONTEXT_PATH);
+        new ServletHolder( getPresentationDrawnInfoServlet ),
+        GetPresentationDrawnInfoServlet.CONTEXT_PATH);
 
     Server jettyServer = new Server(8080);
     jettyServer.setHandler(contextHandler);

@@ -13,26 +13,23 @@
   let info = document.getElementById('info');
   let infoShown = false;
   presentation.addEventListener("click", event => {
-    getDrawnItemMessage(event.offsetX, event.offsetY);
+    getDrawnInfo(event.offsetX, event.offsetY);
   }, true);
 
-  let message = "-";
-
-  presentation.onload = () => {
-    callREST();
-  }
+  let drawnInfo = {};
 
   presentation.onmouseover = event=> {
     if (!infoShown) {
       infoShown = true;
-      info.innerText = message;
-      document.body.style.cursor = "pointer";
+      info.innerText = JSON.stringify(drawnInfo);
+      setMouseCursor();
     }
   }
   presentation.onmousemove = event=> {
     if (infoShown) {
-      getDrawnItemMessage(event.offsetX, event.offsetY);
-      info.innerText = message;
+      getDrawnInfo(event.offsetX, event.offsetY);
+      info.innerText = JSON.stringify(drawnInfo);
+      setMouseCursor();
     }
   }
   presentation.onmouseout = event=> {
@@ -41,16 +38,31 @@
       document.body.style.cursor = "auto";
     }
   }
+  presentation.onclick = event=> {
+    if (drawnInfo.action!=null) {
+      alert("Clicked on: "+drawnInfo.drawnItem.context.value+".  Action to take: "+drawnInfo.action.actionType+" on object: "+drawnInfo.action.objectName);
+    }
+  }
 
-  function getDrawnItemMessage(x, y) {
+  function getDrawnInfo(x, y) {
     var xhr = new XMLHttpRequest();
     xhr.onload = () => {
       if (xhr.status == 200) {
-        message = xhr.response;
+        drawnInfo = JSON.parse(xhr.response);
+      } else {
+        drawnInfo = {};
       }
     };
-    xhr.open("GET", "/lean/presentationDrawnItem?x=" + x + "&y=" + y, true);
+    xhr.open("GET", "/lean/presentationDrawnInfo?x=" + x + "&y=" + y, true);
     xhr.send(null);
+  }
+
+  function setMouseCursor() {
+    if (drawnInfo.action!=null) {
+      document.body.style.cursor = "pointer";
+    } else {
+      document.body.style.cursor = "auto";
+    }
   }
 </script>
 </p>

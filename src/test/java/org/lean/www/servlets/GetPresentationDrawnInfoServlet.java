@@ -25,9 +25,13 @@ import org.apache.hop.metadata.api.IHopMetadataProvider;
 import org.apache.hop.metadata.serializer.memory.MemoryMetadataProvider;
 import org.lean.core.draw.DrawnItem;
 import org.lean.presentation.LeanPresentation;
+import org.lean.presentation.interaction.LeanInteraction;
+import org.lean.presentation.interaction.LeanInteractionAction;
+import org.lean.presentation.interaction.LeanInteractionMethod;
 import org.lean.presentation.layout.LeanLayoutResults;
 import org.lean.presentation.layout.LeanRenderPage;
 import org.lean.util.ComboPresentationUtil;
+import org.lean.www.DrawInfo;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -38,10 +42,9 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 
-@HopServerServlet(id = "pipelineImage", name = "Generate a PNG image of a pipeline")
-public class GetPresentationDrawnItemServlet extends HttpServlet {
+public class GetPresentationDrawnInfoServlet extends HttpServlet {
 
-  public static final String CONTEXT_PATH = "/lean/presentationDrawnItem";
+  public static final String CONTEXT_PATH = "/lean/presentationDrawnInfo";
 
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     if (!request.getServletPath().startsWith(CONTEXT_PATH)) {
@@ -56,7 +59,7 @@ public class GetPresentationDrawnItemServlet extends HttpServlet {
       response.setStatus(HttpServletResponse.SC_OK);
 
       response.setCharacterEncoding("UTF-8");
-      response.setContentType(MediaType.TEXT_PLAIN);
+      response.setContentType(MediaType.APPLICATION_JSON);
 
       IHopMetadataProvider metadataProvider = new MemoryMetadataProvider();
       ILoggingObject parent = new LoggingObject("GetPresentationSvgServlet");
@@ -74,18 +77,26 @@ public class GetPresentationDrawnItemServlet extends HttpServlet {
       if  (drawnItem==null) {
         drawnItem = leanRenderPage.lookupDrawnItem(x, y, false);
       }
-      if (drawnItem!=null && drawnItem.getComponentName().equals("LineChart")) {
-        leanRenderPage.lookupDrawnItem(x, y, true);
+
+      DrawInfo drawInfo = new DrawInfo();
+
+      if (drawnItem!=null) {
+        drawInfo.setDrawnItem( drawnItem );
+
+        // TODO: receive method from JS code
+        //
+        LeanInteractionMethod method = new LeanInteractionMethod( true, false );
+        LeanInteraction interaction = presentation.findInteraction(method, drawnItem);
+        if (interaction!=null) {
+          LeanInteractionAction action = interaction.getAction();
+          drawInfo.setAction( action );
+        }
       }
 
-      String message = "-";
-      if (drawnItem != null) {
-        message = drawnItem.toString();
-      }
-
+      String json = drawInfo.toJsonString();
       svgStream = new ByteArrayOutputStream();
       try {
-        svgStream.write(message.getBytes( StandardCharsets.UTF_8 ));
+        svgStream.write(json.getBytes( StandardCharsets.UTF_8 ));
       } finally {
         svgStream.flush();
       }
