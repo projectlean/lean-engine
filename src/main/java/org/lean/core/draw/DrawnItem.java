@@ -1,36 +1,110 @@
 package org.lean.core.draw;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.lean.core.LeanGeometry;
 
 import java.util.Objects;
 
+// TODO: support Rotation of a drawn item, push up LeanGeometry.contains()
+//
 public class DrawnItem {
 
   private String componentName;
+  private String componentPluginId;
   private int partNumber;
-  private String type;
-  private String name;
+  private DrawnItemType type;
+  private String category;
   private int rowNr;
   private int colNr;
   private LeanGeometry geometry;
   private DrawnContext context;
 
-  public DrawnItem() {
+  public enum DrawnItemType {
+    Component,
+    ComponentItem,
   }
 
-  public DrawnItem( String componentName, int partNumber, String type, String name, int rowNr, int colNr, LeanGeometry geometry, DrawnContext context ) {
+  public enum Category {
+    ComponentArea,
+    Label,
+    Cell,
+    Header,
+    Title,
+    LegendTitle,
+    LegendEntry,
+    XAxisLabel,
+    YAxisLabel,
+    ChartSeriesLabel,
+    ChartLabel,
+  }
+
+  public DrawnItem() {}
+
+  public DrawnItem(
+      String componentName,
+      String componentPluginId,
+      int partNumber,
+      DrawnItemType type,
+      String category,
+      int rowNr,
+      int colNr,
+      LeanGeometry geometry,
+      DrawnContext context) {
     this.componentName = componentName;
+    this.componentPluginId = componentPluginId;
     this.partNumber = partNumber;
     this.type = type;
-    this.name = name;
+    this.category = category;
     this.rowNr = rowNr;
     this.colNr = colNr;
     this.geometry = geometry;
     this.context = context;
   }
 
-  public DrawnItem( String componentName, int partNumber, String type, String name, int rowNr, int colNr, LeanGeometry geometry ) {
-    this(componentName, partNumber, type, name, rowNr, colNr, geometry, null);
+  public DrawnItem(
+      String componentName,
+      String componentPluginId,
+      int partNumber,
+      DrawnItemType type,
+      String category,
+      int rowNr,
+      int colNr,
+      LeanGeometry geometry) {
+    this(
+        componentName, componentPluginId, partNumber, type, category, rowNr, colNr, geometry, null);
+  }
+
+  @Override
+  public String toString() {
+    String string =
+        "DrawnItem{"
+            + "componentName='"
+            + componentName
+            + '\''
+            + ", componentPluginId='"
+            + componentPluginId
+            + '\''
+            + ", partNumber="
+            + partNumber
+            + ", type="
+            + type.name()
+            + ", category='"
+            + category
+            + '\''
+            + ", rowNr="
+            + rowNr
+            + ", colNr="
+            + colNr
+            + ", geometry="
+            + geometry;
+
+    if (context != null) {
+      string += ", context=" + context;
+    }
+    string += '}';
+
+    return string;
   }
 
   @Override public boolean equals( Object o ) {
@@ -40,18 +114,18 @@ public class DrawnItem {
     if ( o == null || getClass() != o.getClass() ) {
       return false;
     }
-    DrawnItem drawItem = (DrawnItem) o;
-    return partNumber == drawItem.partNumber &&
-      rowNr == drawItem.rowNr &&
-      colNr == drawItem.colNr &&
-      Objects.equals( componentName, drawItem.componentName ) &&
-      Objects.equals( type, drawItem.type ) &&
-      Objects.equals( name, drawItem.name ) &&
-      Objects.equals( geometry, drawItem.geometry );
+    DrawnItem drawnItem = (DrawnItem) o;
+    return partNumber == drawnItem.partNumber && rowNr == drawnItem.rowNr && colNr == drawnItem.colNr && Objects.equals( componentName, drawnItem.componentName ) && Objects
+      .equals( componentPluginId, drawnItem.componentPluginId ) && type == drawnItem.type && Objects.equals( category, drawnItem.category );
   }
 
   @Override public int hashCode() {
-    return Objects.hash( componentName, partNumber, type, name, rowNr, colNr, geometry );
+    return Objects.hash( componentName, componentPluginId, partNumber, type, category, rowNr, colNr );
+  }
+
+  public String toJsonString() throws JsonProcessingException {
+    ObjectMapper objectMapper = new ObjectMapper();
+    return objectMapper.writeValueAsString( this );
   }
 
   /**
@@ -63,11 +137,23 @@ public class DrawnItem {
     return componentName;
   }
 
-  /**
-   * @param componentName The componentName to set
-   */
-  public void setComponentName( String componentName ) {
+  /** @param componentName The componentName to set */
+  public void setComponentName(String componentName) {
     this.componentName = componentName;
+  }
+
+  /**
+   * Gets componentPluginId
+   *
+   * @return value of componentPluginId
+   */
+  public String getComponentPluginId() {
+    return componentPluginId;
+  }
+
+  /** @param componentPluginId The componentPluginId to set */
+  public void setComponentPluginId(String componentPluginId) {
+    this.componentPluginId = componentPluginId;
   }
 
   /**
@@ -79,10 +165,8 @@ public class DrawnItem {
     return partNumber;
   }
 
-  /**
-   * @param partNumber The partNumber to set
-   */
-  public void setPartNumber( int partNumber ) {
+  /** @param partNumber The partNumber to set */
+  public void setPartNumber(int partNumber) {
     this.partNumber = partNumber;
   }
 
@@ -91,31 +175,29 @@ public class DrawnItem {
    *
    * @return value of type
    */
-  public String getType() {
+  public DrawnItemType getType() {
     return type;
   }
 
-  /**
-   * @param type The type to set
-   */
-  public void setType( String type ) {
+  /** @param type The type to set */
+  public void setType(DrawnItemType type) {
     this.type = type;
   }
 
   /**
-   * Gets name
+   * Gets category
    *
-   * @return value of name
+   * @return value of category
    */
-  public String getName() {
-    return name;
+  public String getCategory() {
+    return category;
   }
 
   /**
-   * @param name The name to set
+   * @param category The category to set
    */
-  public void setName( String name ) {
-    this.name = name;
+  public void setCategory( String category ) {
+    this.category = category;
   }
 
   /**
@@ -127,10 +209,8 @@ public class DrawnItem {
     return rowNr;
   }
 
-  /**
-   * @param rowNr The rowNr to set
-   */
-  public void setRowNr( int rowNr ) {
+  /** @param rowNr The rowNr to set */
+  public void setRowNr(int rowNr) {
     this.rowNr = rowNr;
   }
 
@@ -143,10 +223,8 @@ public class DrawnItem {
     return colNr;
   }
 
-  /**
-   * @param colNr The colNr to set
-   */
-  public void setColNr( int colNr ) {
+  /** @param colNr The colNr to set */
+  public void setColNr(int colNr) {
     this.colNr = colNr;
   }
 
@@ -159,10 +237,8 @@ public class DrawnItem {
     return geometry;
   }
 
-  /**
-   * @param geometry The geometry to set
-   */
-  public void setGeometry( LeanGeometry geometry ) {
+  /** @param geometry The geometry to set */
+  public void setGeometry(LeanGeometry geometry) {
     this.geometry = geometry;
   }
 
@@ -175,10 +251,8 @@ public class DrawnItem {
     return context;
   }
 
-  /**
-   * @param context The context to set
-   */
-  public void setContext( DrawnContext context ) {
+  /** @param context The context to set */
+  public void setContext(DrawnContext context) {
     this.context = context;
   }
 }

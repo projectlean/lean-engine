@@ -8,6 +8,7 @@ import org.apache.hop.core.svg.HopSvgGraphics2D;
 import org.apache.pdfbox.io.MemoryUsageSetting;
 import org.apache.pdfbox.multipdf.PDFMergerUtility;
 import org.lean.core.LeanGeometry;
+import org.lean.core.draw.DrawnItem;
 import org.lean.core.exception.LeanException;
 import org.lean.presentation.component.LeanComponent;
 import org.lean.presentation.page.LeanPage;
@@ -98,11 +99,23 @@ public class LeanLayoutResults {
       throw new LeanException( "Multi-page headers or footers are not supported!" );
     }
     if ( renderPages.isEmpty() ) {
-      throw new LeanException( "At least one header or footer page was expected!" );
+      return;
     }
 
     LeanRenderPage renderPage = renderPages.get( 0 );
     renderPage.setGc( gc );
+  }
+
+  public void replaceDrawnItemsForHeaderFooter( List<DrawnItem> drawnItems ) throws LeanException {
+    if ( renderPages.size() > 1 ) {
+      throw new LeanException( "Multi-page headers or footers are not supported!" );
+    }
+    if ( renderPages.isEmpty() ) {
+      return;
+    }
+
+    LeanRenderPage renderPage = renderPages.get( 0 );
+    renderPage.setDrawnItems( drawnItems );
   }
 
   /**
@@ -249,6 +262,7 @@ public class LeanLayoutResults {
   public void setLog( ILogChannel log ) {
     this.log = log;
   }
+
 
 }
 

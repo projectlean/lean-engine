@@ -1,8 +1,69 @@
 <HTML>
-  <H1>Lean</H1>
-  <p>
-    Presentation REST service is under lean/presentation relative to this page.<br>
-    Metadata is kept in the global temp folder for now, usually something like /tmp/tomcat8-tomcat8-tmp<br>
+<H1>Lean Presentation Viewer</H1>
+<p>
 
-  </p>
+<p id="info" style="width: 100%;height: 50px">Mouse over the presentation to see info about the drawn items</p>
+<div style="border:2px solid gray;background: white">
+
+  <img id="presentation" src="/lean/presentationSvg">
+</div>
+
+<script defer="defer">
+  let presentation = document.getElementById("presentation");
+  let info = document.getElementById('info');
+  let infoShown = false;
+  presentation.addEventListener("click", event => {
+    getDrawnInfo(event.offsetX, event.offsetY);
+  }, true);
+
+  let drawnInfo = {};
+
+  presentation.onmouseover = event=> {
+    if (!infoShown) {
+      infoShown = true;
+      info.innerText = JSON.stringify(drawnInfo);
+      setMouseCursor();
+    }
+  }
+  presentation.onmousemove = event=> {
+    if (infoShown) {
+      getDrawnInfo(event.offsetX, event.offsetY);
+      info.innerText = JSON.stringify(drawnInfo);
+      setMouseCursor();
+    }
+  }
+  presentation.onmouseout = event=> {
+    if (infoShown) {
+      infoShown = false;
+      document.body.style.cursor = "auto";
+    }
+  }
+  presentation.onclick = event=> {
+    if (drawnInfo.action!=null) {
+      alert("Clicked on: "+drawnInfo.drawnItem.context.value+".  Action to take: "+drawnInfo.action.actionType+" on object: "+drawnInfo.action.objectName);
+    }
+  }
+
+  function getDrawnInfo(x, y) {
+    var xhr = new XMLHttpRequest();
+    xhr.onload = () => {
+      if (xhr.status == 200) {
+        drawnInfo = JSON.parse(xhr.response);
+      } else {
+        drawnInfo = {};
+      }
+    };
+    xhr.open("GET", "/lean/presentationDrawnInfo?x=" + x + "&y=" + y, true);
+    xhr.send(null);
+  }
+
+  function setMouseCursor() {
+    if (drawnInfo.action!=null) {
+      document.body.style.cursor = "pointer";
+    } else {
+      document.body.style.cursor = "auto";
+    }
+  }
+</script>
+</p>
 </HTML>

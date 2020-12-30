@@ -13,9 +13,13 @@ import org.lean.core.LeanColumn;
 import org.lean.core.LeanFact;
 import org.lean.core.LeanGeometry;
 import org.lean.core.LeanHorizontalAlignment;
+import org.lean.core.LeanPosition;
 import org.lean.core.LeanSize;
 import org.lean.core.LeanTextGeometry;
 import org.lean.core.LeanVerticalAlignment;
+import org.lean.core.draw.DrawnContext;
+import org.lean.core.draw.DrawnItem;
+import org.lean.core.draw.DrawnItem.DrawnItemType;
 import org.lean.core.exception.LeanException;
 import org.lean.presentation.LeanComponentLayoutResult;
 import org.lean.presentation.LeanPresentation;
@@ -693,16 +697,18 @@ public class LeanCrosstabComponent extends LeanBaseAggregatingComponent implemen
 
     renderPage.getLayoutResults().add( result );
 
-    renderPage.addDrawnItem( component.getName(), partNumber, "ComponentPart", null, 0, 0, partGeometry );
+    // renderPage.addDrawnItem( component.getName(), partNumber, DrawnItemType.ComponentPart, null, 0, 0, partGeometry );
   }
 
-  @Override public void render( LeanComponentLayoutResult layoutResult, LeanLayoutResults results, IRenderContext renderContext ) throws LeanException {
+  @Override public void render( LeanComponentLayoutResult layoutResult, LeanLayoutResults results, IRenderContext renderContext, LeanPosition offSet ) throws LeanException {
 
     LeanComponent component = layoutResult.getComponent();
     LeanGeometry componentGeometry = layoutResult.getGeometry();
     CrosstabDetails details = (CrosstabDetails) results.getDataSet( component, DATA_CROSSTAB_DETAILS );
 
     SVGGraphics2D gc = layoutResult.getRenderPage().getGc();
+    List<DrawnItem> drawnItems = layoutResult.getRenderPage().getDrawnItems();
+
 
     // Get sizes and string values from data set...
     //
@@ -728,23 +734,23 @@ public class LeanCrosstabComponent extends LeanBaseAggregatingComponent implemen
       //
       int maxHeight = maxHeights.get( 0 );
       for ( int i = 0; i < nrHeaderRows; i++ ) {
-        y = renderLine( gc, y, i, maxHeight, cellInfosList,
-          componentGeometry, maxWidths, true, nrHeaderRows, avgYOffset, renderContext );
+        y = renderLine( gc, drawnItems, layoutResult, y, i, maxHeight, cellInfosList,
+          componentGeometry, maxWidths, true, nrHeaderRows, avgYOffset, renderContext, offSet );
       }
     }
 
     for ( int rowNr = startRow; rowNr < endRow; rowNr++ ) {
       int maxHeight = maxHeights.get( rowNr );
-      y = renderLine( gc, y, rowNr, maxHeight, cellInfosList,
-        componentGeometry, maxWidths, rowNr < nrHeaderRows, nrHeaderRows, avgYOffset, renderContext );
+      y = renderLine( gc, drawnItems, layoutResult, y, rowNr, maxHeight, cellInfosList,
+        componentGeometry, maxWidths, rowNr < nrHeaderRows, nrHeaderRows, avgYOffset, renderContext, offSet );
     }
 
     drawBorder( gc, componentGeometry, renderContext );
   }
 
-  private int renderLine( SVGGraphics2D gc, int y, int rowNr, int maxHeight, List<List<CellInfo>> cellInfosList,
+  private int renderLine( SVGGraphics2D gc, List<DrawnItem> drawnItems, LeanComponentLayoutResult layoutResult, int y, int rowNr, int maxHeight, List<List<CellInfo>> cellInfosList,
                           LeanGeometry componentGeometry, List<Integer> maxWidths,
-                          boolean headerRow, int nrHeaderRows, int yOffset, IRenderContext renderContext ) throws LeanException {
+                          boolean headerRow, int nrHeaderRows, int yOffset, IRenderContext renderContext, LeanPosition offSet ) throws LeanException {
 
     List<CellInfo> cellInfos = cellInfosList.get( rowNr );
 
@@ -765,13 +771,13 @@ public class LeanCrosstabComponent extends LeanBaseAggregatingComponent implemen
     LeanHorizontalAlignment groupHorizontalAlignment = null;
     LeanVerticalAlignment groupVerticalAlignment = null;
 
-    for ( int c = 0; c < cellInfos.size(); c++ ) {
-      int maxWidth = maxWidths.get( c );
-      LeanTextGeometry textGeometry = cellInfos.get( c ).geometry;
-      LeanColumn leanColumn = cellInfos.get( c ).column;
-      String text = cellInfos.get( c ).text;
-      LeanHorizontalAlignment horizontalAlignment = cellInfos.get( c ).horizontalAlignment;
-      LeanVerticalAlignment verticalAlignment = cellInfos.get( c ).verticalAlignment;
+    for ( int columnNr = 0; columnNr < cellInfos.size(); columnNr++ ) {
+      int maxWidth = maxWidths.get( columnNr );
+      LeanTextGeometry textGeometry = cellInfos.get( columnNr ).geometry;
+      LeanColumn leanColumn = cellInfos.get( columnNr ).column;
+      String text = cellInfos.get( columnNr ).text;
+      LeanHorizontalAlignment horizontalAlignment = cellInfos.get( columnNr ).horizontalAlignment;
+      LeanVerticalAlignment verticalAlignment = cellInfos.get( columnNr ).verticalAlignment;
 
       if ( rowNr < nrHeaderRows || headerOnEveryPage && headerRow ) {
         // The header rows block...
@@ -780,7 +786,7 @@ public class LeanCrosstabComponent extends LeanBaseAggregatingComponent implemen
         enableFont( gc, lookupHorizontalDimensionsFont( renderContext ) );
         enableColor( gc, lookupHorizontalDimensionsColor( renderContext ) );
       } else {
-        if ( c < verticalDimensions.size() ) {
+        if ( columnNr < verticalDimensions.size() ) {
           enableFont( gc, lookupVerticalDimensionsFont( renderContext ) );
           enableColor( gc, lookupVerticalDimensionsColor( renderContext ) );
         } else {
@@ -802,38 +808,41 @@ public class LeanCrosstabComponent extends LeanBaseAggregatingComponent implemen
           // Draw the previous group if there is one, start a new one
           //
           if ( groupText != null ) {
-            renderLineCell( gc, groupStartX, y, rowNr, groupColNr, groupText,
+            renderLineCell( gc, drawnItems, layoutResult, groupStartX, y, rowNr, groupColNr, groupText,
               nrHeaderRows, groupWidth, maxHeight, yOffset, groupColumn, groupTextGeometry,
-              groupHorizontalAlignment, groupVerticalAlignment, renderContext );
+              groupHorizontalAlignment, groupVerticalAlignment, renderContext, offSet );
           }
           groupStartX = x;
           groupText = text;
           groupWidth = maxWidth;
           groupTextGeometry = textGeometry;
           groupColumn = leanColumn;
-          groupColNr = c;
+          groupColNr = columnNr;
           groupHorizontalAlignment = horizontalAlignment;
           groupVerticalAlignment = verticalAlignment;
         }
       } else {
-        renderLineCell( gc, x, y, rowNr, c, text, nrHeaderRows, maxWidth, maxHeight, yOffset,
-          leanColumn, textGeometry, horizontalAlignment, verticalAlignment, renderContext );
+        renderLineCell( gc, drawnItems, layoutResult, x, y, rowNr, columnNr, text, nrHeaderRows, maxWidth, maxHeight, yOffset,
+          leanColumn, textGeometry, horizontalAlignment, verticalAlignment, renderContext, offSet );
       }
       x += maxWidth + horizontalMargin * 2;
     }
     // See if we need to draw the last group
     //
     if ( groupText != null ) {
-      renderLineCell( gc, groupStartX, y, rowNr, groupColNr, groupText, nrHeaderRows, groupWidth, maxHeight, yOffset,
-        groupColumn, groupTextGeometry, groupHorizontalAlignment, groupVerticalAlignment, renderContext );
+      renderLineCell( gc, drawnItems, layoutResult, groupStartX, y, rowNr, groupColNr, groupText, nrHeaderRows, groupWidth, maxHeight, yOffset,
+        groupColumn, groupTextGeometry, groupHorizontalAlignment, groupVerticalAlignment, renderContext, offSet );
     }
     y += maxHeight + verticalMargin * 2;
 
     return y;
   }
 
-  private void renderLineCell( SVGGraphics2D gc, int x, int y, int rowNr, int c, String text, int nrHeaderRows, int maxWidth, int maxHeight, int yOffset, LeanColumn leanColumn,
-                               LeanTextGeometry textGeometry, LeanHorizontalAlignment horizontalAlignment, LeanVerticalAlignment verticalAlignment, IRenderContext renderContext )
+  private void renderLineCell( SVGGraphics2D gc, List<DrawnItem> drawnItems, LeanComponentLayoutResult layoutResult, int x, int y, int rowNr, int c, String text, int nrHeaderRows,
+                               int maxWidth, int maxHeight,
+                               int yOffset, LeanColumn leanColumn,
+                               LeanTextGeometry textGeometry, LeanHorizontalAlignment horizontalAlignment, LeanVerticalAlignment verticalAlignment, IRenderContext renderContext,
+                               LeanPosition offSet )
     throws LeanException {
     // Don't theme in the top left cell
     //
@@ -901,6 +910,25 @@ public class LeanCrosstabComponent extends LeanBaseAggregatingComponent implemen
       gc.drawRect( x, y, cellWidth, cellHeight );
       gc.setStroke( baseStroke );
       enableColor( gc, oldColor );
+
+
+      // Add the drawn item for this cell...
+      //
+      int componentX = layoutResult.getGeometry().getX();
+      int componentY = layoutResult.getGeometry().getY();
+
+      DrawnItem drawnItem = new DrawnItem(
+        layoutResult.getComponent().getName(),
+        layoutResult.getComponent().getComponent().getPluginId(),
+        layoutResult.getPartNumber(),
+        DrawnItemType.ComponentItem,
+        DrawnItem.Category.Cell.name(),
+        rowNr,
+        c,
+        new LeanGeometry(offSet.getX()+componentX+x, offSet.getY()+componentY+y, cellWidth, cellHeight),
+        new DrawnContext(text)
+        );
+      drawnItems.add( drawnItem );
     }
   }
 

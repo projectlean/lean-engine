@@ -18,6 +18,8 @@ import org.apache.hop.metadata.api.HopMetadataProperty;
 import org.apache.hop.metadata.api.IHopMetadata;
 import org.apache.hop.metadata.api.IHopMetadataProvider;
 import org.lean.core.LeanGeometry;
+import org.lean.core.LeanPosition;
+import org.lean.core.draw.DrawnItem;
 import org.lean.core.exception.LeanException;
 import org.lean.core.log.LeanMetricsUtil;
 import org.lean.core.metastore.IHasIdentity;
@@ -27,6 +29,8 @@ import org.lean.presentation.connector.LeanConnector;
 import org.lean.presentation.datacontext.IDataContext;
 import org.lean.presentation.datacontext.PresentationDataContext;
 import org.lean.presentation.datacontext.RenderPageDataContext;
+import org.lean.presentation.interaction.LeanInteraction;
+import org.lean.presentation.interaction.LeanInteractionMethod;
 import org.lean.presentation.layout.LeanLayoutResults;
 import org.lean.presentation.layout.LeanRenderPage;
 import org.lean.presentation.page.LeanPage;
@@ -72,10 +76,14 @@ public class LeanPresentation extends HopMetadataBase implements IHasIdentity, I
   @HopMetadataProperty( storeWithName = true )
   private List<LeanConnector> connectors;
 
+  @HopMetadataProperty
+  private List<LeanInteraction> interactions;
+
   public LeanPresentation() {
     pages = new ArrayList<>();
     connectors = new ArrayList<>();
     themes = new ArrayList<>();
+    interactions = new ArrayList<>();
   }
 
   /**
@@ -84,21 +92,22 @@ public class LeanPresentation extends HopMetadataBase implements IHasIdentity, I
    * @param p
    */
   public LeanPresentation( LeanPresentation p ) {
+    this();
     this.name = p.name;
     this.description = p.description;
     this.header = p.header == null ? null : new LeanPage( p.header );
     this.footer = p.footer == null ? null : new LeanPage( p.footer );
-    this.pages = new ArrayList<>();
     for ( LeanPage page : p.pages ) {
       this.pages.add( new LeanPage( page ) );
     }
-    this.connectors = new ArrayList<>();
     for ( LeanConnector c : p.connectors ) {
       this.connectors.add( new LeanConnector( c ) );
     }
-    this.themes = new ArrayList<>();
     for ( LeanTheme t : p.themes ) {
       this.themes.add( new LeanTheme( t ) );
+    }
+    for (LeanInteraction interaction : interactions) {
+      this.interactions.add( new LeanInteraction(interaction));
     }
   }
 
@@ -197,7 +206,8 @@ public class LeanPresentation extends HopMetadataBase implements IHasIdentity, I
 
         // Draw at top left of page
         //
-        gc.translate( page.getLeftMargin(), page.getTopMargin() + getHeaderHeight() );
+        LeanPosition offSet = new LeanPosition( page.getLeftMargin(), page.getTopMargin()+getHeaderHeight());
+        gc.translate( offSet.getX(), offSet.getY() );
 
         // Loop over all the component layout results on the page...
         //
@@ -243,7 +253,7 @@ public class LeanPresentation extends HopMetadataBase implements IHasIdentity, I
           }
 
           LeanComponent component = componentLayoutResult.getComponent();
-          component.getComponent().render( componentLayoutResult, results, presentationRenderContext );
+          component.getComponent().render( componentLayoutResult, results, presentationRenderContext, offSet);
 
           if ( clip ) {
             gc.setClip( oldClip );
@@ -253,7 +263,7 @@ public class LeanPresentation extends HopMetadataBase implements IHasIdentity, I
           //
           LeanGeometry componentGeometry = results.findGeometry( component.getName() );
           if ( componentGeometry != null ) {
-            componentLayoutResult.getRenderPage().addComponentDrawnItem( component, componentGeometry );
+            componentLayoutResult.getRenderPage().addComponentDrawnItem( component, componentGeometry, offSet );
           }
 
           gc.setComposite( beforeComposite );
@@ -300,19 +310,27 @@ public class LeanPresentation extends HopMetadataBase implements IHasIdentity, I
       // We don't want to render on these RenderPages though, we want to render on the given renderPage.
       //
       headerResults.replaceGCForHeaderFooter( gc );
+      headerResults.replaceDrawnItemsForHeaderFooter(renderPage.getDrawnItems());
 
       // Before rendering, position rendering at the top of the page, after the margin...
       //
-      gc.translate( page.getLeftMargin(), page.getTopMargin() );
+      LeanPosition offSet = new LeanPosition(page.getLeftMargin(), page.getTopMargin());
+      gc.translate( offSet.getX(), offSet.getY() );
 
       // Now render the header onto the given render page GC
       // Only one header "page" is supported
       //
       List<LeanComponentLayoutResult> componentLayoutResults = headerResults.getRenderPages().get( 0 ).getLayoutResults();
       for ( LeanComponentLayoutResult componentLayoutResult : componentLayoutResults ) {
+        LeanComponent component = componentLayoutResult.getComponent();
+
         // Render the component...
         //
-        componentLayoutResult.getComponent().getComponent().render( componentLayoutResult, headerResults, renderContext );
+        component.getComponent().render( componentLayoutResult, headerResults, renderContext, offSet );
+
+        // remember where we left it
+        //
+        renderPage.addComponentDrawnItem( component, componentLayoutResult.getGeometry(), offSet );
       }
 
       // Reset the gc translation...
@@ -339,20 +357,28 @@ public class LeanPresentation extends HopMetadataBase implements IHasIdentity, I
       // We don't want to render on these RenderPages though, we want to render on the given renderPage.
       //
       footerResults.replaceGCForHeaderFooter( gc );
+      footerResults.replaceDrawnItemsForHeaderFooter(renderPage.getDrawnItems());
 
       // Before rendering, position rendering at the bottom of the page.
       // The position is the page height minus bottom margin and footer height
       //
-      gc.translate( page.getLeftMargin(), page.getHeight() - page.getBottomMargin() - getFooterHeight() );
+      LeanPosition offSet = new LeanPosition(page.getLeftMargin(), page.getHeight() - page.getBottomMargin() - getFooterHeight());
+      gc.translate( offSet.getX(), offSet.getY() );
 
       // Now render the footer onto the given render page GC
       // Only one footer "page" is supported
       //
       List<LeanComponentLayoutResult> componentLayoutResults = footerResults.getRenderPages().get( 0 ).getLayoutResults();
       for ( LeanComponentLayoutResult componentLayoutResult : componentLayoutResults ) {
-        // Render the component...
+        LeanComponent component = componentLayoutResult.getComponent();
+
+        // Render the footer component...
         //
-        componentLayoutResult.getComponent().getComponent().render( componentLayoutResult, footerResults, renderContext );
+        component.getComponent().render( componentLayoutResult, footerResults, renderContext, offSet );
+
+        // remember where we left it
+        //
+        renderPage.addComponentDrawnItem( component, componentLayoutResult.getGeometry(), offSet );
       }
 
       // Reset the gc translation...
@@ -457,6 +483,24 @@ public class LeanPresentation extends HopMetadataBase implements IHasIdentity, I
     }
     return null;
   }
+
+  /**
+   * Find the given interaction for the drawn item.
+   * Look in the list of defined interactions for this presentation to see what needs to happen to the particular drawn item.
+   * We assumed it's something
+   *
+   * @param drawnItem
+   * @return
+   */
+  public LeanInteraction findInteraction( LeanInteractionMethod method, DrawnItem drawnItem ) {
+    for (LeanInteraction interaction : interactions) {
+      if (interaction.matches(method, drawnItem)) {
+        return interaction;
+      }
+    }
+    return null;
+  }
+
 
   /**
    * @return the description
@@ -565,4 +609,21 @@ public class LeanPresentation extends HopMetadataBase implements IHasIdentity, I
   public void setDefaultThemeName( String defaultThemeName ) {
     this.defaultThemeName = defaultThemeName;
   }
+
+  /**
+   * Gets interactions
+   *
+   * @return value of interactions
+   */
+  public List<LeanInteraction> getInteractions() {
+    return interactions;
+  }
+
+  /**
+   * @param interactions The interactions to set
+   */
+  public void setInteractions( List<LeanInteraction> interactions ) {
+    this.interactions = interactions;
+  }
+
 }

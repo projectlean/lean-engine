@@ -29,4 +29,43 @@ public class DrawnContext {
     this(value);
     this.dimensions.addAll( Arrays.asList(dimensions) );
   }
+
+  @Override public String toString() {
+    return "DrawnContext{" +
+      "dimensions=" + dimensions +
+      ", value='" + value + '\'' +
+      '}';
+  }
+
+  /**
+   * Gets dimensions
+   *
+   * @return value of dimensions
+   */
+  public List<LeanColumn> getDimensions() {
+    return dimensions;
+  }
+
+  /**
+   * @param dimensions The dimensions to set
+   */
+  public void setDimensions( List<LeanColumn> dimensions ) {
+    this.dimensions = dimensions;
+  }
+
+  /**
+   * Gets value
+   *
+   * @return value of value
+   */
+  public String getValue() {
+    return value;
+  }
+
+  /**
+   * @param value The value to set
+   */
+  public void setValue( String value ) {
+    this.value = value;
+  }
 }

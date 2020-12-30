@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import org.apache.hop.metadata.api.HopMetadataProperty;
 import org.lean.core.LeanAttachment;
 import org.lean.core.LeanGeometry;
+import org.lean.core.LeanPosition;
 import org.lean.core.LeanSize;
 import org.lean.core.exception.LeanException;
 import org.lean.presentation.LeanComponentLayoutResult;
@@ -42,7 +43,7 @@ import java.util.List;
  * <p>
  * Finally, have all the child composites render themselves
  * <p>
- * @see ILeanComponent#render(LeanComponentLayoutResult, LeanLayoutResults, IRenderContext)
+ * @see ILeanComponent#render(LeanComponentLayoutResult, LeanLayoutResults, IRenderContext, LeanPosition)
  */
 @JsonDeserialize( as = LeanCompositeComponent.class )
 @LeanComponentPlugin(
@@ -270,7 +271,7 @@ public class LeanCompositeComponent extends LeanBaseComponent implements ILeanCo
 
 
   @Override
-  public void render( LeanComponentLayoutResult layoutResult, LeanLayoutResults results, IRenderContext renderContext ) throws LeanException {
+  public void render( LeanComponentLayoutResult layoutResult, LeanLayoutResults results, IRenderContext renderContext, LeanPosition offSet ) throws LeanException {
 
     LeanComponent component = layoutResult.getComponent();
     LeanGeometry componentGeometry = layoutResult.getGeometry();
@@ -287,7 +288,7 @@ public class LeanCompositeComponent extends LeanBaseComponent implements ILeanCo
       childComponentLayoutResult.setComponent( child );
       childComponentLayoutResult.setGeometry( childGeometry );
 
-      childIComponent.render( childComponentLayoutResult, results, renderContext );
+      childIComponent.render( childComponentLayoutResult, results, renderContext, offSet);
     }
   }
 

@@ -9,6 +9,7 @@ import org.apache.hop.core.row.IValueMeta;
 import org.apache.hop.metadata.api.HopMetadataProperty;
 import org.lean.core.LeanColorRGB;
 import org.lean.core.LeanGeometry;
+import org.lean.core.LeanPosition;
 import org.lean.core.LeanTextGeometry;
 import org.lean.core.exception.LeanException;
 import org.lean.presentation.LeanComponentLayoutResult;
@@ -70,7 +71,7 @@ public class LeanBarChartComponent extends LeanBaseChartComponent implements ILe
   }
 
 
-  @Override public void render( LeanComponentLayoutResult layoutResult, LeanLayoutResults results, IRenderContext renderContext ) throws LeanException {
+  @Override public void render( LeanComponentLayoutResult layoutResult, LeanLayoutResults results, IRenderContext renderContext, LeanPosition offSet ) throws LeanException {
     LeanGeometry componentGeometry = layoutResult.getGeometry();
     LeanComponent component = layoutResult.getComponent();
     SVGGraphics2D gc = layoutResult.getRenderPage().getGc();

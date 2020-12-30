@@ -1,9 +1,6 @@
 package org.lean.presentation.component.types.svg;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import org.apache.batik.anim.dom.SAXSVGDocumentFactory;
-import org.apache.batik.util.SVGConstants;
-import org.apache.batik.util.XMLResourceDescriptor;
 import org.apache.commons.lang.StringUtils;
 import org.apache.hop.core.Const;
 import org.apache.hop.core.svg.HopSvgGraphics2D;
@@ -13,6 +10,7 @@ import org.apache.hop.core.svg.SvgFile;
 import org.apache.hop.core.variables.IVariables;
 import org.apache.hop.metadata.api.HopMetadataProperty;
 import org.lean.core.LeanGeometry;
+import org.lean.core.LeanPosition;
 import org.lean.core.LeanSize;
 import org.lean.core.exception.LeanException;
 import org.lean.presentation.LeanComponentLayoutResult;
@@ -26,16 +24,7 @@ import org.lean.presentation.layout.LeanLayoutResults;
 import org.lean.presentation.layout.LeanRenderPage;
 import org.lean.presentation.page.LeanPage;
 import org.lean.render.IRenderContext;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
 import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-
-import java.awt.geom.AffineTransform;
-import java.io.IOException;
-import java.io.InputStream;
-
-import static org.apache.batik.svggen.DOMGroupManager.DRAW;
 
 @JsonDeserialize( as = LeanSvgComponent.class )
 @LeanComponentPlugin(
@@ -122,7 +111,7 @@ public class LeanSvgComponent extends LeanBaseComponent implements ILeanComponen
     return super.getExpectedGeometry( presentation, page, component, dataContext, renderContext, results );
   }
 
-  public void render( LeanComponentLayoutResult layoutResult, LeanLayoutResults results, IRenderContext renderContext ) throws LeanException {
+  public void render( LeanComponentLayoutResult layoutResult, LeanLayoutResults results, IRenderContext renderContext, LeanPosition offSet ) throws LeanException {
 
     LeanRenderPage renderPage = layoutResult.getRenderPage();
     LeanGeometry componentGeometry = layoutResult.getGeometry();
@@ -160,7 +149,7 @@ public class LeanSvgComponent extends LeanBaseComponent implements ILeanComponen
 
     // addd drawnItem for this
     //
-    renderPage.addComponentDrawnItem( component, componentGeometry );
+    // renderPage.addComponentDrawnItem( component, componentGeometry );
   }
 
 
