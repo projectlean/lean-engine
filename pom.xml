@@ -30,7 +30,7 @@
     <jandex-maven-plugin.version>1.0.8</jandex-maven-plugin.version>
 
     <mockito-all.version>1.9.5</mockito-all.version>
-    <junit.version>4.4</junit.version>
+    <junit.version>4.13.1</junit.version>
     <grizzly2-version>2.29.1</grizzly2-version>
     <batik.version>1.12</batik.version>
   </properties>
