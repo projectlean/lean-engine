@@ -9,7 +9,7 @@ public class LeanPresentationCrosstabOnlyFactsTest extends LeanPresentationTestB
   @Test
   public void testCrosstabRenderOnlyFacts() throws Exception {
 
-    LeanPresentation presentation = new CrosstabPresentationUtil( metadataProvider ).createCrosstabPresentationOnlyFacts( 3300 );
+    LeanPresentation presentation = new CrosstabPresentationUtil( metadataProvider, variables ).createCrosstabPresentationOnlyFacts( 3300 );
     testRendering( presentation, "crosstab_only_facts");
   }
 

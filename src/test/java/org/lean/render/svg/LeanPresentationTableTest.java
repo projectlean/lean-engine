@@ -9,7 +9,7 @@ public class LeanPresentationTableTest extends LeanPresentationTestBase {
   @Test
   public void testTableRender() throws Exception {
 
-    LeanPresentation presentation = new TablePresentationUtil( metadataProvider ).createTablePresentation( 2000 );
+    LeanPresentation presentation = new TablePresentationUtil( metadataProvider, variables ).createTablePresentation( 2000 );
     testRendering( presentation, "table_test");
   }
 

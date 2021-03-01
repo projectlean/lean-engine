@@ -16,7 +16,6 @@ public class LeanConnectorPluginType extends BasePluginType<LeanConnectorPlugin>
 
   protected LeanConnectorPluginType() {
     super(LeanConnectorPlugin.class, "LeanConnector", "Connector");
-    populateFolders("connectors");
   }
 
   protected LeanConnectorPluginType(Class<LeanConnectorPlugin> pluginType, String id, String name) {

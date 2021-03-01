@@ -12,7 +12,7 @@ public interface IDataContext {
 
   LeanConnector getConnector( String name ) throws LeanException;
 
-  IVariables getVariableSpace();
+  IVariables getVariables();
 
   IHopMetadataProvider getMetadataProvider();
 

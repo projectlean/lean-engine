@@ -1,5 +1,6 @@
 package org.lean.util;
 
+import org.apache.hop.core.variables.IVariables;
 import org.apache.hop.metadata.api.IHopMetadataProvider;
 import org.lean.core.LeanAttachment;
 import org.lean.core.LeanFont;
@@ -14,8 +15,8 @@ import org.lean.presentation.page.LeanPage;
 public class ImagesPresentationUtil extends BasePresentationUtil {
 
 
-  public ImagesPresentationUtil( IHopMetadataProvider metadataProvider ) {
-    super( metadataProvider );
+  public ImagesPresentationUtil( IHopMetadataProvider metadataProvider, IVariables variables ) {
+    super( metadataProvider, variables );
   }
 
   public LeanPresentation createImagesPresentation( int nr ) throws Exception {

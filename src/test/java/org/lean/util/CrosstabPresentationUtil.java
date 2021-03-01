@@ -1,5 +1,6 @@
 package org.lean.util;
 
+import org.apache.hop.core.variables.IVariables;
 import org.apache.hop.metadata.api.IHopMetadataProvider;
 import org.lean.core.AggregationMethod;
 import org.lean.core.LeanDimension;
@@ -16,8 +17,8 @@ import java.util.Arrays;
 public class CrosstabPresentationUtil extends BasePresentationUtil {
 
 
-  public CrosstabPresentationUtil( IHopMetadataProvider metadataProvider ) {
-    super( metadataProvider );
+  public CrosstabPresentationUtil( IHopMetadataProvider metadataProvider, IVariables variables ) {
+    super( metadataProvider, variables );
   }
 
   public LeanPresentation createCrosstabPresentation( int nr ) throws Exception {

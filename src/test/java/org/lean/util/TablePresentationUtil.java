@@ -12,6 +12,7 @@ import org.apache.hop.core.row.value.ValueMetaDate;
 import org.apache.hop.core.row.value.ValueMetaInteger;
 import org.apache.hop.core.row.value.ValueMetaNumber;
 import org.apache.hop.core.row.value.ValueMetaString;
+import org.apache.hop.core.variables.IVariables;
 import org.apache.hop.metadata.api.IHopMetadataProvider;
 import org.apache.hop.metadata.api.IHopMetadataSerializer;
 import org.lean.core.LeanAttachment;
@@ -53,8 +54,8 @@ public class TablePresentationUtil extends BasePresentationUtil {
   public static final String CONNECTOR_NAME_PASSTHROUGH = "PassThrough";
   private static final String CONNECTOR_NAME_CHAIN = "Chain";
 
-  public TablePresentationUtil( IHopMetadataProvider metadataProvider ) {
-    super( metadataProvider );
+  public TablePresentationUtil( IHopMetadataProvider metadataProvider, IVariables variables ) {
+    super( metadataProvider, variables );
   }
 
   public LeanPresentation createTablePresentation( int nr ) throws Exception {
@@ -75,10 +76,10 @@ public class TablePresentationUtil extends BasePresentationUtil {
     //
     String tableName = "test_table";
     int rowCount = 100;
-    LeanDatabaseConnection connection = TablePresentationUtil.populateTestTable( tableName, rowCount );
+    LeanDatabaseConnection connection = TablePresentationUtil.populateTestTable( variables, tableName, rowCount );
     serializer.save( connection );
 
-    LeanDatabaseConnection steelWheels = H2DatabaseUtil.createSteelWheelsDatabase( metadataProvider );
+    LeanDatabaseConnection steelWheels = H2DatabaseUtil.createSteelWheelsDatabase( metadataProvider, variables );
 
     // Get 100 rows in the output.
     //
@@ -213,14 +214,14 @@ public class TablePresentationUtil extends BasePresentationUtil {
   }
 
 
-  public static final LeanDatabaseConnection populateTestTable( String tableName, int rowCount ) throws Exception {
+  public static final LeanDatabaseConnection populateTestTable( IVariables variables, String tableName, int rowCount ) throws Exception {
 
     // Create a local H2 database in some tmp space.
     //
     String dbFolder = System.getProperty( "java.io.tmpdir", "." ) + Const.FILE_SEPARATOR + "testDb";
     LeanDatabaseConnection connection = new LeanDatabaseConnection( "testDb", "H2", null, null, dbFolder, null, null );
     DatabaseMeta databaseMeta = connection.createDatabaseMeta();
-    Database database = new Database( new LoggingObject( connection.getName() ), databaseMeta );
+    Database database = new Database( new LoggingObject( connection.getName() ), variables, databaseMeta );
 
     IRowMeta rowMeta = new RowMeta();
     rowMeta.addValueMeta( new ValueMetaInteger( "id" ) );

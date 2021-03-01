@@ -65,7 +65,7 @@ public class PresentationDataContext implements IDataContext {
    *
    * @return value of variableSpace
    */
-  @Override public IVariables getVariableSpace() {
+  @Override public IVariables getVariables() {
     return variableSpace;
   }
 

@@ -116,8 +116,16 @@ public class LeanPresentation extends HopMetadataBase implements IHasIdentity, I
   }
 
   public String toJsonString() throws JsonProcessingException {
+    return toJsonString(false);
+  }
+
+  public String toJsonString(boolean indent) throws JsonProcessingException {
     ObjectMapper objectMapper = new ObjectMapper();
-    return objectMapper.writeValueAsString( this );
+    if (indent) {
+      return objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString( this );
+    } else {
+      return objectMapper.writeValueAsString(this);
+    }
   }
 
   public static LeanPresentation fromJsonString( String jsonString ) throws IOException {

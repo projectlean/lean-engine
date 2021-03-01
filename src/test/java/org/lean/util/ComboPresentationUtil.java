@@ -1,5 +1,6 @@
 package org.lean.util;
 
+import org.apache.hop.core.variables.IVariables;
 import org.apache.hop.metadata.api.IHopMetadataProvider;
 import org.lean.core.AggregationMethod;
 import org.lean.core.LeanAttachment;
@@ -24,8 +25,8 @@ import java.util.Arrays;
 
 public class ComboPresentationUtil extends BasePresentationUtil {
 
-  public ComboPresentationUtil(IHopMetadataProvider metadataProvider) {
-    super(metadataProvider);
+  public ComboPresentationUtil( IHopMetadataProvider metadataProvider, IVariables variables ) {
+    super(metadataProvider, variables);
   }
 
   public LeanPresentation createComboPresentation(int nr) throws Exception {

@@ -27,6 +27,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class LeanSqlConnectorTest extends TestCase {
 
   private IHopMetadataProvider metadataProvider;
+  private IVariables variables;
 
   private static int rowCount = 50;
   private static String tableName = "SQL_TEST_TABLE";
@@ -36,6 +37,7 @@ public class LeanSqlConnectorTest extends TestCase {
   @Override protected void setUp() throws Exception {
 
     metadataProvider = new MemoryMetadataProvider();
+    variables = Variables.getADefaultVariableSpace();
     LeanEnvironment.init();
 
     // Add the database plugins from the test classpath
@@ -46,7 +48,7 @@ public class LeanSqlConnectorTest extends TestCase {
 
     // Create a table and put a bunch of rows in it...
     //
-    connection = TablePresentationUtil.populateTestTable( tableName, rowCount );
+    connection = TablePresentationUtil.populateTestTable( variables, tableName, rowCount );
     dbSerializer.save( connection );
   }
 
@@ -78,7 +80,7 @@ public class LeanSqlConnectorTest extends TestCase {
         return new LeanConnector(name, leanSqlConnector);
       }
 
-      @Override public IVariables getVariableSpace() {
+      @Override public IVariables getVariables() {
         return Variables.getADefaultVariableSpace();
       }
 

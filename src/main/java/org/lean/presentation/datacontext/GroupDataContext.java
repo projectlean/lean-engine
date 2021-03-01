@@ -32,7 +32,7 @@ public class GroupDataContext implements IDataContext {
     this.groupRow = groupRow;
 
     variableSpace = new Variables();
-    variableSpace.initializeFrom( parentDataContext.getVariableSpace() );
+    variableSpace.initializeFrom( parentDataContext.getVariables() );
 
     // Set variables with the names of the fields in the group
     //
@@ -114,7 +114,7 @@ public class GroupDataContext implements IDataContext {
    *
    * @return value of variableSpace
    */
-  @Override public IVariables getVariableSpace() {
+  @Override public IVariables getVariables() {
     return variableSpace;
   }
 

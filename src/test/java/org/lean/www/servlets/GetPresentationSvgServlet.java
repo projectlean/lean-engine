@@ -20,28 +20,20 @@ package org.lean.www.servlets;
 import org.apache.hop.core.annotations.HopServerServlet;
 import org.apache.hop.core.logging.ILoggingObject;
 import org.apache.hop.core.logging.LoggingObject;
-import org.apache.hop.i18n.BaseMessages;
+import org.apache.hop.core.variables.Variables;
 import org.apache.hop.metadata.api.IHopMetadataProvider;
 import org.apache.hop.metadata.serializer.memory.MemoryMetadataProvider;
-import org.apache.hop.www.BaseHttpServlet;
-import org.apache.hop.www.IHopServerPlugin;
 import org.lean.presentation.LeanPresentation;
-import org.lean.presentation.datacontext.IDataContext;
-import org.lean.presentation.datacontext.PresentationDataContext;
 import org.lean.presentation.layout.LeanLayoutResults;
 import org.lean.presentation.layout.LeanRenderPage;
-import org.lean.render.IRenderContext;
-import org.lean.render.context.PresentationRenderContext;
 import org.lean.util.ComboPresentationUtil;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.Map;
 
 @HopServerServlet(id = "pipelineImage", name = "Generate a PNG image of a pipeline")
 public class GetPresentationSvgServlet extends HttpServlet {
@@ -66,14 +58,18 @@ public class GetPresentationSvgServlet extends HttpServlet {
       response.setContentType("image/svg+xml");
 
       IHopMetadataProvider metadataProvider = new MemoryMetadataProvider();
-      ILoggingObject parent = new LoggingObject( "GetPresentationSvgServlet" );
+      ILoggingObject parent = new LoggingObject("GetPresentationSvgServlet");
 
       // Generate the presentation in SVG
       //
-      LeanPresentation presentation = new ComboPresentationUtil(new MemoryMetadataProvider()).createComboPresentation(3000);
-      LeanLayoutResults results = PresentationCache.renderAndCache( presentation, parent, metadataProvider );
+      LeanPresentation presentation =
+          new ComboPresentationUtil(
+                  new MemoryMetadataProvider(), Variables.getADefaultVariableSpace())
+              .createComboPresentation(3000);
+      LeanLayoutResults results =
+          PresentationCache.renderAndCache(presentation, parent, metadataProvider);
 
-      LeanRenderPage leanRenderPage = results.getRenderPages().get( 0 );// page 0 to test
+      LeanRenderPage leanRenderPage = results.getRenderPages().get(0); // page 0 to test
 
       String svgXml = leanRenderPage.getSvgXml();
       svgStream = new ByteArrayOutputStream();

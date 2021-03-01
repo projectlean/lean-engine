@@ -62,7 +62,7 @@ public class LeanSqlConnector extends LeanBaseConnector implements ILeanConnecto
       LeanDatabaseConnection databaseConnection = serializer.load( databaseConnectionName );
 
       DatabaseMeta databaseMeta = databaseConnection.createDatabaseMeta();
-      database = new Database( new LoggingObject( "Database connection '" + databaseConnectionName + "'" ), databaseMeta );
+      database = new Database( new LoggingObject( "Database connection '" + databaseConnectionName + "'" ), dataContext.getVariables(), databaseMeta );
       database.connect();
 
       IRowMeta rowMeta = database.getQueryFields( sql, false );
@@ -92,7 +92,7 @@ public class LeanSqlConnector extends LeanBaseConnector implements ILeanConnecto
 
       DatabaseMeta databaseMeta = databaseConnection.createDatabaseMeta();
 
-      database = new Database( new LoggingObject( "Database connection '" + databaseConnectionName + "'" ), databaseMeta );
+      database = new Database( new LoggingObject( "Database connection '" + databaseConnectionName + "'" ), dataContext.getVariables(), databaseMeta );
       database.connect();
 
       resultSet = database.openQuery( sql );
