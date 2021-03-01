@@ -83,7 +83,7 @@ public class LeanLabelComponent extends LeanBaseComponent implements ILeanCompon
 
     // Calculate the string
     //
-    String text = dataContext.getVariableSpace().resolve(label);
+    String text = dataContext.getVariables().resolve(label);
 
     LeanTextGeometry textGeometry = calculateTextGeometry(gc, text);
 

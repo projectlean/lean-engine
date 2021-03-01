@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 /**
  * Contains layout results of a presentation
@@ -35,11 +36,14 @@ public class LeanLayoutResults {
 
   private ILogChannel log;
 
+  private String id;
+
   public LeanLayoutResults( ILogChannel log ) {
     this.log = log;
     componentGeometryMap = new HashMap<>();
     componentDataSetMap = new HashMap<>();
     renderPages = new ArrayList<>();
+    id = UUID.randomUUID().toString();
   }
 
   public LeanGeometry findGeometry( String componentName ) {
@@ -263,6 +267,20 @@ public class LeanLayoutResults {
     this.log = log;
   }
 
+  /**
+   * Gets id
+   *
+   * @return value of id
+   */
+  public String getId() {
+    return id;
+  }
 
+  /**
+   * @param id The id to set
+   */
+  public void setId( String id ) {
+    this.id = id;
+  }
 }
 

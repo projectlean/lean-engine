@@ -36,8 +36,8 @@ public class ChainDataContext implements IDataContext {
     return connector;
   }
 
-  @Override public IVariables getVariableSpace() {
-    return parentDataContext.getVariableSpace();
+  @Override public IVariables getVariables() {
+    return parentDataContext.getVariables();
   }
 
   public void addConnector( LeanConnector leanConnector ) {

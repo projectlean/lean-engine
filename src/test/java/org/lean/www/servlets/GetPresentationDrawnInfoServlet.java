@@ -18,9 +18,9 @@
 package org.lean.www.servlets;
 
 import org.apache.hop.core.Const;
-import org.apache.hop.core.annotations.HopServerServlet;
 import org.apache.hop.core.logging.ILoggingObject;
 import org.apache.hop.core.logging.LoggingObject;
+import org.apache.hop.core.variables.Variables;
 import org.apache.hop.metadata.api.IHopMetadataProvider;
 import org.apache.hop.metadata.serializer.memory.MemoryMetadataProvider;
 import org.lean.core.draw.DrawnItem;
@@ -51,8 +51,8 @@ public class GetPresentationDrawnInfoServlet extends HttpServlet {
       return;
     }
 
-    int x = (int)Math.round( Const.toDouble(request.getParameter("x"), -1.0) );
-    int y = (int)Math.round( Const.toDouble(request.getParameter("y"), -1.0) );
+    int x = (int) Math.round(Const.toDouble(request.getParameter("x"), -1.0));
+    int y = (int) Math.round(Const.toDouble(request.getParameter("y"), -1.0));
 
     ByteArrayOutputStream svgStream = null;
     try {
@@ -67,36 +67,38 @@ public class GetPresentationDrawnInfoServlet extends HttpServlet {
       // Generate the presentation in SVG
       //
       LeanPresentation presentation =
-          new ComboPresentationUtil(new MemoryMetadataProvider()).createComboPresentation(3000);
+          new ComboPresentationUtil(
+                  new MemoryMetadataProvider(), Variables.getADefaultVariableSpace())
+              .createComboPresentation(3000);
       LeanLayoutResults results =
           PresentationCache.renderAndCache(presentation, parent, metadataProvider);
 
       LeanRenderPage leanRenderPage = results.getRenderPages().get(0); // page 0 to test
 
       DrawnItem drawnItem = leanRenderPage.lookupDrawnItem(x, y, true);
-      if  (drawnItem==null) {
+      if (drawnItem == null) {
         drawnItem = leanRenderPage.lookupDrawnItem(x, y, false);
       }
 
       DrawInfo drawInfo = new DrawInfo();
 
-      if (drawnItem!=null) {
-        drawInfo.setDrawnItem( drawnItem );
+      if (drawnItem != null) {
+        drawInfo.setDrawnItem(drawnItem);
 
         // TODO: receive method from JS code
         //
-        LeanInteractionMethod method = new LeanInteractionMethod( true, false );
+        LeanInteractionMethod method = new LeanInteractionMethod(true, false);
         LeanInteraction interaction = presentation.findInteraction(method, drawnItem);
-        if (interaction!=null) {
+        if (interaction != null) {
           LeanInteractionAction action = interaction.getAction();
-          drawInfo.setAction( action );
+          drawInfo.setAction(action);
         }
       }
 
       String json = drawInfo.toJsonString();
       svgStream = new ByteArrayOutputStream();
       try {
-        svgStream.write(json.getBytes( StandardCharsets.UTF_8 ));
+        svgStream.write(json.getBytes(StandardCharsets.UTF_8));
       } finally {
         svgStream.flush();
       }

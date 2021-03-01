@@ -1,5 +1,6 @@
 package org.lean.util;
 
+import org.apache.hop.core.variables.IVariables;
 import org.apache.hop.metadata.api.IHopMetadataProvider;
 import org.lean.core.LeanColorRGB;
 import org.lean.core.LeanFont;
@@ -13,8 +14,8 @@ import org.lean.presentation.layout.LeanLayout;
 
 public class LabelPresentationUtil extends BasePresentationUtil {
 
-  public LabelPresentationUtil( IHopMetadataProvider metadataProvider ) {
-    super( metadataProvider );
+  public LabelPresentationUtil( IHopMetadataProvider metadataProvider, IVariables variables ) {
+    super( metadataProvider, variables );
   }
 
   public LeanPresentation createLabelPresentation( int nr ) throws LeanException {

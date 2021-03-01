@@ -68,7 +68,7 @@ public class LeanSvgComponent extends LeanBaseComponent implements ILeanComponen
       throw new LeanException( "No image file specified" );
     }
 
-    IVariables variables = dataContext.getVariableSpace();
+    IVariables variables = dataContext.getVariables();
 
     SvgDetails details = new SvgDetails();
 

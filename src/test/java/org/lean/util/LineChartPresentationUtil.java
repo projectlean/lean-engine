@@ -1,5 +1,6 @@
 package org.lean.util;
 
+import org.apache.hop.core.variables.IVariables;
 import org.apache.hop.metadata.api.IHopMetadataProvider;
 import org.lean.core.AggregationMethod;
 import org.lean.core.LeanAttachment;
@@ -19,8 +20,8 @@ public class LineChartPresentationUtil extends BasePresentationUtil {
 
   public static final String LINE_CHART_NAME = "LineChart";
 
-  public LineChartPresentationUtil( IHopMetadataProvider metadataProvider ) {
-    super( metadataProvider );
+  public LineChartPresentationUtil( IHopMetadataProvider metadataProvider, IVariables variables ) {
+    super( metadataProvider, variables );
   }
 
   public LeanPresentation createLineChartPresentation( int nr ) throws Exception {

@@ -4,6 +4,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.hop.core.database.Database;
 import org.apache.hop.core.database.DatabaseMeta;
 import org.apache.hop.core.logging.LoggingObject;
+import org.apache.hop.core.variables.IVariables;
 import org.apache.hop.metadata.api.IHopMetadataProvider;
 import org.apache.hop.metadata.api.IHopMetadataSerializer;
 import org.lean.core.LeanDatabaseConnection;
@@ -26,7 +27,7 @@ public class H2DatabaseUtil {
    * @param metadataProvider The metadata provider to save the database connection in
    * @return The created/populated SteelWheels database connection
    */
-  public static final LeanDatabaseConnection createSteelWheelsDatabase( IHopMetadataProvider metadataProvider ) throws LeanException {
+  public static final LeanDatabaseConnection createSteelWheelsDatabase( IHopMetadataProvider metadataProvider, IVariables variables ) throws LeanException {
     try {
 
       String h2DatabaseName = System.getProperty( "java.io.tmpdir" ) + File.separator + CONNECTOR_STEEL_WHEELS_NAME;
@@ -57,7 +58,7 @@ public class H2DatabaseUtil {
 
       DatabaseMeta databaseMeta = connection.createDatabaseMeta();
       databaseMeta.setForcingIdentifiersToUpperCase( true );
-      Database database = new Database( new LoggingObject( connection.getName() ), databaseMeta );
+      Database database = new Database( new LoggingObject( connection.getName() ), variables, databaseMeta );
       try {
         database.connect();
 

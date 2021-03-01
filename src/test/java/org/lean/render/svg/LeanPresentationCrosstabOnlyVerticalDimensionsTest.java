@@ -9,7 +9,7 @@ public class LeanPresentationCrosstabOnlyVerticalDimensionsTest extends LeanPres
   @Test
   public void testCrosstabRenderOnlyVerticalDimensions() throws Exception {
 
-    LeanPresentation presentation = new CrosstabPresentationUtil( metadataProvider ).createCrosstabPresentationOnlyVerticalDimensions( 3100 );
+    LeanPresentation presentation = new CrosstabPresentationUtil( metadataProvider, variables ).createCrosstabPresentationOnlyVerticalDimensions( 3100 );
     testRendering( presentation, "crosstab_verticals_test");
   }
 }

@@ -9,7 +9,7 @@ public class LeanPresentationComboTest extends LeanPresentationTestBase {
   @Test
   public void testComboRender() throws Exception {
 
-    LeanPresentation presentation = new ComboPresentationUtil( metadataProvider ).createComboPresentation( 3000 );
+    LeanPresentation presentation = new ComboPresentationUtil( metadataProvider, variables ).createComboPresentation( 3000 );
     testRendering( presentation, "combo_test");
   }
 }

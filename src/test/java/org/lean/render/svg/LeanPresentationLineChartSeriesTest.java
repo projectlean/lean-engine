@@ -9,7 +9,7 @@ public class LeanPresentationLineChartSeriesTest extends LeanPresentationTestBas
   @Test
   public void testLineChartSeriesRender() throws Exception {
 
-    LeanPresentation presentation = new LineChartPresentationUtil( metadataProvider ).createLineChartSeriesPresentation( 4100 );
+    LeanPresentation presentation = new LineChartPresentationUtil( metadataProvider, variables ).createLineChartSeriesPresentation( 4100 );
     testRendering(presentation, "line_chart_series_test");
   }
 

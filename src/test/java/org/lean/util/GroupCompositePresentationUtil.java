@@ -1,5 +1,6 @@
 package org.lean.util;
 
+import org.apache.hop.core.variables.IVariables;
 import org.apache.hop.metadata.api.IHopMetadataProvider;
 import org.lean.core.AggregationMethod;
 import org.lean.core.LeanAttachment;
@@ -29,8 +30,8 @@ public class GroupCompositePresentationUtil extends BasePresentationUtil {
   public static final String COMPONENT_NAME_LABEL1 = "Label1";
   public static final String COMPONENT_NAME_CROSSTAB1 = "Crosstab1";
 
-  public GroupCompositePresentationUtil( IHopMetadataProvider metadataProvider ) {
-    super( metadataProvider );
+  public GroupCompositePresentationUtil( IHopMetadataProvider metadataProvider, IVariables variables ) {
+    super( metadataProvider, variables );
   }
 
   public LeanPresentation createGroupCompositePresentation( int nr ) throws Exception {

@@ -4,7 +4,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>org.lean</groupId>
-  <version>0.0.10-SNAPSHOT</version>
+  <version>0.0.11-SNAPSHOT</version>
   <artifactId>lean-engine</artifactId>
   <name>${project.artifactId}</name>
   <description>Lean Engine for ANalytics</description>
@@ -21,7 +21,7 @@
   </licenses>
 
   <properties>
-    <hop.version>0.60-SNAPSHOT</hop.version>
+    <hop.version>0.70-SNAPSHOT</hop.version>
 
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>1.8</maven.compiler.target>
@@ -33,6 +33,8 @@
     <junit.version>4.13.1</junit.version>
     <grizzly2-version>2.29.1</grizzly2-version>
     <batik.version>1.12</batik.version>
+
+    <jetty-version>9.4.24.v20191120</jetty-version>
   </properties>
 
   <repositories>
@@ -342,46 +344,6 @@
           <artifactId>jsr311-api</artifactId>
         </exclusion>
       </exclusions>
-    </dependency>
-
-
-    <!-- Jetty server
-      -->
-    <dependency>
-      <groupId>org.eclipse.jetty</groupId>
-      <artifactId>jetty-server</artifactId>
-      <version>9.4.35.v20201120</version>
-    </dependency>
-    <dependency>
-      <groupId>org.eclipse.jetty</groupId>
-      <artifactId>jetty-servlet</artifactId>
-      <version>9.4.22.v20191022</version>
-    </dependency>
-    <dependency>
-      <groupId>org.glassfish.jersey.core</groupId>
-      <artifactId>jersey-server</artifactId>
-      <version>2.22.2</version>
-    </dependency>
-    <dependency>
-      <groupId>org.glassfish.jersey.containers</groupId>
-      <artifactId>jersey-container-servlet-core</artifactId>
-      <version>2.22.2</version>
-    </dependency>
-    <dependency>
-      <groupId>org.glassfish.jersey.containers</groupId>
-      <artifactId>jersey-container-jetty-http</artifactId>
-      <version>2.22.2</version>
-    </dependency>
-    <dependency>
-      <groupId>org.glassfish.jersey.media</groupId>
-      <artifactId>jersey-media-moxy</artifactId>
-      <version>2.22.2</version>
-    </dependency>
-
-    <dependency>
-      <groupId>javax.servlet</groupId>
-      <artifactId>javax.servlet-api</artifactId>
-      <version>4.0.1</version>
     </dependency>
 
   </dependencies>

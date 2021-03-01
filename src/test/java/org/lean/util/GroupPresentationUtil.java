@@ -1,5 +1,6 @@
 package org.lean.util;
 
+import org.apache.hop.core.variables.IVariables;
 import org.apache.hop.metadata.api.IHopMetadataProvider;
 import org.lean.core.LeanAttachment;
 import org.lean.core.LeanColorRGB;
@@ -22,8 +23,8 @@ public class GroupPresentationUtil extends BasePresentationUtil {
 
   public static final String COMPONENT_NAME_LABEL = "Label1";
 
-  public GroupPresentationUtil( IHopMetadataProvider metadataProvider ) {
-    super( metadataProvider );
+  public GroupPresentationUtil( IHopMetadataProvider metadataProvider, IVariables variables ) {
+    super( metadataProvider, variables );
   }
 
   public LeanPresentation createSimpleGroupedLabelPresentation( int nr ) throws Exception {

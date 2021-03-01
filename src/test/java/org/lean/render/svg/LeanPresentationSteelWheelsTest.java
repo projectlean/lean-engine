@@ -21,7 +21,7 @@ public class LeanPresentationSteelWheelsTest extends LeanPresentationTestBase {
 
     // populate steelwheels database and save connection in metastore
     //
-    H2DatabaseUtil.createSteelWheelsDatabase( metadataProvider );
+    H2DatabaseUtil.createSteelWheelsDatabase( metadataProvider, variables );
 
     // Load all files in resources/presentations/*.json
     //

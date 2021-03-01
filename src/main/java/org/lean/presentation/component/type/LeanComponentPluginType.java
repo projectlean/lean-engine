@@ -17,7 +17,6 @@ public class LeanComponentPluginType extends BasePluginType<LeanComponentPlugin>
 
   protected LeanComponentPluginType() {
     super(LeanComponentPlugin.class, "LeanComponentType", "Component Type");
-    populateFolders("components_types");
   }
 
   protected LeanComponentPluginType(Class<LeanComponentPlugin> pluginType, String id, String name) {
