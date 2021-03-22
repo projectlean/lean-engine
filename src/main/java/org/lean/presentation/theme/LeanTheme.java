@@ -168,7 +168,7 @@ public class LeanTheme extends HopMetadataBase implements IHopMetadata {
     if ( backgroundColor != null ) {
       return backgroundColor;
     }
-    return defaultColor;
+    return LeanColorRGB.WHITE;
   }
 
   public LeanColorRGB lookupBorderColor() throws LeanException {

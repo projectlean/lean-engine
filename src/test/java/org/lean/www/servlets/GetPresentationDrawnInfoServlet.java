@@ -41,6 +41,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 
 public class GetPresentationDrawnInfoServlet extends HttpServlet {
 
@@ -90,8 +91,8 @@ public class GetPresentationDrawnInfoServlet extends HttpServlet {
         LeanInteractionMethod method = new LeanInteractionMethod(true, false);
         LeanInteraction interaction = presentation.findInteraction(method, drawnItem);
         if (interaction != null) {
-          LeanInteractionAction action = interaction.getAction();
-          drawInfo.setAction(action);
+          List<LeanInteractionAction> actions = interaction.getActions();
+          drawInfo.setActions(actions);
         }
       }
 

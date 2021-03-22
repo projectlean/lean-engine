@@ -17,18 +17,18 @@ public class PresentationDataContext implements IDataContext {
 
   private LeanPresentation presentation;
 
-  private IVariables variableSpace;
+  private IVariables variables;
 
   private IHopMetadataProvider metadataProvider;
 
   public PresentationDataContext( LeanPresentation presentation, IHopMetadataProvider metadataProvider ) {
     this.presentation = presentation;
     this.metadataProvider = metadataProvider;
-    variableSpace = new Variables();
+    variables = new Variables();
 
-    variableSpace.setVariable( Constants.VARIABLE_PRESENTATION_NAME, presentation.getName() );
-    variableSpace.setVariable( Constants.VARIABLE_PRESENTATION_DESCRIPTION, presentation.getDescription() );
-    variableSpace.setVariable( Constants.VARIABLE_SYSTEM_DATE, new SimpleDateFormat( "yyyy/MM/dd" ).format( new Date() ) );
+    variables.setVariable( Constants.VARIABLE_PRESENTATION_NAME, presentation.getName() );
+    variables.setVariable( Constants.VARIABLE_PRESENTATION_DESCRIPTION, presentation.getDescription() );
+    variables.setVariable( Constants.VARIABLE_SYSTEM_DATE, new SimpleDateFormat( "yyyy/MM/dd" ).format( new Date() ) );
   }
 
 
@@ -63,17 +63,17 @@ public class PresentationDataContext implements IDataContext {
   /**
    * Gets variableSpace
    *
-   * @return value of variableSpace
+   * @return value of variables
    */
   @Override public IVariables getVariables() {
-    return variableSpace;
+    return variables;
   }
 
   /**
-   * @param variableSpace The variableSpace to set
+   * @param variables The variables to set
    */
-  public void setVariableSpace( IVariables variableSpace ) {
-    this.variableSpace = variableSpace;
+  public void setVariables( IVariables variables ) {
+    this.variables = variables;
   }
 
   /**

@@ -8,6 +8,7 @@ import org.lean.presentation.layout.LeanLayoutResults;
 import org.lean.render.IRenderContext;
 import org.lean.render.context.PresentationRenderContext;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -42,7 +43,7 @@ public class PresentationCache {
     }
 
     IRenderContext renderContext = new PresentationRenderContext(presentation);
-    results = presentation.doLayout(parent, renderContext, metadataProvider);
+    results = presentation.doLayout(parent, renderContext, metadataProvider, Collections.emptyList());
     presentation.render(results, metadataProvider);
 
     getInstance().presentationResultsMap.put(presentation, results);
