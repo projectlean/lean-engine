@@ -3,6 +3,10 @@ package org.lean.presentation.interaction;
 import org.apache.hop.metadata.api.HopMetadataProperty;
 import org.lean.core.draw.DrawnItem;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * Describes an interaction: method: how the user interacts. location: where the interaction can
  * take place action: what needs to happen
@@ -13,28 +17,31 @@ public class LeanInteraction {
 
   @HopMetadataProperty private LeanInteractionLocation location;
 
-  @HopMetadataProperty private LeanInteractionAction action;
+  @HopMetadataProperty private List<LeanInteractionAction> actions;
 
   public LeanInteraction() {}
 
   public LeanInteraction(
       LeanInteractionMethod method,
       LeanInteractionLocation location,
-      LeanInteractionAction action) {
+      LeanInteractionAction...actions) {
     this.method = method;
     this.location = location;
-    this.action = action;
+    this.actions = new ArrayList<>( Arrays.asList(actions) );
   }
 
   public LeanInteraction( LeanInteraction interaction ) {
     this();
     this.method = new LeanInteractionMethod(interaction.method);
     this.location = new LeanInteractionLocation(interaction.location);
-    this.action = new LeanInteractionAction(interaction.action);
+    this.actions = new ArrayList<>();
+    for (LeanInteractionAction action : interaction.actions) {
+      actions.add(new LeanInteractionAction(action));
+    }
   }
 
   public boolean matches( LeanInteractionMethod method, DrawnItem drawnItem ) {
-    if (!this.method.equals(method)) {
+    if (method!=null && !this.method.equals(method)) {
       return false;
     }
     return location.matches(drawnItem);
@@ -73,19 +80,19 @@ public class LeanInteraction {
   }
 
   /**
-   * Gets action
+   * Gets the list of actions
    *
-   * @return value of action
+   * @return List of actions
    */
-  public LeanInteractionAction getAction() {
-    return action;
+  public List<LeanInteractionAction> getActions() {
+    return actions;
   }
 
   /**
-   * @param action The action to set
+   * @param actions The action to set
    */
-  public void setAction( LeanInteractionAction action ) {
-    this.action = action;
+  public void setActions( List<LeanInteractionAction> actions ) {
+    this.actions = actions;
   }
 
 

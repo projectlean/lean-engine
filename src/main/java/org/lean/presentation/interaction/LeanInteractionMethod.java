@@ -7,6 +7,9 @@ import java.util.Objects;
 /** A Lean interaction method describes the way a user can interact with any part of a presentation. */
 public class LeanInteractionMethod {
 
+  public static final LeanInteractionMethod SingleClick = new LeanInteractionMethod(true, false);
+  public static final LeanInteractionMethod DoubleClick = new LeanInteractionMethod(false, true);
+
   @HopMetadataProperty private boolean mouseClick;
 
   @HopMetadataProperty private boolean mouseDoubleClick;

@@ -23,6 +23,7 @@ import org.lean.presentation.theme.LeanTheme;
 import org.lean.render.IRenderContext;
 import org.lean.render.context.SimpleRenderContext;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -139,7 +140,10 @@ public class LeanComponent extends HopMetadataBase implements IHopMetadata {
     IRenderContext renderContext = new SimpleRenderContext( width, height, themes );
     LoggingObject loggingObject = new LoggingObject( "componentRender" );
     ILogChannel log = LogChannel.GENERAL;
-    LeanLayoutResults results = presentation.doLayout( loggingObject, renderContext, metadataProvider );
+
+    // We don't pass in any new parameters
+    //
+    LeanLayoutResults results = presentation.doLayout( loggingObject, renderContext, metadataProvider, Collections.emptyList() );
     presentation.render( results, metadataProvider );
 
     if ( results.getRenderPages().size() == 0 ) {

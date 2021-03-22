@@ -30,6 +30,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static org.junit.Assert.assertNotNull;
@@ -92,7 +93,7 @@ public class LeanPresentationTestBase {
 
     IRenderContext renderContext = new PresentationRenderContext( presentation );
 
-    LeanLayoutResults results = presentation.doLayout( parent, renderContext, metadataProvider );
+    LeanLayoutResults results = presentation.doLayout( parent, renderContext, metadataProvider, Collections.emptyList() );
     presentation.render( results, metadataProvider );
 
     ILogChannel log = results.getLog();
