@@ -21,7 +21,7 @@
   </licenses>
 
   <properties>
-    <hop.version>0.70-SNAPSHOT</hop.version>
+    <hop.version>1.0.0</hop.version>
 
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>1.8</maven.compiler.target>
@@ -38,6 +38,17 @@
   </properties>
 
   <repositories>
+    <repository>
+      <id>Apache</id>
+      <url>https://repository.apache.org/snapshots/</url>
+      <name>Apache Repository</name>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+      <releases>
+        <enabled>false</enabled>
+      </releases>
+    </repository>
     <repository>
       <id>central</id>
       <url>https://repo1.maven.org/maven2/</url>
@@ -140,51 +151,6 @@
           </execution>
         </executions>
       </plugin>
-      <!--
-            <plugin>
-              <groupId>org.apache.maven.plugins</groupId>
-              <artifactId>maven-resources-plugin</artifactId>
-              <executions>
-                <execution>
-                  <id>default-copy-resources</id>
-                  <phase>process-resources</phase>
-                  <goals>
-                    <goal>copy-resources</goal>
-                  </goals>
-                  <configuration>
-                    <overwrite>true</overwrite>
-                    <outputDirectory>${project.build.directory}/${project.artifactId}-${project.version}/WEB-INF/</outputDirectory>
-                    <resources>
-                      <resource>
-                        <directory>${project.basedir}/src/resources</directory>
-                      </resource>
-                    </resources>
-                  </configuration>
-                </execution>
-              </executions>
-            </plugin>
-
-            <plugin>
-              <groupId>org.apache.maven.plugins</groupId>
-              <artifactId>maven-war-plugin</artifactId>
-              <version>3.2.0</version>
-              <configuration>
-                <webResources>
-                  <resource>
-                    <filtering>true</filtering>
-                    <directory>src/main/webapp</directory>
-                    <includes>
-                      <include>**/web.xml</include>
-                    </includes>
-                  </resource>
-                </webResources>
-                <warSourceDirectory>src/main/webapp</warSourceDirectory>
-                <webXml>src/main/webapp/WEB-INF/web.xml</webXml>
-              </configuration>
-            </plugin>
-
-          -->
-
     </plugins>
   </build>
 
