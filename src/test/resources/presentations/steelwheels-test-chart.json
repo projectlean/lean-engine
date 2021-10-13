@@ -1,448 +1,447 @@
 {
-  "name":"My Presentation 0",
-  "description":"My Presentation Description0",
-  "pages":[
+  "name": "My Presentation 0",
+  "description": "My Presentation Description0",
+  "pages": [
     {
-      "pageNumber":1,
-      "width":1123,
-      "height":794,
-      "leftMargin":25,
-      "rightMargin":25,
-      "topMargin":25,
-      "bottomMargin":25,
-      "components":[
+      "pageNumber": 1,
+      "width": 1123,
+      "height": 794,
+      "leftMargin": 25,
+      "rightMargin": 25,
+      "topMargin": 25,
+      "bottomMargin": 25,
+      "components": [
         {
-          "name":"My bi.lean.presentation.component.types.chart.LeanLineChartComponent",
-          "layout":{
-            "left":{
-              "componentName":null,
-              "percentage":0,
-              "offset":5,
-              "alignment":"DEFAULT"
+          "name": "My bi.lean.presentation.component.types.chart.LeanLineChartComponent",
+          "layout": {
+            "left": {
+              "componentName": null,
+              "percentage": 0,
+              "offset": 5,
+              "alignment": "DEFAULT"
             },
-            "right":{
-              "componentName":null,
-              "percentage":100,
-              "offset":-5,
-              "alignment":"DEFAULT"
+            "right": {
+              "componentName": null,
+              "percentage": 100,
+              "offset": -5,
+              "alignment": "DEFAULT"
             },
-            "top":{
-              "componentName":null,
-              "percentage":0,
-              "offset":5,
-              "alignment":"DEFAULT"
+            "top": {
+              "componentName": null,
+              "percentage": 0,
+              "offset": 5,
+              "alignment": "DEFAULT"
             },
-            "bottom":{
-              "componentName":null,
-              "percentage":100,
-              "offset":-5,
-              "alignment":"DEFAULT"
+            "bottom": {
+              "componentName": null,
+              "percentage": 100,
+              "offset": -5,
+              "alignment": "DEFAULT"
             }
           },
-          "size":null,
-          "component":{
-            "pluginId":"LeanLineChartComponent",
-            "sourceConnectorName":"territories",
-            "defaultFont":{
-              "fontName":"Arial",
-              "fontSize":"12",
-              "bold":false,
-              "italic":false
+          "size": null,
+          "component": {
+            "pluginId": "LeanLineChartComponent",
+            "sourceConnectorName": "territories",
+            "defaultFont": {
+              "fontName": "Arial",
+              "fontSize": "12",
+              "bold": false,
+              "italic": false
             },
-            "defaultColor":{
-              "r":0,
-              "g":0,
-              "b":0
+            "defaultColor": {
+              "r": 0,
+              "g": 0,
+              "b": 0
             },
-            "background":false,
-            "backGroundColor":{
-              "r":245,
-              "g":245,
-              "b":245
+            "background": false,
+            "backGroundColor": {
+              "r": 245,
+              "g": 245,
+              "b": 245
             },
-            "border":true,
-            "borderColor":{
-              "r":230,
-              "g":230,
-              "b":230
+            "border": true,
+            "borderColor": {
+              "r": 230,
+              "g": 230,
+              "b": 230
             },
-            "horizontalDimensions":[
+            "horizontalDimensions": [
               {
-                "columnName":"TERRITORY",
-                "headerValue":"TERRITORY",
-                "font":null,
-                "horizontalAlignment":"CENTER",
-                "verticalAlignment":"MIDDLE",
-                "width":0,
-                "formatMask":null
+                "columnName": "TERRITORY",
+                "headerValue": "TERRITORY",
+                "font": null,
+                "horizontalAlignment": "CENTER",
+                "verticalAlignment": "MIDDLE",
+                "width": 0,
+                "formatMask": null
               }
             ],
-            "verticalDimensions":[
+            "verticalDimensions": [
               {
-                "columnName":"CNT",
-                "headerValue":"CNT",
-                "font":null,
-                "horizontalAlignment":"CENTER",
-                "verticalAlignment":"MIDDLE",
-                "width":0,
-                "formatMask":null
+                "columnName": "CNT",
+                "headerValue": "CNT",
+                "font": null,
+                "horizontalAlignment": "CENTER",
+                "verticalAlignment": "MIDDLE",
+                "width": 0,
+                "formatMask": null
               }
             ],
-            "facts":[
+            "facts": [
               {
-                "columnName":"CNT",
-                "headerValue":"CNT",
-                "font":null,
-                "horizontalAlignment":"RIGHT",
-                "verticalAlignment":"MIDDLE",
-                "width":0,
-                "formatMask":"0",
-                "aggregationMethod":"SUM",
-                "horizontalAggregation":true,
-                "horizontalAggregationHeader":"Total Count",
-                "verticalAggregation":false,
-                "verticalAggregationHeader":null,
-                "headerHorizontalAlignment":"CENTER",
-                "headerVerticalAlignment":"MIDDLE"
+                "columnName": "CNT",
+                "headerValue": "CNT",
+                "font": null,
+                "horizontalAlignment": "RIGHT",
+                "verticalAlignment": "MIDDLE",
+                "width": 0,
+                "formatMask": "0",
+                "aggregationMethod": "SUM",
+                "horizontalAggregation": true,
+                "horizontalAggregationHeader": "Total Count",
+                "verticalAggregation": false,
+                "verticalAggregationHeader": null,
+                "headerHorizontalAlignment": "CENTER",
+                "headerVerticalAlignment": "MIDDLE"
               }
             ],
-            "showingHorizontalTotals":false,
-            "showingVerticalTotals":false,
-            "axisColor":{
-              "r":0,
-              "g":0,
-              "b":0
+            "showingHorizontalTotals": false,
+            "showingVerticalTotals": false,
+            "axisColor": {
+              "r": 0,
+              "g": 0,
+              "b": 0
             },
-            "horizontalDimensionsFont":{
-              "fontName":"Arial",
-              "fontSize":"12",
-              "bold":true,
-              "italic":false
+            "horizontalDimensionsFont": {
+              "fontName": "Arial",
+              "fontSize": "12",
+              "bold": true,
+              "italic": false
             },
-            "verticalDimensionsFont":{
-              "fontName":"Arial",
-              "fontSize":"12",
-              "bold":true,
-              "italic":false
+            "verticalDimensionsFont": {
+              "fontName": "Arial",
+              "fontSize": "12",
+              "bold": true,
+              "italic": false
             },
-            "factsFont":{
-              "fontName":"Arial",
-              "fontSize":"12",
-              "bold":false,
-              "italic":false
+            "factsFont": {
+              "fontName": "Arial",
+              "fontSize": "12",
+              "bold": false,
+              "italic": false
             },
-            "horizontalMargin":10,
-            "verticalMargin":10,
-            "showingHorizontalLabels":true,
-            "showingVerticalLabels":true,
-            "showingAxisTicks":true,
-            "dotSize":6,
-            "title":"Random by Color",
-            "titleFont":{
-              "fontName":"Arial",
-              "fontSize":"10",
-              "bold":true,
-              "italic":true
+            "horizontalMargin": 10,
+            "verticalMargin": 10,
+            "showingHorizontalLabels": true,
+            "showingVerticalLabels": true,
+            "showingAxisTicks": true,
+            "dotSize": 6,
+            "title": "Random by Color",
+            "titleFont": {
+              "fontName": "Arial",
+              "fontSize": "10",
+              "bold": true,
+              "italic": true
             },
-            "titleColor":{
-              "r":200,
-              "g":200,
-              "b":200
+            "titleColor": {
+              "r": 200,
+              "g": 200,
+              "b": 200
             },
-            "themeName":null,
-            "lineWidth":null,
-            "drawingCurvedTrendLine":false
+            "themeName": null,
+            "lineWidth": null,
+            "drawingCurvedTrendLine": false
           },
-          "shared":false,
-          "rotation":null,
-          "transparency":null
+          "shared": false,
+          "rotation": null,
+          "transparency": null
         }
       ]
     }
   ],
-  "header":{
-    "pageNumber":-1,
-    "width":1073,
-    "height":50,
-    "leftMargin":0,
-    "rightMargin":0,
-    "topMargin":0,
-    "bottomMargin":0,
-    "components":[
+  "header": {
+    "pageNumber": -1,
+    "width": 1073,
+    "height": 50,
+    "leftMargin": 0,
+    "rightMargin": 0,
+    "topMargin": 0,
+    "bottomMargin": 0,
+    "components": [
       {
-        "name":"Logo",
-        "layout":{
-          "left":null,
-          "right":{
-            "componentName":null,
-            "percentage":100,
-            "offset":0,
-            "alignment":"RIGHT"
+        "name": "Logo",
+        "layout": {
+          "left": null,
+          "right": {
+            "componentName": null,
+            "percentage": 100,
+            "offset": 0,
+            "alignment": "RIGHT"
           },
-          "top":{
-            "componentName":null,
-            "percentage":0,
-            "offset":0,
-            "alignment":"TOP"
+          "top": {
+            "componentName": null,
+            "percentage": 0,
+            "offset": 0,
+            "alignment": "TOP"
           },
-          "bottom":null
+          "bottom": null
         },
-        "size":null,
-        "component":{
-          "pluginId":"LeanImageComponent",
-          "sourceConnectorName":null,
-          "defaultFont":null,
-          "defaultColor":null,
-          "background":false,
-          "backGroundColor":null,
-          "border":false,
-          "borderColor":{
-            "r":245,
-            "g":245,
-            "b":245
+        "size": null,
+        "component": {
+          "pluginId": "LeanImageComponent",
+          "sourceConnectorName": null,
+          "defaultFont": null,
+          "defaultColor": null,
+          "background": false,
+          "backGroundColor": null,
+          "border": false,
+          "borderColor": {
+            "r": 245,
+            "g": 245,
+            "b": 245
           },
-          "filename":"lean-logo.png",
-          "scalePercent":"5"
+          "filename": "lean-logo.png",
+          "scalePercent": "5"
         },
-        "shared":false,
-        "rotation":null,
-        "transparency":null
+        "shared": false,
+        "rotation": null,
+        "transparency": null
       },
       {
-        "name":"HeaderLabel",
-        "layout":{
-          "left":{
-            "componentName":null,
-            "percentage":0,
-            "offset":0,
-            "alignment":"CENTER"
+        "name": "HeaderLabel",
+        "layout": {
+          "left": {
+            "componentName": null,
+            "percentage": 0,
+            "offset": 0,
+            "alignment": "CENTER"
           },
-          "right":null,
-          "top":{
-            "componentName":"Logo",
-            "percentage":0,
-            "offset":0,
-            "alignment":"CENTER"
+          "right": null,
+          "top": {
+            "componentName": "Logo",
+            "percentage": 0,
+            "offset": 0,
+            "alignment": "CENTER"
           },
-          "bottom":null
+          "bottom": null
         },
-        "size":null,
-        "component":{
-          "pluginId":"LeanLabelComponent",
-          "sourceConnectorName":null,
-          "defaultFont":{
-            "fontName":"Arial",
-            "fontSize":"12",
-            "bold":false,
-            "italic":false
+        "size": null,
+        "component": {
+          "pluginId": "LeanLabelComponent",
+          "sourceConnectorName": null,
+          "defaultFont": {
+            "fontName": "Arial",
+            "fontSize": "12",
+            "bold": false,
+            "italic": false
           },
-          "defaultColor":{
-            "r":0,
-            "g":0,
-            "b":0
+          "defaultColor": {
+            "r": 0,
+            "g": 0,
+            "b": 0
           },
-          "background":false,
-          "backGroundColor":null,
-          "border":false,
-          "borderColor":{
-            "r":240,
-            "g":240,
-            "b":240
+          "background": false,
+          "backGroundColor": null,
+          "border": false,
+          "borderColor": {
+            "r": 240,
+            "g": 240,
+            "b": 240
           },
-          "label":"Test header",
-          "horizontalAlignment":"LEFT",
-          "verticalAlignment":"TOP",
-          "customHtml":null
+          "label": "Test header",
+          "horizontalAlignment": "LEFT",
+          "verticalAlignment": "TOP",
+          "customHtml": null
         },
-        "shared":false,
-        "rotation":null,
-        "transparency":null
+        "shared": false,
+        "rotation": null,
+        "transparency": null
       },
       {
-        "name":"PresentationName",
-        "layout":{
-          "left":{
-            "componentName":null,
-            "percentage":0,
-            "offset":0,
-            "alignment":"LEFT"
+        "name": "PresentationName",
+        "layout": {
+          "left": {
+            "componentName": null,
+            "percentage": 0,
+            "offset": 0,
+            "alignment": "LEFT"
           },
-          "right":null,
-          "top":{
-            "componentName":"Logo",
-            "percentage":0,
-            "offset":0,
-            "alignment":"CENTER"
+          "right": null,
+          "top": {
+            "componentName": "Logo",
+            "percentage": 0,
+            "offset": 0,
+            "alignment": "CENTER"
           },
-          "bottom":null
+          "bottom": null
         },
-        "size":null,
-        "component":{
-          "pluginId":"LeanLabelComponent",
-          "sourceConnectorName":null,
-          "defaultFont":{
-            "fontName":"Arial",
-            "fontSize":"12",
-            "bold":false,
-            "italic":false
+        "size": null,
+        "component": {
+          "pluginId": "LeanLabelComponent",
+          "sourceConnectorName": null,
+          "defaultFont": {
+            "fontName": "Arial",
+            "fontSize": "12",
+            "bold": false,
+            "italic": false
           },
-          "defaultColor":{
-            "r":0,
-            "g":0,
-            "b":0
+          "defaultColor": {
+            "r": 0,
+            "g": 0,
+            "b": 0
           },
-          "background":false,
-          "backGroundColor":null,
-          "border":false,
-          "borderColor":{
-            "r":240,
-            "g":240,
-            "b":240
+          "background": false,
+          "backGroundColor": null,
+          "border": false,
+          "borderColor": {
+            "r": 240,
+            "g": 240,
+            "b": 240
           },
-          "label":"${PRESENTATION_NAME}",
-          "horizontalAlignment":"LEFT",
-          "verticalAlignment":"TOP",
-          "customHtml":null
+          "label": "${PRESENTATION_NAME}",
+          "horizontalAlignment": "LEFT",
+          "verticalAlignment": "TOP",
+          "customHtml": null
         },
-        "shared":false,
-        "rotation":null,
-        "transparency":null
+        "shared": false,
+        "rotation": null,
+        "transparency": null
       }
     ]
   },
-  "footer":{
-    "pageNumber":-1,
-    "width":1073,
-    "height":25,
-    "leftMargin":0,
-    "rightMargin":0,
-    "topMargin":0,
-    "bottomMargin":0,
-    "components":[
+  "footer": {
+    "pageNumber": -1,
+    "width": 1073,
+    "height": 25,
+    "leftMargin": 0,
+    "rightMargin": 0,
+    "topMargin": 0,
+    "bottomMargin": 0,
+    "components": [
       {
-        "name":"FooterLabel",
-        "layout":{
-          "left":{
-            "componentName":null,
-            "percentage":0,
-            "offset":0,
-            "alignment":"LEFT"
+        "name": "FooterLabel",
+        "layout": {
+          "left": {
+            "componentName": null,
+            "percentage": 0,
+            "offset": 0,
+            "alignment": "LEFT"
           },
-          "right":null,
-          "top":{
-            "componentName":null,
-            "percentage":0,
-            "offset":0,
-            "alignment":"TOP"
+          "right": null,
+          "top": {
+            "componentName": null,
+            "percentage": 0,
+            "offset": 0,
+            "alignment": "TOP"
           },
-          "bottom":null
+          "bottom": null
         },
-        "size":null,
-        "component":{
-          "pluginId":"LeanLabelComponent",
-          "sourceConnectorName":null,
-          "defaultFont":{
-            "fontName":"Arial",
-            "fontSize":"12",
-            "bold":false,
-            "italic":false
+        "size": null,
+        "component": {
+          "pluginId": "LeanLabelComponent",
+          "sourceConnectorName": null,
+          "defaultFont": {
+            "fontName": "Arial",
+            "fontSize": "12",
+            "bold": false,
+            "italic": false
           },
-          "defaultColor":{
-            "r":0,
-            "g":0,
-            "b":0
+          "defaultColor": {
+            "r": 0,
+            "g": 0,
+            "b": 0
           },
-          "background":false,
-          "backGroundColor":null,
-          "border":false,
-          "borderColor":{
-            "r":240,
-            "g":240,
-            "b":240
+          "background": false,
+          "backGroundColor": null,
+          "border": false,
+          "borderColor": {
+            "r": 240,
+            "g": 240,
+            "b": 240
           },
-          "label":"Page #${PAGE_NUMBER}",
-          "horizontalAlignment":"LEFT",
-          "verticalAlignment":"TOP",
-          "customHtml":null
+          "label": "Page #${PAGE_NUMBER}",
+          "horizontalAlignment": "LEFT",
+          "verticalAlignment": "TOP",
+          "customHtml": null
         },
-        "shared":false,
-        "rotation":null,
-        "transparency":null
+        "shared": false,
+        "rotation": null,
+        "transparency": null
       },
       {
-        "name":"SystemDate",
-        "layout":{
-          "left":null,
-          "right":{
-            "componentName":null,
-            "percentage":100,
-            "offset":0,
-            "alignment":"RIGHT"
+        "name": "SystemDate",
+        "layout": {
+          "left": null,
+          "right": {
+            "componentName": null,
+            "percentage": 100,
+            "offset": 0,
+            "alignment": "RIGHT"
           },
-          "top":{
-            "componentName":null,
-            "percentage":0,
-            "offset":0,
-            "alignment":"TOP"
+          "top": {
+            "componentName": null,
+            "percentage": 0,
+            "offset": 0,
+            "alignment": "TOP"
           },
-          "bottom":null
+          "bottom": null
         },
-        "size":null,
-        "component":{
-          "pluginId":"LeanLabelComponent",
-          "sourceConnectorName":null,
-          "defaultFont":{
-            "fontName":"Arial",
-            "fontSize":"12",
-            "bold":false,
-            "italic":false
+        "size": null,
+        "component": {
+          "pluginId": "LeanLabelComponent",
+          "sourceConnectorName": null,
+          "defaultFont": {
+            "fontName": "Arial",
+            "fontSize": "12",
+            "bold": false,
+            "italic": false
           },
-          "defaultColor":{
-            "r":0,
-            "g":0,
-            "b":0
+          "defaultColor": {
+            "r": 0,
+            "g": 0,
+            "b": 0
           },
-          "background":false,
-          "backGroundColor":null,
-          "border":false,
-          "borderColor":{
-            "r":240,
-            "g":240,
-            "b":240
+          "background": false,
+          "backGroundColor": null,
+          "border": false,
+          "borderColor": {
+            "r": 240,
+            "g": 240,
+            "b": 240
           },
-          "label":"${SYSTEM_DATE}",
-          "horizontalAlignment":"LEFT",
-          "verticalAlignment":"TOP",
-          "customHtml":null
+          "label": "${SYSTEM_DATE}",
+          "horizontalAlignment": "LEFT",
+          "verticalAlignment": "TOP",
+          "customHtml": null
         },
-        "shared":false,
-        "rotation":null,
-        "transparency":null
+        "shared": false,
+        "rotation": null,
+        "transparency": null
       }
     ]
   },
-  "themes":[
-
+  "themes": [
   ],
-  "connectors":[
+  "connectors": [
     {
-      "name":"Sample Data",
-      "connector":{
-        "pluginId":"SampleDataConnector",
-        "sourceConnectorName":null,
-        "rowCount":100
+      "name": "Sample Data",
+      "connector": {
+        "pluginId": "SampleDataConnector",
+        "sourceConnectorName": null,
+        "rowCount": 100
       },
-      "shared":false
+      "shared": false
     },
     {
-      "name":"territories",
-      "connector":{
-        "pluginId":"SqlConnector",
-        "sourceConnectorName":null,
-        "databaseConnectionName":"SteelWheels",
-        "sql":"select coalesce(territory, 'UNKNOWN') as territory, count(*) as cnt from customer_w_ter group by territory order by 1 asc; "
+      "name": "territories",
+      "connector": {
+        "pluginId": "SqlConnector",
+        "sourceConnectorName": null,
+        "databaseConnectionName": "SteelWheels",
+        "sql": "select coalesce(territory, 'UNKNOWN') as territory, count(*) as cnt from customer_w_ter group by territory order by 1 asc; "
       },
-      "shared":false
+      "shared": false
     }
   ]
 }

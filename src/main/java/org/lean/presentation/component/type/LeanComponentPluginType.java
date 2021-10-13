@@ -30,7 +30,8 @@ public class LeanComponentPluginType extends BasePluginType<LeanComponentPlugin>
     return pluginType;
   }
 
-  @Override protected void registerNatives() throws HopPluginException {
+  @Override
+  protected void registerNatives() throws HopPluginException {
     super.registerNatives();
   }
 

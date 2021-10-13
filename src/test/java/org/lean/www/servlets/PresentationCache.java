@@ -43,7 +43,8 @@ public class PresentationCache {
     }
 
     IRenderContext renderContext = new PresentationRenderContext(presentation);
-    results = presentation.doLayout(parent, renderContext, metadataProvider, Collections.emptyList());
+    results =
+        presentation.doLayout(parent, renderContext, metadataProvider, Collections.emptyList());
     presentation.render(results, metadataProvider);
 
     getInstance().presentationResultsMap.put(presentation, results);

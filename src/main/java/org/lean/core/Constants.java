@@ -19,14 +19,13 @@ public class Constants {
   /** The system variable which points to the component plugins XML file */
   public static final String LEAN_CORE_CONNECTORS_FILE = "LEAN_CORE_CONNECTORS_FILE";
 
-
-
-
   /** The name of the metastore component factory */
-  public static final String METASTORE_FACTORY_NAME_COMPONENTS = "METASTORE_FACTORY_NAME_COMPONENTS";
+  public static final String METASTORE_FACTORY_NAME_COMPONENTS =
+      "METASTORE_FACTORY_NAME_COMPONENTS";
 
   /** The name of the metastore connectors factory */
-  public static final String METASTORE_FACTORY_NAME_CONNECTORS = "METASTORE_FACTORY_NAME_CONNECTORS";
+  public static final String METASTORE_FACTORY_NAME_CONNECTORS =
+      "METASTORE_FACTORY_NAME_CONNECTORS";
 
   /** The name of the metastore database factory */
   public static final String METASTORE_FACTORY_NAME_DATABASES = "METASTORE_FACTORY_NAME_DATABASES";
@@ -35,15 +34,12 @@ public class Constants {
   public static final String METASTORE_FACTORY_NAME_THEMES = "METASTORE_FACTORY_NAME_THEMES";
 
   /** The name of the metastore presentation factory */
-  public static final String METASTORE_FACTORY_NAME_PRESENTATION = "METASTORE_FACTORY_NAME_PRESENTATION";
-
+  public static final String METASTORE_FACTORY_NAME_PRESENTATION =
+      "METASTORE_FACTORY_NAME_PRESENTATION";
 
   /** The maximum number of remembered user history actions */
   public static final int USER_ACTION_HISTORY_SIZE = 10;
 
-
   public static final String DEFAULT_THEME_NAME = "Default";
   public static final String DEFAULT_THEME_DESCRIPTION = "Default test theme scheme";
-
-
 }

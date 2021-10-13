@@ -57,6 +57,11 @@ public class LeanLabelComponent extends LeanBaseComponent implements ILeanCompon
     this.customHtml = c.customHtml;
   }
 
+  public LeanLabelComponent(String label) {
+    this();
+    this.label = label;
+  }
+
   public LeanLabelComponent clone() {
     return new LeanLabelComponent(this);
   }
@@ -186,7 +191,7 @@ public class LeanLabelComponent extends LeanBaseComponent implements ILeanCompon
     LeanGeometry labelGeometry =
         new LeanGeometry(
             Math.round(offSet.getX() + x + textGeometry.getOffsetX()),
-            Math.round(offSet.getY() + y ),
+            Math.round(offSet.getY() + y),
             textGeometry.getWidth(),
             textGeometry.getHeight());
 

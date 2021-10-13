@@ -24,13 +24,13 @@ public class LeanInteraction {
   public LeanInteraction(
       LeanInteractionMethod method,
       LeanInteractionLocation location,
-      LeanInteractionAction...actions) {
+      LeanInteractionAction... actions) {
     this.method = method;
     this.location = location;
-    this.actions = new ArrayList<>( Arrays.asList(actions) );
+    this.actions = new ArrayList<>(Arrays.asList(actions));
   }
 
-  public LeanInteraction( LeanInteraction interaction ) {
+  public LeanInteraction(LeanInteraction interaction) {
     this();
     this.method = new LeanInteractionMethod(interaction.method);
     this.location = new LeanInteractionLocation(interaction.location);
@@ -40,8 +40,8 @@ public class LeanInteraction {
     }
   }
 
-  public boolean matches( LeanInteractionMethod method, DrawnItem drawnItem ) {
-    if (method!=null && !this.method.equals(method)) {
+  public boolean matches(LeanInteractionMethod method, DrawnItem drawnItem) {
+    if (method != null && !this.method.equals(method)) {
       return false;
     }
     return location.matches(drawnItem);
@@ -56,10 +56,8 @@ public class LeanInteraction {
     return method;
   }
 
-  /**
-   * @param method The method to set
-   */
-  public void setMethod( LeanInteractionMethod method ) {
+  /** @param method The method to set */
+  public void setMethod(LeanInteractionMethod method) {
     this.method = method;
   }
 
@@ -72,10 +70,8 @@ public class LeanInteraction {
     return location;
   }
 
-  /**
-   * @param location The location to set
-   */
-  public void setLocation( LeanInteractionLocation location ) {
+  /** @param location The location to set */
+  public void setLocation(LeanInteractionLocation location) {
     this.location = location;
   }
 
@@ -88,12 +84,8 @@ public class LeanInteraction {
     return actions;
   }
 
-  /**
-   * @param actions The action to set
-   */
-  public void setActions( List<LeanInteractionAction> actions ) {
+  /** @param actions The action to set */
+  public void setActions(List<LeanInteractionAction> actions) {
     this.actions = actions;
   }
-
-
 }

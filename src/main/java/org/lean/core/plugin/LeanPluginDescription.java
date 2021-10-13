@@ -3,7 +3,7 @@ package org.lean.core.plugin;
 import java.util.ArrayList;
 import java.util.List;
 
-public class LeanPluginDescription implements Comparable<LeanPluginDescription>{
+public class LeanPluginDescription implements Comparable<LeanPluginDescription> {
   private String id;
   private String name;
   private String description;
@@ -14,7 +14,8 @@ public class LeanPluginDescription implements Comparable<LeanPluginDescription>{
     libraries = new ArrayList<String>();
   }
 
-  public LeanPluginDescription( String id, String name, String description, String className, List<String> libraries ) {
+  public LeanPluginDescription(
+      String id, String name, String description, String className, List<String> libraries) {
     this.id = id;
     this.name = name;
     this.description = description;
@@ -26,7 +27,7 @@ public class LeanPluginDescription implements Comparable<LeanPluginDescription>{
     return id;
   }
 
-  public void setId( String id ) {
+  public void setId(String id) {
     this.id = id;
   }
 
@@ -34,7 +35,7 @@ public class LeanPluginDescription implements Comparable<LeanPluginDescription>{
     return name;
   }
 
-  public void setName( String name ) {
+  public void setName(String name) {
     this.name = name;
   }
 
@@ -42,7 +43,7 @@ public class LeanPluginDescription implements Comparable<LeanPluginDescription>{
     return description;
   }
 
-  public void setDescription( String description ) {
+  public void setDescription(String description) {
     this.description = description;
   }
 
@@ -50,7 +51,7 @@ public class LeanPluginDescription implements Comparable<LeanPluginDescription>{
     return className;
   }
 
-  public void setClassName( String className ) {
+  public void setClassName(String className) {
     this.className = className;
   }
 
@@ -58,11 +59,12 @@ public class LeanPluginDescription implements Comparable<LeanPluginDescription>{
     return libraries;
   }
 
-  public void setLibraries( List<String> libraries ) {
+  public void setLibraries(List<String> libraries) {
     this.libraries = libraries;
   }
 
-  @Override public int compareTo( LeanPluginDescription leanPluginDescription ) {
-    return id.compareTo( leanPluginDescription.id );
+  @Override
+  public int compareTo(LeanPluginDescription leanPluginDescription) {
+    return id.compareTo(leanPluginDescription.id);
   }
 }

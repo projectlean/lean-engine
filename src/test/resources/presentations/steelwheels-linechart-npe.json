@@ -1,151 +1,150 @@
 {
-  "name":"My Trial Presentation",
-  "description":null,
-  "pages":[
+  "name": "My Trial Presentation",
+  "description": null,
+  "pages": [
     {
-      "pageNumber":1,
-      "width":1123,
-      "height":794,
-      "leftMargin":25,
-      "rightMargin":25,
-      "topMargin":25,
-      "bottomMargin":25,
-      "components":[
+      "pageNumber": 1,
+      "width": 1123,
+      "height": 794,
+      "leftMargin": 25,
+      "rightMargin": 25,
+      "topMargin": 25,
+      "bottomMargin": 25,
+      "components": [
         {
-          "name":"My Line Chart",
-          "layout":{
-            "left":{
-              "componentName":null,
-              "percentage":0,
-              "offset":5,
-              "alignment":"DEFAULT"
+          "name": "My Line Chart",
+          "layout": {
+            "left": {
+              "componentName": null,
+              "percentage": 0,
+              "offset": 5,
+              "alignment": "DEFAULT"
             },
-            "right":{
-              "componentName":null,
-              "percentage":100,
-              "offset":-5,
-              "alignment":"DEFAULT"
+            "right": {
+              "componentName": null,
+              "percentage": 100,
+              "offset": -5,
+              "alignment": "DEFAULT"
             },
-            "top":{
-              "componentName":null,
-              "percentage":0,
-              "offset":5,
-              "alignment":"DEFAULT"
+            "top": {
+              "componentName": null,
+              "percentage": 0,
+              "offset": 5,
+              "alignment": "DEFAULT"
             },
-            "bottom":{
-              "componentName":null,
-              "percentage":100,
-              "offset":-5,
-              "alignment":"DEFAULT"
+            "bottom": {
+              "componentName": null,
+              "percentage": 100,
+              "offset": -5,
+              "alignment": "DEFAULT"
             }
           },
-          "size":null,
-          "component":{
-            "pluginId":"LeanLineChartComponent",
-            "sourceConnectorName":"territories",
-            "defaultFont":{
-              "fontName":"Aria",
-              "fontSize":"12",
-              "bold":false,
-              "italic":false
+          "size": null,
+          "component": {
+            "pluginId": "LeanLineChartComponent",
+            "sourceConnectorName": "territories",
+            "defaultFont": {
+              "fontName": "Aria",
+              "fontSize": "12",
+              "bold": false,
+              "italic": false
             },
-            "defaultColor":{
-              "r":0,
-              "g":0,
-              "b":0
+            "defaultColor": {
+              "r": 0,
+              "g": 0,
+              "b": 0
             },
-            "background":false,
-            "backGroundColor":null,
-            "border":false,
-            "borderColor":null,
-            "themeName":null,
-            "horizontalDimensions":[
+            "background": false,
+            "backGroundColor": null,
+            "border": false,
+            "borderColor": null,
+            "themeName": null,
+            "horizontalDimensions": [
               {
-                "columnName":"TERRITORY",
-                "headerValue":"TERRITORY",
-                "horizontalAlignment":"CENTER",
-                "verticalAlignment":"MIDDLE",
-                "width":0,
-                "formatMask":null,
-                "font":null
+                "columnName": "TERRITORY",
+                "headerValue": "TERRITORY",
+                "horizontalAlignment": "CENTER",
+                "verticalAlignment": "MIDDLE",
+                "width": 0,
+                "formatMask": null,
+                "font": null
               }
             ],
-            "verticalDimensions":[
+            "verticalDimensions": [
               {
-                "columnName":"PRODUCTLINE",
-                "headerValue":"PRODUCTLINE",
-                "horizontalAlignment":"CENTER",
-                "verticalAlignment":"MIDDLE",
-                "width":0,
-                "formatMask":null,
-                "font":null
+                "columnName": "PRODUCTLINE",
+                "headerValue": "PRODUCTLINE",
+                "horizontalAlignment": "CENTER",
+                "verticalAlignment": "MIDDLE",
+                "width": 0,
+                "formatMask": null,
+                "font": null
               }
             ],
-            "facts":[
+            "facts": [
               {
-                "columnName":"CNT",
-                "headerValue":"CNT",
-                "horizontalAlignment":"CENTER",
-                "verticalAlignment":"MIDDLE",
-                "width":0,
-                "formatMask":"0",
-                "font":null,
-                "aggregationMethod":"SUM",
-                "horizontalAggregation":false,
-                "horizontalAggregationHeader":null,
-                "verticalAggregation":false,
-                "verticalAggregationHeader":null,
-                "headerHorizontalAlignment":null,
-                "headerVerticalAlignment":null
+                "columnName": "CNT",
+                "headerValue": "CNT",
+                "horizontalAlignment": "CENTER",
+                "verticalAlignment": "MIDDLE",
+                "width": 0,
+                "formatMask": "0",
+                "font": null,
+                "aggregationMethod": "SUM",
+                "horizontalAggregation": false,
+                "horizontalAggregationHeader": null,
+                "verticalAggregation": false,
+                "verticalAggregationHeader": null,
+                "headerHorizontalAlignment": null,
+                "headerVerticalAlignment": null
               }
             ],
-            "showingHorizontalTotals":false,
-            "showingVerticalTotals":false,
-            "horizontalDimensionsFont":null,
-            "horizontalDimensionsColor":null,
-            "verticalDimensionsFont":null,
-            "verticalDimensionsColor":null,
-            "factsFont":null,
-            "factsColor":null,
-            "titleFont":null,
-            "titleColor":null,
-            "gridColor":null,
-            "axisColor":null,
-            "horizontalMargin":0,
-            "verticalMargin":0,
-            "showingHorizontalLabels":true,
-            "showingVerticalLabels":true,
-            "showingAxisTicks":true,
-            "dotSize":6,
-            "title":null,
-            "lineWidth":null,
-            "usingZeroBaseline":true,
-            "showingLegend":false,
-            "drawingCurvedTrendLine":false
+            "showingHorizontalTotals": false,
+            "showingVerticalTotals": false,
+            "horizontalDimensionsFont": null,
+            "horizontalDimensionsColor": null,
+            "verticalDimensionsFont": null,
+            "verticalDimensionsColor": null,
+            "factsFont": null,
+            "factsColor": null,
+            "titleFont": null,
+            "titleColor": null,
+            "gridColor": null,
+            "axisColor": null,
+            "horizontalMargin": 0,
+            "verticalMargin": 0,
+            "showingHorizontalLabels": true,
+            "showingVerticalLabels": true,
+            "showingAxisTicks": true,
+            "dotSize": 6,
+            "title": null,
+            "lineWidth": null,
+            "usingZeroBaseline": true,
+            "showingLegend": false,
+            "drawingCurvedTrendLine": false
           },
-          "shared":false,
-          "rotation":null,
-          "transparency":null
+          "shared": false,
+          "rotation": null,
+          "transparency": null
         }
       ]
     }
   ],
-  "header":null,
-  "footer":null,
-  "themes":[
-
+  "header": null,
+  "footer": null,
+  "themes": [
   ],
-  "defaultThemeName":null,
-  "connectors":[
+  "defaultThemeName": null,
+  "connectors": [
     {
-      "name":"territories",
-      "connector":{
-        "pluginId":"SqlConnector",
-        "sourceConnectorName":null,
-        "databaseConnectionName":"SteelWheels",
-        "sql":"select coalesce(territory, 'UNKNOWN') as territory, country, productline, count(*) as cnt FROM customer_w_ter c INNER JOIN orderfact o ON (c.customernumber = o.customernumber) INNER JOIN products p ON (o.productcode = o.productcode) group by territory, country, productline order by 1,2,3 ASC"
+      "name": "territories",
+      "connector": {
+        "pluginId": "SqlConnector",
+        "sourceConnectorName": null,
+        "databaseConnectionName": "SteelWheels",
+        "sql": "select coalesce(territory, 'UNKNOWN') as territory, country, productline, count(*) as cnt FROM customer_w_ter c INNER JOIN orderfact o ON (c.customernumber = o.customernumber) INNER JOIN products p ON (o.productcode = o.productcode) group by territory, country, productline order by 1,2,3 ASC"
       },
-      "shared":false
+      "shared": false
     }
   ]
 }

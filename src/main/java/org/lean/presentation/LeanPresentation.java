@@ -104,6 +104,10 @@ public class LeanPresentation extends HopMetadataBase implements IHasIdentity, I
     }
   }
 
+  public static LeanPresentation fromJsonString(String jsonString) throws IOException {
+    return new ObjectMapper().readValue(jsonString, LeanPresentation.class);
+  }
+
   @Override
   public String toString() {
     return name != null ? name : super.toString();
@@ -120,10 +124,6 @@ public class LeanPresentation extends HopMetadataBase implements IHasIdentity, I
     } else {
       return objectMapper.writeValueAsString(this);
     }
-  }
-
-  public static LeanPresentation fromJsonString(String jsonString) throws IOException {
-    return new ObjectMapper().readValue(jsonString, LeanPresentation.class);
   }
 
   /**
@@ -149,7 +149,7 @@ public class LeanPresentation extends HopMetadataBase implements IHasIdentity, I
 
     // Apply the given variable values to the data context...
     //
-    for ( LeanParameter variable : parameters) {
+    for (LeanParameter variable : parameters) {
       if (StringUtils.isNotEmpty(variable.getParameterName())) {
         String name = variable.getParameterName();
         String value = variable.getParameterValue();
@@ -174,9 +174,16 @@ public class LeanPresentation extends HopMetadataBase implements IHasIdentity, I
       //
       for (LeanPage page : pagesCopy) {
 
+        // At the very least, add an empty render page in case we have no components...
+        //
+        results.addNewPage( page, null );
+
         List<LeanComponent> sortedComponents = page.getSortedComponents();
         for (LeanComponent leanComponent : sortedComponents) {
           ILeanComponent component = leanComponent.getComponent();
+          if (component.getThemeName() == null) {
+            component.setThemeName(defaultThemeName);
+          }
           component.setLogChannel(log);
           component.processSourceData(
               this, page, leanComponent, presentationDataContext, renderContext, results);
@@ -286,7 +293,7 @@ public class LeanPresentation extends HopMetadataBase implements IHasIdentity, I
           }
 
           // Clipping of string drawing...
-          boolean clip = leanComponent.getSize() != null && leanComponent.getSize().isDefined();
+          boolean clip = leanComponent.getClipSize() != null && leanComponent.getClipSize().isDefined();
           Shape oldClip = gc.getClip();
           if (clip) {
             LeanGeometry lg = componentLayoutResult.getGeometry();
@@ -345,6 +352,9 @@ public class LeanPresentation extends HopMetadataBase implements IHasIdentity, I
         new RenderPageDataContext(presentationDataContext, renderPage);
 
     if (header != null) {
+      // Just making sure
+      header.setHeader(true);
+
       // Do the layout of the header on every page again...
       //
       List<LeanComponent> sortedComponents = header.getSortedComponents();
@@ -396,6 +406,8 @@ public class LeanPresentation extends HopMetadataBase implements IHasIdentity, I
     }
 
     if (footer != null) {
+      // Just making sure
+      footer.setFooter(true);
 
       // Do the layout of the footer on every page again...
       //
@@ -501,21 +513,11 @@ public class LeanPresentation extends HopMetadataBase implements IHasIdentity, I
     int height = page.getHeight();
     height -= page.getTopMargin();
     height -= page.getBottomMargin();
-    if (!isHeader(page) && !isFooter(page)) {
+    if (!page.isHeader() && !page.isFooter()) {
       height -= getHeaderHeight();
-    }
-    if (!isHeader(page) && !isFooter(page)) {
       height -= getFooterHeight();
     }
     return height;
-  }
-
-  public boolean isHeader(LeanPage page) {
-    return getHeader() != null && getHeader().equals(page);
-  }
-
-  public boolean isFooter(LeanPage page) {
-    return getFooter() != null && getFooter().equals(page);
   }
 
   @JsonIgnore

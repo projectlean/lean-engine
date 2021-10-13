@@ -7,22 +7,16 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 @Documented
-@Retention( RetentionPolicy.RUNTIME )
-@Target( ElementType.TYPE )
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.TYPE)
 public @interface LeanComponentPlugin {
 
-  /**
-   * @return The ID of the component
-   */
+  /** @return The ID of the component */
   String id();
 
-  /**
-   * @return The name of the component
-   */
+  /** @return The name of the component */
   String name();
 
-  /**
-   * @return The description of the component
-   */
+  /** @return The description of the component */
   String description() default "";
 }

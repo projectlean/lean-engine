@@ -5,8 +5,8 @@ import org.apache.fop.svg.PDFDocumentGraphics2D;
 import java.io.IOException;
 
 public class LeanPDFDocumentGraphics2D extends PDFDocumentGraphics2D {
-  public LeanPDFDocumentGraphics2D( boolean textAsShapes ) {
-    super( textAsShapes );
+  public LeanPDFDocumentGraphics2D(boolean textAsShapes) {
+    super(textAsShapes);
   }
 
   public void preparePainting() {
@@ -20,5 +20,4 @@ public class LeanPDFDocumentGraphics2D extends PDFDocumentGraphics2D {
   public void startPage() throws IOException {
     super.startPage();
   }
-
 }

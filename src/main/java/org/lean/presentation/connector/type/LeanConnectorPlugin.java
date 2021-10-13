@@ -7,24 +7,16 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 @Documented
-@Retention( RetentionPolicy.RUNTIME )
-@Target( ElementType.TYPE )
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.TYPE)
 public @interface LeanConnectorPlugin {
 
-  /**
-   * @return The ID of the connector
-   */
+  /** @return The ID of the connector */
   String id();
 
-  /**
-   * @return The name of the connector
-   */
+  /** @return The name of the connector */
   String name();
 
-  /**
-   * @return The description of the connector
-   */
+  /** @return The description of the connector */
   String description();
-
-
 }

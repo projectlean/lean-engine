@@ -4,32 +4,29 @@ import org.apache.hop.metadata.api.HopMetadataProperty;
 import org.lean.core.LeanAttachment;
 
 /**
- * In case a position is not relative it means absolute vs the top and left margins of the page.
- * In that situation, you simply set or get the (x,y) position and you're done.
- * <p>
- * In case the position is relative versus another component, you need to provide a bunch of details for the x and y coordinates.
+ * In case a position is not relative it means absolute vs the top and left margins of the page. In
+ * that situation, you simply set or get the (x,y) position and you're done.
+ *
+ * <p>In case the position is relative versus another component, you need to provide a bunch of
+ * details for the x and y coordinates.
+ *
  * <ul>
- * <li>The component name x relative to</li>
- * <li>The left, right, top or bottom of the referenced component</li>
- * <li>whether or not to place the position in the centre or middle.</li>
+ *   <li>The component name x relative to
+ *   <li>The left, right, top or bottom of the referenced component
+ *   <li>whether or not to place the position in the centre or middle.
  * </ul>
  */
 public class LeanLayout {
 
-  @HopMetadataProperty
-  private LeanAttachment left;
+  @HopMetadataProperty private LeanAttachment left;
 
-  @HopMetadataProperty
-  private LeanAttachment right;
+  @HopMetadataProperty private LeanAttachment right;
 
-  @HopMetadataProperty
-  private LeanAttachment top;
+  @HopMetadataProperty private LeanAttachment top;
 
-  @HopMetadataProperty
-  private LeanAttachment bottom;
+  @HopMetadataProperty private LeanAttachment bottom;
 
-  public LeanLayout() {
-  }
+  public LeanLayout() {}
 
   /**
    * Position the component relative to the page, with an offset of (x,y)
@@ -37,48 +34,81 @@ public class LeanLayout {
    * @param x
    * @param y
    */
-  public LeanLayout( int x, int y ) {
-    left = new LeanAttachment( 0, x );
-    top = new LeanAttachment( 0, y );
+  public LeanLayout(int x, int y) {
+    left = new LeanAttachment(0, x);
+    top = new LeanAttachment(0, y);
   }
 
-  public LeanLayout( LeanAttachment left, LeanAttachment right, LeanAttachment top, LeanAttachment bottom ) {
+  public LeanLayout(
+      LeanAttachment left, LeanAttachment right, LeanAttachment top, LeanAttachment bottom) {
     this.left = left;
     this.right = right;
     this.top = top;
     this.bottom = bottom;
   }
 
-  public LeanLayout( LeanLayout layout ) {
-    if ( layout.left == null ) {
+  public LeanLayout(LeanLayout layout) {
+    if (layout.left == null) {
       this.left = null;
     } else {
-      this.left = new LeanAttachment( layout.left );
+      this.left = new LeanAttachment(layout.left);
     }
-    if ( layout.right == null ) {
+    if (layout.right == null) {
       this.right = null;
     } else {
-      this.right = new LeanAttachment( layout.right );
+      this.right = new LeanAttachment(layout.right);
     }
-    if ( layout.top == null ) {
+    if (layout.top == null) {
       this.top = null;
     } else {
-      this.top = new LeanAttachment( layout.top );
+      this.top = new LeanAttachment(layout.top);
     }
-    if ( layout.bottom == null ) {
+    if (layout.bottom == null) {
       this.bottom = null;
     } else {
-      this.bottom = new LeanAttachment( layout.bottom );
+      this.bottom = new LeanAttachment(layout.bottom);
     }
   }
 
   public static LeanLayout topLeftPage() {
     LeanLayout layout = new LeanLayout();
-    layout.left = new LeanAttachment( null, 0, 0, LeanAttachment.Alignment.LEFT );
-    layout.top = new LeanAttachment( null, 0, 0, LeanAttachment.Alignment.TOP );
+    layout.left = new LeanAttachment(null, 0, 0, LeanAttachment.Alignment.LEFT);
+    layout.top = new LeanAttachment(null, 0, 0, LeanAttachment.Alignment.TOP);
     return layout;
   }
 
+  /**
+   * Place directly below the referenced component
+   *
+   * @param otherComponent The name of the component to reference
+   * @param spanPageWidth span the width of the page
+   * @return The requested layout
+   */
+  public static LeanLayout under(String otherComponent, boolean spanPageWidth) {
+    LeanLayout layout = new LeanLayout();
+    layout.left = new LeanAttachment(otherComponent, 0, 0, LeanAttachment.Alignment.LEFT);
+    layout.top = new LeanAttachment(otherComponent, 0, 0, LeanAttachment.Alignment.BOTTOM);
+    if (spanPageWidth) {
+      layout.right = new LeanAttachment(null, 0, 0, LeanAttachment.Alignment.RIGHT);
+    }
+    return layout;
+  }
+
+  /**
+   * Place to the right of the referenced component at the same height
+   *
+   * @param otherComponent The name of the component to reference
+   * @return The requested layout
+   */
+  public static LeanLayout right(String otherComponent, boolean spanPageWidth) {
+    LeanLayout layout = new LeanLayout();
+    layout.left = new LeanAttachment(otherComponent, 0, 0, LeanAttachment.Alignment.RIGHT);
+    layout.top = new LeanAttachment(otherComponent, 0, 0, LeanAttachment.Alignment.TOP);
+    if (spanPageWidth) {
+      layout.right = new LeanAttachment(null, 0, 0, LeanAttachment.Alignment.RIGHT);
+    }
+    return layout;
+  }
 
   /**
    * Replace all left,top, right, bottom references with a new name
@@ -86,10 +116,10 @@ public class LeanLayout {
    * @param oldName
    * @param newName
    */
-  public void replaceReferences( String oldName, String newName ) {
-    for ( LeanAttachment attachment : new LeanAttachment[] { left, top, right, bottom } ) {
-      if ( attachment != null && oldName.equals( attachment.getComponentName() ) ) {
-        attachment.setComponentName( newName );
+  public void replaceReferences(String oldName, String newName) {
+    for (LeanAttachment attachment : new LeanAttachment[] {left, top, right, bottom}) {
+      if (attachment != null && oldName.equals(attachment.getComponentName())) {
+        attachment.setComponentName(newName);
       }
     }
   }
@@ -103,10 +133,8 @@ public class LeanLayout {
     return left;
   }
 
-  /**
-   * @param left The left to set
-   */
-  public void setLeft( LeanAttachment left ) {
+  /** @param left The left to set */
+  public void setLeft(LeanAttachment left) {
     this.left = left;
   }
 
@@ -119,10 +147,8 @@ public class LeanLayout {
     return right;
   }
 
-  /**
-   * @param right The right to set
-   */
-  public void setRight( LeanAttachment right ) {
+  /** @param right The right to set */
+  public void setRight(LeanAttachment right) {
     this.right = right;
   }
 
@@ -135,10 +161,8 @@ public class LeanLayout {
     return top;
   }
 
-  /**
-   * @param top The top to set
-   */
-  public void setTop( LeanAttachment top ) {
+  /** @param top The top to set */
+  public void setTop(LeanAttachment top) {
     this.top = top;
   }
 
@@ -151,10 +175,8 @@ public class LeanLayout {
     return bottom;
   }
 
-  /**
-   * @param bottom The bottom to set
-   */
-  public void setBottom( LeanAttachment bottom ) {
+  /** @param bottom The bottom to set */
+  public void setBottom(LeanAttachment bottom) {
     this.bottom = bottom;
   }
 }

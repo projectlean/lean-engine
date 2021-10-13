@@ -15,27 +15,28 @@ public class RenderPageDataContext implements IDataContext {
 
   private IVariables variableSpace;
 
-  public RenderPageDataContext( IDataContext parentDataContext, LeanRenderPage renderPage ) {
+  public RenderPageDataContext(IDataContext parentDataContext, LeanRenderPage renderPage) {
     this.parentDataContext = parentDataContext;
     this.renderPage = renderPage;
 
     variableSpace = new Variables();
-    variableSpace.copyFrom( parentDataContext.getVariables() );
+    variableSpace.copyFrom(parentDataContext.getVariables());
 
     // Inject page specific variables
     //
-    variableSpace.setVariable( Constants.VARIABLE_PAGE_NUMBER, Integer.toString( renderPage.getPageNumber() ) );
+    variableSpace.setVariable(
+        Constants.VARIABLE_PAGE_NUMBER, Integer.toString(renderPage.getPageNumber()));
   }
 
-
-  @Override public LeanConnector getConnector( String name ) throws LeanException {
-    LeanConnector connector = parentDataContext.getConnector( name );
+  @Override
+  public LeanConnector getConnector(String name) throws LeanException {
+    LeanConnector connector = parentDataContext.getConnector(name);
 
     // Create a copy every time someone asks for a connector.
     // This ensures that querying is safe
     //
-    if ( connector != null ) {
-      connector = new LeanConnector( connector );
+    if (connector != null) {
+      connector = new LeanConnector(connector);
     }
     return connector;
   }
@@ -49,10 +50,8 @@ public class RenderPageDataContext implements IDataContext {
     return renderPage;
   }
 
-  /**
-   * @param renderPage The renderPage to set
-   */
-  public void setRenderPage( LeanRenderPage renderPage ) {
+  /** @param renderPage The renderPage to set */
+  public void setRenderPage(LeanRenderPage renderPage) {
     this.renderPage = renderPage;
   }
 
@@ -65,10 +64,8 @@ public class RenderPageDataContext implements IDataContext {
     return parentDataContext;
   }
 
-  /**
-   * @param parentDataContext The parentDataContext to set
-   */
-  public void setParentDataContext( IDataContext parentDataContext ) {
+  /** @param parentDataContext The parentDataContext to set */
+  public void setParentDataContext(IDataContext parentDataContext) {
     this.parentDataContext = parentDataContext;
   }
 
@@ -77,18 +74,18 @@ public class RenderPageDataContext implements IDataContext {
    *
    * @return value of variableSpace
    */
-  @Override public IVariables getVariables() {
+  @Override
+  public IVariables getVariables() {
     return variableSpace;
   }
 
-  /**
-   * @param variableSpace The variableSpace to set
-   */
-  public void setVariableSpace( IVariables variableSpace ) {
+  /** @param variableSpace The variableSpace to set */
+  public void setVariableSpace(IVariables variableSpace) {
     this.variableSpace = variableSpace;
   }
 
-  @Override public IHopMetadataProvider getMetadataProvider() {
+  @Override
+  public IHopMetadataProvider getMetadataProvider() {
     return parentDataContext.getMetadataProvider();
   }
 }

@@ -6,16 +6,19 @@ public class LeanDimension extends LeanColumn {
     super();
   }
 
-  public LeanDimension( String columnName ) {
-    super( columnName );
+  public LeanDimension(String columnName) {
+    super(columnName);
   }
 
-  public LeanDimension( String columnName, String headerValue, LeanHorizontalAlignment horizontalAlignment, LeanVerticalAlignment verticalAlignment) {
-    super( columnName, headerValue, horizontalAlignment, verticalAlignment );
-
+  public LeanDimension(
+      String columnName,
+      String headerValue,
+      LeanHorizontalAlignment horizontalAlignment,
+      LeanVerticalAlignment verticalAlignment) {
+    super(columnName, headerValue, horizontalAlignment, verticalAlignment);
   }
 
-  public LeanDimension( LeanDimension d ) {
+  public LeanDimension(LeanDimension d) {
     super(d);
   }
 }

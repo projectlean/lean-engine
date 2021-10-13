@@ -8,12 +8,11 @@ public class PresentationRenderContext extends SimpleRenderContext implements IR
 
   private LeanPresentation presentation;
 
-
   public PresentationRenderContext() {
     super();
   }
 
-  public PresentationRenderContext( LeanPresentation presentation ) {
+  public PresentationRenderContext(LeanPresentation presentation) {
     this();
     this.presentation = presentation;
   }
@@ -22,14 +21,15 @@ public class PresentationRenderContext extends SimpleRenderContext implements IR
    * @param themeName The name of the theme to look for or null if you want to use the default
    * @return The theme or null if none is found.
    */
-  @Override public LeanTheme lookupTheme( String themeName ) {
+  @Override
+  public LeanTheme lookupTheme(String themeName) {
 
     // If no theme name is given, them we'll use the default of the presentation
     //
-    if ( themeName == null ) {
+    if (themeName == null) {
       return presentation.getDefaultTheme();
     } else {
-      return presentation.lookupTheme( themeName );
+      return presentation.lookupTheme(themeName);
     }
   }
 
@@ -42,10 +42,8 @@ public class PresentationRenderContext extends SimpleRenderContext implements IR
     return presentation;
   }
 
-  /**
-   * @param presentation The presentation to set
-   */
-  public void setPresentation( LeanPresentation presentation ) {
+  /** @param presentation The presentation to set */
+  public void setPresentation(LeanPresentation presentation) {
     this.presentation = presentation;
   }
 }

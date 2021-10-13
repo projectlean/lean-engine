@@ -1,18 +1,15 @@
 package org.lean.core;
 
-/**
- * Represents a piece of SVG on a certain location in another document
- */
+/** Represents a piece of SVG on a certain location in another document */
 public class LeanSvg {
 
   private String svgXml;
 
   private LeanGeometry geometry;
 
-  public LeanSvg() {
-  }
+  public LeanSvg() {}
 
-  public LeanSvg( String svgXml, LeanGeometry geometry ) {
+  public LeanSvg(String svgXml, LeanGeometry geometry) {
     this.svgXml = svgXml;
     this.geometry = geometry;
   }
@@ -26,10 +23,8 @@ public class LeanSvg {
     return svgXml;
   }
 
-  /**
-   * @param svgXml The svgXml to set
-   */
-  public void setSvgXml( String svgXml ) {
+  /** @param svgXml The svgXml to set */
+  public void setSvgXml(String svgXml) {
     this.svgXml = svgXml;
   }
 
@@ -42,10 +37,8 @@ public class LeanSvg {
     return geometry;
   }
 
-  /**
-   * @param geometry The geometry to set
-   */
-  public void setGeometry( LeanGeometry geometry ) {
+  /** @param geometry The geometry to set */
+  public void setGeometry(LeanGeometry geometry) {
     this.geometry = geometry;
   }
 }

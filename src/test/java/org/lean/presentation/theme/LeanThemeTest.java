@@ -13,6 +13,12 @@ public class LeanThemeTest {
   public static final String THEME_NAME = "Theme1";
   private IHopMetadataProvider metadataProvider;
 
+  public static final LeanTheme createTheme(String name) {
+    LeanTheme theme = LeanTheme.getDefault();
+    theme.setName(name);
+    return theme;
+  }
+
   @Before
   public void before() throws Exception {
     metadataProvider = new MemoryMetadataProvider();
@@ -21,27 +27,19 @@ public class LeanThemeTest {
   @Test
   public void testThemeSaveLoad() throws Exception {
 
-    IHopMetadataSerializer<LeanTheme> themeSerializer = metadataProvider.getSerializer( LeanTheme.class );
+    IHopMetadataSerializer<LeanTheme> themeSerializer =
+        metadataProvider.getSerializer(LeanTheme.class);
 
-    LeanTheme theme = createTheme( THEME_NAME );
-    themeSerializer.save( theme );
+    LeanTheme theme = createTheme(THEME_NAME);
+    themeSerializer.save(theme);
 
     // Load it back...
     //
-    LeanTheme verify = themeSerializer.load( THEME_NAME );
+    LeanTheme verify = themeSerializer.load(THEME_NAME);
 
-    TestUtil.assertEqualThemes( theme, verify );
-
+    TestUtil.assertEqualThemes(theme, verify);
   }
 
   @After
-  public void after() throws Exception {
-  }
-
-
-  public static final LeanTheme createTheme( String name ) {
-    LeanTheme theme = LeanTheme.getDefault();
-    theme.setName( name );
-    return theme;
-  }
+  public void after() throws Exception {}
 }

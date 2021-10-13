@@ -5,7 +5,7 @@ public class DurationRequest {
   private String finishId;
   private String message;
 
-  public DurationRequest( String startId, String finishId, String message ) {
+  public DurationRequest(String startId, String finishId, String message) {
     this.startId = startId;
     this.finishId = finishId;
     this.message = message;
@@ -20,10 +20,8 @@ public class DurationRequest {
     return startId;
   }
 
-  /**
-   * @param startId The startId to set
-   */
-  public void setStartId( String startId ) {
+  /** @param startId The startId to set */
+  public void setStartId(String startId) {
     this.startId = startId;
   }
 
@@ -36,10 +34,8 @@ public class DurationRequest {
     return finishId;
   }
 
-  /**
-   * @param finishId The finishId to set
-   */
-  public void setFinishId( String finishId ) {
+  /** @param finishId The finishId to set */
+  public void setFinishId(String finishId) {
     this.finishId = finishId;
   }
 
@@ -52,10 +48,8 @@ public class DurationRequest {
     return message;
   }
 
-  /**
-   * @param message The message to set
-   */
-  public void setMessage( String message ) {
+  /** @param message The message to set */
+  public void setMessage(String message) {
     this.message = message;
   }
 }

@@ -8,10 +8,12 @@ public class ChildDetails {
   public LeanSize childExpectedSize;
   public LeanComponent childComponent;
 
-  public ChildDetails() {
-  }
+  public ChildDetails() {}
 
-  public ChildDetails( LeanLayoutResults childLayoutResults, LeanSize childExpectedSize, LeanComponent childComponent ) {
+  public ChildDetails(
+      LeanLayoutResults childLayoutResults,
+      LeanSize childExpectedSize,
+      LeanComponent childComponent) {
     this.childExpectedSize = childExpectedSize;
     this.childComponent = childComponent;
   }

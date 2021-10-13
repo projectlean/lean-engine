@@ -9,14 +9,18 @@ public class LeanPresentationChartTest extends LeanPresentationTestBase {
   @Test
   public void testChartRender() throws Exception {
 
-    LeanPresentation presentation = new LineChartPresentationUtil( metadataProvider, variables ).createLineChartPresentation( 5000 );
-    testRendering( presentation, "chart_test" );
+    LeanPresentation presentation =
+        new LineChartPresentationUtil(metadataProvider, variables)
+            .createLineChartPresentation(5000);
+    testRendering(presentation, "chart_test");
   }
 
   @Test
   public void testChartNoLabelsRender() throws Exception {
 
-    LeanPresentation presentation = new LineChartPresentationUtil( metadataProvider, variables ).createLineChartNoLabelsPresentation( 5100 );
-    testRendering( presentation, "chart_trend_test" );
+    LeanPresentation presentation =
+        new LineChartPresentationUtil(metadataProvider, variables)
+            .createLineChartNoLabelsPresentation(5100);
+    testRendering(presentation, "chart_trend_test");
   }
 }

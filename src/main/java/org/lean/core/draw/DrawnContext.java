@@ -12,29 +12,27 @@ public class DrawnContext {
   private String value;
 
   public DrawnContext() {
-    this.dimensions = new ArrayList<>(  );
+    this.dimensions = new ArrayList<>();
   }
 
-  public DrawnContext( String value ) {
+  public DrawnContext(String value) {
     this();
     this.value = value;
   }
 
-  public DrawnContext( List<LeanColumn> dimensions, String value ) {
+  public DrawnContext(List<LeanColumn> dimensions, String value) {
     this.dimensions = dimensions;
     this.value = value;
   }
 
-  public DrawnContext(String value, LeanColumn...dimensions) {
+  public DrawnContext(String value, LeanColumn... dimensions) {
     this(value);
-    this.dimensions.addAll( Arrays.asList(dimensions) );
+    this.dimensions.addAll(Arrays.asList(dimensions));
   }
 
-  @Override public String toString() {
-    return "DrawnContext{" +
-      "dimensions=" + dimensions +
-      ", value='" + value + '\'' +
-      '}';
+  @Override
+  public String toString() {
+    return "DrawnContext{" + "dimensions=" + dimensions + ", value='" + value + '\'' + '}';
   }
 
   /**
@@ -46,10 +44,8 @@ public class DrawnContext {
     return dimensions;
   }
 
-  /**
-   * @param dimensions The dimensions to set
-   */
-  public void setDimensions( List<LeanColumn> dimensions ) {
+  /** @param dimensions The dimensions to set */
+  public void setDimensions(List<LeanColumn> dimensions) {
     this.dimensions = dimensions;
   }
 
@@ -62,10 +58,8 @@ public class DrawnContext {
     return value;
   }
 
-  /**
-   * @param value The value to set
-   */
-  public void setValue( String value ) {
+  /** @param value The value to set */
+  public void setValue(String value) {
     this.value = value;
   }
 }

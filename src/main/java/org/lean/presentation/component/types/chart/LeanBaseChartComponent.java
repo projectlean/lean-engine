@@ -27,48 +27,27 @@ import org.lean.render.IRenderContext;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class LeanBaseChartComponent extends LeanBaseAggregatingComponent implements ILeanComponent {
+public abstract class LeanBaseChartComponent extends LeanBaseAggregatingComponent
+    implements ILeanComponent {
 
-  @HopMetadataProperty
-  protected int horizontalMargin;
-
-  @HopMetadataProperty
-  protected int verticalMargin;
-
-  @HopMetadataProperty
-  protected boolean showingHorizontalLabels;
-
-  @HopMetadataProperty
-  protected boolean showingVerticalLabels;
-
-  @HopMetadataProperty
-  protected boolean showingAxisTicks;
-
-  @HopMetadataProperty
-  protected int dotSize;
-
-  @HopMetadataProperty
-  protected String title;
-
-  @HopMetadataProperty
-  protected String lineWidth;
-
-  @HopMetadataProperty
-  protected boolean usingZeroBaseline;
-
-  @HopMetadataProperty
-  protected boolean showingLegend;
+  @HopMetadataProperty protected int horizontalMargin;
+  @HopMetadataProperty protected int verticalMargin;
+  @HopMetadataProperty protected boolean showingHorizontalLabels;
+  @HopMetadataProperty protected boolean showingVerticalLabels;
+  @HopMetadataProperty protected boolean showingAxisTicks;
+  @HopMetadataProperty protected int dotSize;
+  @HopMetadataProperty protected String title;
+  @HopMetadataProperty protected String lineWidth;
+  @HopMetadataProperty protected boolean usingZeroBaseline;
+  @HopMetadataProperty protected boolean showingLegend;
 
   // Calculated at runtime
   //
-  @JsonIgnore
-  protected transient String titleText;
+  @JsonIgnore protected transient String titleText;
+  @JsonIgnore protected transient boolean usingTotalHeights;
 
-  @JsonIgnore
-  protected transient boolean usingTotalHeights;
-
-  public LeanBaseChartComponent( String pluginId, String connectorName ) {
-    super( pluginId );
+  public LeanBaseChartComponent(String pluginId, String connectorName) {
+    super(pluginId);
     this.sourceConnectorName = connectorName;
     horizontalDimensions = new ArrayList<>();
     verticalDimensions = new ArrayList<>();
@@ -79,8 +58,8 @@ public abstract class LeanBaseChartComponent extends LeanBaseAggregatingComponen
     dotSize = 6;
   }
 
-  public LeanBaseChartComponent( String pluginId, LeanBaseChartComponent c ) {
-    super( pluginId, c );
+  public LeanBaseChartComponent(String pluginId, LeanBaseChartComponent c) {
+    super(pluginId, c);
     this.horizontalMargin = c.horizontalMargin;
     this.verticalMargin = c.verticalMargin;
     this.showingHorizontalLabels = c.showingHorizontalLabels;
@@ -92,64 +71,74 @@ public abstract class LeanBaseChartComponent extends LeanBaseAggregatingComponen
     this.lineWidth = c.lineWidth;
   }
 
-  public void processSourceData( LeanPresentation presentation, LeanPage page, LeanComponent component, IDataContext dataContext, IRenderContext renderContext,
-                                 LeanLayoutResults results ) throws LeanException {
+  public void processSourceData(
+      LeanPresentation presentation,
+      LeanPage page,
+      LeanComponent component,
+      IDataContext dataContext,
+      IRenderContext renderContext,
+      LeanLayoutResults results)
+      throws LeanException {
     // Read the data
     //
-    LeanConnector connector = dataContext.getConnector( sourceConnectorName );
-    if ( connector == null ) {
-      throw new LeanException( "Unable to find connector '" + sourceConnectorName + "'" );
+    LeanConnector connector = dataContext.getConnector(sourceConnectorName);
+    if (connector == null) {
+      throw new LeanException("Unable to find connector '" + sourceConnectorName + "'");
     }
 
     validateSettings();
 
     // Get the rows
     //
-    connector.getConnector().addRowListener( ( rowMeta, rowData ) -> {
-      if ( rowData != null ) {
-        // Pivot the row data...
-        //
-        pivotRow( rowMeta, rowData );
-      }
-    } );
+    connector
+        .getConnector()
+        .addRowListener(
+            (rowMeta, rowData) -> {
+              if (rowData != null) {
+                // Pivot the row data...
+                //
+                pivotRow(rowMeta, rowData);
+              }
+            });
 
-    connector.getConnector().startStreaming( dataContext );
+    connector.getConnector().startStreaming(dataContext);
     connector.getConnector().waitUntilFinished();
 
     // Calculate the title based on data context
     //
-    titleText = dataContext.getVariables().resolve( title );
+    titleText = dataContext.getVariables().resolve(title);
   }
 
   protected void validateSettings() throws LeanException {
 
     // Validate some metadata...
     //
-    for ( LeanFact fact : facts ) {
-      if ( StringUtils.isEmpty( fact.getColumnName() ) ) {
-        throw new LeanException( "No column name given for a fact" );
+    for (LeanFact fact : facts) {
+      if (StringUtils.isEmpty(fact.getColumnName())) {
+        throw new LeanException("No column name given for a fact");
       }
-      if ( fact.getAggregationMethod() == null ) {
-        throw new LeanException( "No aggregation method specified for fact column '" + fact.getColumnName() + "'" );
-      }
-    }
-    for ( LeanDimension dimension : horizontalDimensions ) {
-      if ( StringUtils.isEmpty( dimension.getColumnName() ) ) {
-        throw new LeanException( "No column name given for a horizontal dimension" );
+      if (fact.getAggregationMethod() == null) {
+        throw new LeanException(
+            "No aggregation method specified for fact column '" + fact.getColumnName() + "'");
       }
     }
-    for ( LeanDimension dimension : verticalDimensions ) {
-      if ( StringUtils.isEmpty( dimension.getColumnName() ) ) {
-        throw new LeanException( "No column name given for a vertical dimension" );
+    for (LeanDimension dimension : horizontalDimensions) {
+      if (StringUtils.isEmpty(dimension.getColumnName())) {
+        throw new LeanException("No column name given for a horizontal dimension");
+      }
+    }
+    for (LeanDimension dimension : verticalDimensions) {
+      if (StringUtils.isEmpty(dimension.getColumnName())) {
+        throw new LeanException("No column name given for a vertical dimension");
       }
     }
   }
 
   /**
    * 1. First
-   * <p>
-   * Calculate the imageSize of the table, pretty much calculating the sizes of each element in the data grid
-   * We store all the information in the Results data set
+   *
+   * <p>Calculate the imageSize of the table, pretty much calculating the sizes of each element in
+   * the data grid We store all the information in the Results data set
    *
    * @param presentation
    * @param page
@@ -158,43 +147,46 @@ public abstract class LeanBaseChartComponent extends LeanBaseAggregatingComponen
    * @param results
    * @return
    */
-  public LeanSize getExpectedSize( LeanPresentation presentation, LeanPage page, LeanComponent component, IDataContext dataContext, IRenderContext renderContext, LeanLayoutResults results ) {
-    if ( component.isDynamic() ) {
-      // Just a default imageSize, get's changed if a imageSize is set
-      // or if attachments are used for position and imageSize
+  public LeanSize getExpectedSize(
+      LeanPresentation presentation,
+      LeanPage page,
+      LeanComponent component,
+      IDataContext dataContext,
+      IRenderContext renderContext,
+      LeanLayoutResults results) {
+
+      // Calculated using the layout provided
       //
-      return new LeanSize( LeanSize.UNKNOWN_SIZE );
-    } else {
-      return component.getSize();
-    }
+      return null;
   }
 
-  protected String getCombinationString( List<String> combinationList ) {
+  protected String getCombinationString(List<String> combinationList) {
     StringBuilder combo = new StringBuilder();
-    for ( String combination : combinationList ) {
-      if ( combo.length() > 0 ) {
-        combo.append( "-" );
+    for (String combination : combinationList) {
+      if (combo.length() > 0) {
+        combo.append("-");
       }
-      combo.append( combination );
+      combo.append(combination);
     }
     return combo.toString();
   }
 
-  protected ChartDetails calculateDetails( SVGGraphics2D gc, int x, int y, int width, int height ) throws LeanException {
-    ChartDetails details = new ChartDetails( x, y, width, height );
-    calculateDistinctValues( details.horizontalValues, details.verticalValues );
+  protected ChartDetails calculateDetails(SVGGraphics2D gc, int x, int y, int width, int height)
+      throws LeanException {
+    ChartDetails details = new ChartDetails(x, y, width, height);
+    calculateDistinctValues(details.horizontalValues, details.verticalValues);
 
-    getCombinations( details.horizontalValues, 0, details.horizontalCombinations, new ArrayList<>() );
-    List<List<String>> sortedHorizontalCombinations = sortCombinations( details.horizontalCombinations );
+    getCombinations(details.horizontalValues, 0, details.horizontalCombinations, new ArrayList<>());
+    List<List<String>> sortedHorizontalCombinations =
+        sortCombinations(details.horizontalCombinations);
 
-    getCombinations( details.verticalValues, 0, details.verticalCombinations, new ArrayList<>() );
-    List<List<String>> sortedVerticalCombinations = sortCombinations( details.verticalCombinations );
-
+    getCombinations(details.verticalValues, 0, details.verticalCombinations, new ArrayList<>());
+    List<List<String>> sortedVerticalCombinations = sortCombinations(details.verticalCombinations);
 
     // Calculate the title geometry
     //
-    if ( StringUtils.isNotEmpty( titleText ) ) {
-      details.titleGeometry = calculateTextGeometry( gc, titleText );
+    if (StringUtils.isNotEmpty(titleText)) {
+      details.titleGeometry = calculateTextGeometry(gc, titleText);
       details.titleHeight = details.titleGeometry.getHeight() + verticalMargin;
     } else {
       details.titleHeight = 0;
@@ -202,39 +194,39 @@ public abstract class LeanBaseChartComponent extends LeanBaseAggregatingComponen
 
     // How many series do we have in the chart?
     //
-    List<List<String>> verticalCombinations = new ArrayList<>( details.verticalCombinations );
-    if ( verticalCombinations.isEmpty() ) {
+    List<List<String>> verticalCombinations = new ArrayList<>(details.verticalCombinations);
+    if (verticalCombinations.isEmpty()) {
       // At least perform once without vertical dimensions...
       //
-      verticalCombinations.add( new ArrayList<>() );
+      verticalCombinations.add(new ArrayList<>());
     }
 
-    if ( facts.isEmpty() ) {
-      throw new LeanException( "We need at least 1 fact to work with" );
+    if (facts.isEmpty()) {
+      throw new LeanException("We need at least 1 fact to work with");
     }
-    if ( facts.size() > 1 ) {
-      throw new LeanException( "Only 1 fact is supported at this time" );
+    if (facts.size() > 1) {
+      throw new LeanException("Only 1 fact is supported at this time");
     }
 
     // Some information about the fact
     //
     int factIndex = 0;
-    LeanFact fact = facts.get( factIndex );
-    ValueMetaNumber factValueMeta = new ValueMetaNumber( fact.getColumnName() );
-    factValueMeta.setConversionMask( fact.getFormatMask() );
+    LeanFact fact = facts.get(factIndex);
+    ValueMetaNumber factValueMeta = new ValueMetaNumber(fact.getColumnName());
+    factValueMeta.setConversionMask(fact.getFormatMask());
 
     // Calculate labels and get their sizes, fact values...
     // Also calculate the maximal height to see how much room we need at the bottom.
     //
     details.minValue = Double.MAX_VALUE;
-    if ( usingZeroBaseline ) {
+    if (usingZeroBaseline) {
       details.minValue = 0.0d;
       try {
-        details.minLabel = factValueMeta.getString( details.minValue );
-      } catch ( HopValueException e ) {
-        throw new LeanException( "Unexpected error converting number to string", e );
+        details.minLabel = factValueMeta.getString(details.minValue);
+      } catch (HopValueException e) {
+        throw new LeanException("Unexpected error converting number to string", e);
       }
-      details.minLabelGeometry = calculateTextGeometry( gc, details.minLabel );
+      details.minLabelGeometry = calculateTextGeometry(gc, details.minLabel);
     }
     details.maxValue = Double.MIN_VALUE;
     details.maxFactWidth = 0;
@@ -243,103 +235,103 @@ public abstract class LeanBaseChartComponent extends LeanBaseAggregatingComponen
     //
     int nrCombinations = sortedHorizontalCombinations.size();
 
-    for ( int series = 0; series < verticalCombinations.size(); series++ ) {
-      details.factLabels.add( new ArrayList<>() );
-      details.factValues.add( new ArrayList<>() );
-      details.factValueMetas.add( new ArrayList<>() );
+    for (int series = 0; series < verticalCombinations.size(); series++) {
+      details.factLabels.add(new ArrayList<>());
+      details.factValues.add(new ArrayList<>());
+      details.factValueMetas.add(new ArrayList<>());
     }
 
-    for ( int part = 0; part < nrCombinations; part++ ) {
-      List<String> combinationList = sortedHorizontalCombinations.get( part );
-      String axisLabel = getCombinationString( combinationList );
-      details.labels.add( axisLabel );
+    for (int part = 0; part < nrCombinations; part++) {
+      List<String> combinationList = sortedHorizontalCombinations.get(part);
+      String axisLabel = getCombinationString(combinationList);
+      details.labels.add(axisLabel);
 
       // What's the geometry of the label?
       //
-      LeanTextGeometry labelGeometry = calculateTextGeometry( gc, axisLabel );
-      details.labelGeometries.add( labelGeometry );
+      LeanTextGeometry labelGeometry = calculateTextGeometry(gc, axisLabel);
+      details.labelGeometries.add(labelGeometry);
 
       // Do we have any facts to look up: only 1 fact supported for now.
       //
-      IValueMeta valueMeta = inputRowMeta.getValueMeta( factIndexes.get( factIndex ) );
+      IValueMeta valueMeta = inputRowMeta.getValueMeta(factIndexes.get(factIndex));
 
       double totalValue = 0;
 
-      for ( int series = 0; series < verticalCombinations.size(); series++ ) {
+      for (int series = 0; series < verticalCombinations.size(); series++) {
 
-        List<String> verticalCombination = verticalCombinations.get( series );
+        List<String> verticalCombination = verticalCombinations.get(series);
 
-        List<String> factLabels = details.factLabels.get( series );
-        List<Object> factValues = details.factValues.get( series );
-        List<IValueMeta> factValueMetas = details.factValueMetas.get( series );
+        List<String> factLabels = details.factLabels.get(series);
+        List<Object> factValues = details.factValues.get(series);
+        List<IValueMeta> factValueMetas = details.factValueMetas.get(series);
 
         // The lookup key for the combination of horizontal and vertical dimensions...
         //
-        List<String> factLookupKey = new ArrayList<>( verticalCombination );
-        factLookupKey.addAll( combinationList );
+        List<String> factLookupKey = new ArrayList<>(verticalCombination);
+        factLookupKey.addAll(combinationList);
 
         // Lookup the values...
         //
-        Object valueData = pivotMapList.get( factIndex ).get( factLookupKey );
+        Object valueData = pivotMapList.get(factIndex).get(factLookupKey);
 
-        factValues.add( valueData );
-        factValueMetas.add( valueMeta );
+        factValues.add(valueData);
+        factValueMetas.add(valueMeta);
 
         try {
-          if ( fact.getFormatMask() != null ) {
-            valueMeta.setConversionMask( fact.getFormatMask() );
+          if (fact.getFormatMask() != null) {
+            valueMeta.setConversionMask(fact.getFormatMask());
           }
-          String factString = Const.NVL( valueMeta.getString( valueData ), "-" );
-          factLabels.add( factString );
-          LeanTextGeometry factGeometry = calculateTextGeometry( gc, factString );
-          if ( factGeometry.getWidth() > details.maxFactWidth ) {
+          String factString = Const.NVL(valueMeta.getString(valueData), "-");
+          factLabels.add(factString);
+          LeanTextGeometry factGeometry = calculateTextGeometry(gc, factString);
+          if (factGeometry.getWidth() > details.maxFactWidth) {
             details.maxFactWidth = factGeometry.getWidth();
           }
-        } catch ( HopValueException e ) {
-          throw new LeanException( "Error formatting value '" + valueData + "' : ", e );
+        } catch (HopValueException e) {
+          throw new LeanException("Error formatting value '" + valueData + "' : ", e);
         }
 
         try {
-          Double factValueDouble = valueMeta.getNumber( valueData );
+          Double factValueDouble = valueMeta.getNumber(valueData);
           double factValue;
-          if ( factValueDouble == null ) {
+          if (factValueDouble == null) {
             factValue = 0.0d;
           } else {
             factValue = factValueDouble.doubleValue();
           }
           totalValue += factValue;
-          if ( factValue < details.minValue ) {
+          if (factValue < details.minValue) {
             details.minValue = factValue;
-            details.minLabel = factLabels.get( factLabels.size() - 1 );
-            details.minLabelGeometry = calculateTextGeometry( gc, details.minLabel );
+            details.minLabel = factLabels.get(factLabels.size() - 1);
+            details.minLabelGeometry = calculateTextGeometry(gc, details.minLabel);
           }
-          if ( factValue > details.maxValue ) {
+          if (factValue > details.maxValue) {
             details.maxValue = factValue;
-            details.maxLabel = factLabels.get( factLabels.size() - 1 );
-            details.maxLabelGeometry = calculateTextGeometry( gc, details.maxLabel );
+            details.maxLabel = factLabels.get(factLabels.size() - 1);
+            details.maxLabelGeometry = calculateTextGeometry(gc, details.maxLabel);
           }
-          if ( usingTotalHeights && totalValue > details.maxValue ) {
+          if (usingTotalHeights && totalValue > details.maxValue) {
             details.maxValue = totalValue;
-            details.maxLabel = factValueMeta.getString( totalValue );
-            details.maxLabelGeometry = calculateTextGeometry( gc, details.maxLabel );
+            details.maxLabel = factValueMeta.getString(totalValue);
+            details.maxLabelGeometry = calculateTextGeometry(gc, details.maxLabel);
           }
-        } catch ( HopException e ) {
-          throw new LeanException( "Data conversion error", e );
+        } catch (HopException e) {
+          throw new LeanException("Data conversion error", e);
         }
       }
 
-      if ( labelGeometry.getHeight() > details.maxLabelHeight ) {
+      if (labelGeometry.getHeight() > details.maxLabelHeight) {
         details.maxLabelHeight = labelGeometry.getHeight();
       }
     }
 
-
-    if ( nrCombinations == 0 ) {
+    if (nrCombinations == 0) {
       details.partWidth = details.width - horizontalMargin * 2 - details.maxFactWidth;
     } else {
       // Split the graph in equal parts
       //
-      details.partWidth = ( details.width - horizontalMargin * 3 - details.maxFactWidth ) / (double) nrCombinations;
+      details.partWidth =
+          (details.width - horizontalMargin * 3 - details.maxFactWidth) / (double) nrCombinations;
     }
 
     // Do some calculations for the legend.
@@ -354,18 +346,18 @@ public abstract class LeanBaseChartComponent extends LeanBaseAggregatingComponen
     int maxLegendLabelWidth = 0;
     int maxLegendLabelHeight = 0;
     int nrLabels = 0;
-    if ( showingLegend ) {
+    if (showingLegend) {
       nrLabels = sortedHorizontalCombinations.size();
-      for ( List<String> verticalCombination : sortedVerticalCombinations ) {
-        String legendLabel = getCombinationLabel( verticalCombination );
-        legendLabels.add( legendLabel );
-        LeanTextGeometry labelGeo = calculateTextGeometry( gc, legendLabel );
-        legendLabelGeos.add( labelGeo );
+      for (List<String> verticalCombination : sortedVerticalCombinations) {
+        String legendLabel = getCombinationLabel(verticalCombination);
+        legendLabels.add(legendLabel);
+        LeanTextGeometry labelGeo = calculateTextGeometry(gc, legendLabel);
+        legendLabelGeos.add(labelGeo);
 
-        if ( labelGeo.getWidth() > maxLegendLabelWidth ) {
+        if (labelGeo.getWidth() > maxLegendLabelWidth) {
           maxLegendLabelWidth = labelGeo.getWidth();
         }
-        if ( labelGeo.getHeight() > maxLegendLabelHeight ) {
+        if (labelGeo.getHeight() > maxLegendLabelHeight) {
           maxLegendLabelHeight = labelGeo.getHeight();
         }
       }
@@ -381,24 +373,34 @@ public abstract class LeanBaseChartComponent extends LeanBaseAggregatingComponen
     details.legendMarkerSize = maxLegendLabelHeight * 2 / 3;
 
     details.legendWidth = width - 2 * horizontalMargin;
-    details.maxNrLegendColumns = (int) Math.floor( (double) details.legendWidth / ( maxLegendLabelWidth + 2 * horizontalMargin + details.legendMarkerSize ) );
-    details.nrLegendColumns = Math.min( details.legendLabels.size(), details.maxNrLegendColumns );
-    if ( details.nrLegendColumns > 0 ) {
-      details.nrLegendRows = 1 + (int) Math.floor( (double) nrLabels / details.nrLegendColumns );
+    details.maxNrLegendColumns =
+        (int)
+            Math.floor(
+                (double) details.legendWidth
+                    / (maxLegendLabelWidth + 2 * horizontalMargin + details.legendMarkerSize));
+    details.nrLegendColumns = Math.min(details.legendLabels.size(), details.maxNrLegendColumns);
+    if (details.nrLegendColumns > 0) {
+      details.nrLegendRows = 1 + (int) Math.floor((double) nrLabels / details.nrLegendColumns);
     } else {
       details.nrLegendRows = 0;
     }
-    details.legendHeight = ( details.maxLegendLabelHeight + verticalMargin ) * details.nrLegendRows;
+    details.legendHeight = (details.maxLegendLabelHeight + verticalMargin) * details.nrLegendRows;
 
     // OK, now we continue...
     //
     details.overshoot = (double) height / 20;
-    details.partHeight = ( height - verticalMargin * 3 - details.maxLabelHeight - details.overshoot * 2 - details.titleHeight - details.legendHeight );
-    if ( usingZeroBaseline ) {
+    details.partHeight =
+        (height
+            - verticalMargin * 3
+            - details.maxLabelHeight
+            - details.overshoot * 2
+            - details.titleHeight
+            - details.legendHeight);
+    if (usingZeroBaseline) {
       details.partHeight += details.overshoot;
     }
     details.valueRange = details.maxValue - details.minValue;
-    if ( details.valueRange == 0.0 ) {
+    if (details.valueRange == 0.0) {
       details.valueFactor = 0.0;
     } else {
       details.valueFactor = details.partHeight / details.valueRange;
@@ -407,17 +409,16 @@ public abstract class LeanBaseChartComponent extends LeanBaseAggregatingComponen
     return details;
   }
 
-  protected String getCombinationLabel( List<String> combination ) {
+  protected String getCombinationLabel(List<String> combination) {
     StringBuilder label = new StringBuilder();
-    for ( String string : combination ) {
-      if ( label.length() > 0 ) {
-        label.append( '-' );
+    for (String string : combination) {
+      if (label.length() > 0) {
+        label.append('-');
       }
-      label.append( string );
+      label.append(string);
     }
     return label.toString();
   }
-
 
   /**
    * Gets horizontalMargin
@@ -428,10 +429,8 @@ public abstract class LeanBaseChartComponent extends LeanBaseAggregatingComponen
     return horizontalMargin;
   }
 
-  /**
-   * @param horizontalMargin The horizontalMargin to set
-   */
-  public void setHorizontalMargin( int horizontalMargin ) {
+  /** @param horizontalMargin The horizontalMargin to set */
+  public void setHorizontalMargin(int horizontalMargin) {
     this.horizontalMargin = horizontalMargin;
   }
 
@@ -444,10 +443,8 @@ public abstract class LeanBaseChartComponent extends LeanBaseAggregatingComponen
     return verticalMargin;
   }
 
-  /**
-   * @param verticalMargin The verticalMargin to set
-   */
-  public void setVerticalMargin( int verticalMargin ) {
+  /** @param verticalMargin The verticalMargin to set */
+  public void setVerticalMargin(int verticalMargin) {
     this.verticalMargin = verticalMargin;
   }
 
@@ -460,10 +457,8 @@ public abstract class LeanBaseChartComponent extends LeanBaseAggregatingComponen
     return showingHorizontalLabels;
   }
 
-  /**
-   * @param showingHorizontalLabels The showingHorizontalLabels to set
-   */
-  public void setShowingHorizontalLabels( boolean showingHorizontalLabels ) {
+  /** @param showingHorizontalLabels The showingHorizontalLabels to set */
+  public void setShowingHorizontalLabels(boolean showingHorizontalLabels) {
     this.showingHorizontalLabels = showingHorizontalLabels;
   }
 
@@ -476,10 +471,8 @@ public abstract class LeanBaseChartComponent extends LeanBaseAggregatingComponen
     return showingVerticalLabels;
   }
 
-  /**
-   * @param showingVerticalLabels The showingVerticalLabels to set
-   */
-  public void setShowingVerticalLabels( boolean showingVerticalLabels ) {
+  /** @param showingVerticalLabels The showingVerticalLabels to set */
+  public void setShowingVerticalLabels(boolean showingVerticalLabels) {
     this.showingVerticalLabels = showingVerticalLabels;
   }
 
@@ -492,10 +485,8 @@ public abstract class LeanBaseChartComponent extends LeanBaseAggregatingComponen
     return showingAxisTicks;
   }
 
-  /**
-   * @param showingAxisTicks The showingAxisTicks to set
-   */
-  public void setShowingAxisTicks( boolean showingAxisTicks ) {
+  /** @param showingAxisTicks The showingAxisTicks to set */
+  public void setShowingAxisTicks(boolean showingAxisTicks) {
     this.showingAxisTicks = showingAxisTicks;
   }
 
@@ -508,10 +499,8 @@ public abstract class LeanBaseChartComponent extends LeanBaseAggregatingComponen
     return dotSize;
   }
 
-  /**
-   * @param dotSize The dotSize to set
-   */
-  public void setDotSize( int dotSize ) {
+  /** @param dotSize The dotSize to set */
+  public void setDotSize(int dotSize) {
     this.dotSize = dotSize;
   }
 
@@ -524,10 +513,8 @@ public abstract class LeanBaseChartComponent extends LeanBaseAggregatingComponen
     return title;
   }
 
-  /**
-   * @param title The title to set
-   */
-  public void setTitle( String title ) {
+  /** @param title The title to set */
+  public void setTitle(String title) {
     this.title = title;
   }
 
@@ -540,10 +527,8 @@ public abstract class LeanBaseChartComponent extends LeanBaseAggregatingComponen
     return lineWidth;
   }
 
-  /**
-   * @param lineWidth The lineWidth to set
-   */
-  public void setLineWidth( String lineWidth ) {
+  /** @param lineWidth The lineWidth to set */
+  public void setLineWidth(String lineWidth) {
     this.lineWidth = lineWidth;
   }
 
@@ -556,10 +541,8 @@ public abstract class LeanBaseChartComponent extends LeanBaseAggregatingComponen
     return usingZeroBaseline;
   }
 
-  /**
-   * @param usingZeroBaseline The usingZeroBaseline to set
-   */
-  public void setUsingZeroBaseline( boolean usingZeroBaseline ) {
+  /** @param usingZeroBaseline The usingZeroBaseline to set */
+  public void setUsingZeroBaseline(boolean usingZeroBaseline) {
     this.usingZeroBaseline = usingZeroBaseline;
   }
 
@@ -572,10 +555,8 @@ public abstract class LeanBaseChartComponent extends LeanBaseAggregatingComponen
     return showingLegend;
   }
 
-  /**
-   * @param showingLegend The showingLegend to set
-   */
-  public void setShowingLegend( boolean showingLegend ) {
+  /** @param showingLegend The showingLegend to set */
+  public void setShowingLegend(boolean showingLegend) {
     this.showingLegend = showingLegend;
   }
 }

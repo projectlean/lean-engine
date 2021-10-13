@@ -11,6 +11,6 @@ public class CompositeDetails {
   public LeanSize size;
 
   public CompositeDetails() {
-    this.childDetails = new ArrayList<>(  );
+    this.childDetails = new ArrayList<>();
   }
 }

@@ -17,61 +17,63 @@ import org.lean.presentation.datacontext.IDataContext;
 
 import java.sql.ResultSet;
 
-@JsonDeserialize( as = LeanSqlConnector.class )
+@JsonDeserialize(as = LeanSqlConnector.class)
 @LeanConnectorPlugin(
-  id="SqlConnector",
-  name="Execute a SQL query",
-  description = "Reads data from a relational database using a SQL query"
-)
+    id = "SqlConnector",
+    name = "Execute a SQL query",
+    description = "Reads data from a relational database using a SQL query")
 public class LeanSqlConnector extends LeanBaseConnector implements ILeanConnector {
 
-  @HopMetadataProperty
-  private String databaseConnectionName;
+  @HopMetadataProperty private String databaseConnectionName;
 
-  @HopMetadataProperty
-  private String sql;
+  @HopMetadataProperty private String sql;
 
-  @JsonIgnore
-  private transient ResultSet resultSet;
+  @JsonIgnore private transient ResultSet resultSet;
 
   public LeanSqlConnector() {
-    super( "SqlConnector" );
+    super("SqlConnector");
   }
 
-  public LeanSqlConnector( String databaseConnectionName, String sql ) {
+  public LeanSqlConnector(String databaseConnectionName, String sql) {
     this();
     this.databaseConnectionName = databaseConnectionName;
     this.sql = sql;
   }
 
-  public LeanSqlConnector( LeanSqlConnector c ) {
-    super( c );
+  public LeanSqlConnector(LeanSqlConnector c) {
+    super(c);
     this.databaseConnectionName = c.databaseConnectionName;
     this.sql = c.sql;
   }
 
   public LeanSqlConnector clone() {
-    return new LeanSqlConnector( this );
+    return new LeanSqlConnector(this);
   }
 
-  @Override public IRowMeta describeOutput( IDataContext dataContext ) throws LeanException {
+  @Override
+  public IRowMeta describeOutput(IDataContext dataContext) throws LeanException {
     Database database = null;
 
     try {
-      IHopMetadataSerializer<LeanDatabaseConnection> serializer = dataContext.getMetadataProvider().getSerializer( LeanDatabaseConnection.class );
-      LeanDatabaseConnection databaseConnection = serializer.load( databaseConnectionName );
+      IHopMetadataSerializer<LeanDatabaseConnection> serializer =
+          dataContext.getMetadataProvider().getSerializer(LeanDatabaseConnection.class);
+      LeanDatabaseConnection databaseConnection = serializer.load(databaseConnectionName);
 
       DatabaseMeta databaseMeta = databaseConnection.createDatabaseMeta();
-      database = new Database( new LoggingObject( "Database connection '" + databaseConnectionName + "'" ), dataContext.getVariables(), databaseMeta );
+      database =
+          new Database(
+              new LoggingObject("Database connection '" + databaseConnectionName + "'"),
+              dataContext.getVariables(),
+              databaseMeta);
       database.connect();
 
-      IRowMeta rowMeta = database.getQueryFields( sql, false );
+      IRowMeta rowMeta = database.getQueryFields(sql, false);
 
       return rowMeta;
-    } catch ( Exception e ) {
-      throw new LeanException( "Unable to describe output of SQL query", e );
+    } catch (Exception e) {
+      throw new LeanException("Unable to describe output of SQL query", e);
     } finally {
-      if ( database != null ) {
+      if (database != null) {
         database.disconnect();
       }
     }
@@ -83,40 +85,48 @@ public class LeanSqlConnector extends LeanBaseConnector implements ILeanConnecto
    * @param dataContext the data context to optionally reference (not used here)
    * @throws LeanException
    */
-  @Override public void startStreaming( IDataContext dataContext ) throws LeanException {
+  @Override
+  public void startStreaming(IDataContext dataContext) throws LeanException {
 
     Database database = null;
     try {
-      IHopMetadataSerializer<LeanDatabaseConnection> serializer = dataContext.getMetadataProvider().getSerializer( LeanDatabaseConnection.class );
-      LeanDatabaseConnection databaseConnection = serializer.load( databaseConnectionName );
+      IHopMetadataSerializer<LeanDatabaseConnection> serializer =
+          dataContext.getMetadataProvider().getSerializer(LeanDatabaseConnection.class);
+      LeanDatabaseConnection databaseConnection = serializer.load(databaseConnectionName);
 
       DatabaseMeta databaseMeta = databaseConnection.createDatabaseMeta();
 
-      database = new Database( new LoggingObject( "Database connection '" + databaseConnectionName + "'" ), dataContext.getVariables(), databaseMeta );
+      database =
+          new Database(
+              new LoggingObject("Database connection '" + databaseConnectionName + "'"),
+              dataContext.getVariables(),
+              databaseMeta);
       database.connect();
 
-      resultSet = database.openQuery( sql );
-      Object[] row = database.getRow( resultSet );
-      while ( row != null ) {
-        passToRowListeners( database.getReturnRowMeta(), row );
-        row = database.getRow( resultSet );
+      resultSet = database.openQuery(sql);
+      Object[] row = database.getRow(resultSet);
+      while (row != null) {
+        passToRowListeners(database.getReturnRowMeta(), row);
+        row = database.getRow(resultSet);
       }
-      database.closeQuery( resultSet );
+      database.closeQuery(resultSet);
 
       // Signal to all row listeners (and subsequent connectors) that no more rows are forthcoming .
       //
       outputDone();
 
-    } catch ( Exception e ) {
-      throw new LeanException( "Couldn't stream data from database connection " + databaseConnectionName, e );
+    } catch (Exception e) {
+      throw new LeanException(
+          "Couldn't stream data from database connection " + databaseConnectionName, e);
     } finally {
-      if ( database != null ) {
+      if (database != null) {
         database.disconnect();
       }
     }
   }
 
-  @Override public void waitUntilFinished() throws LeanException {
+  @Override
+  public void waitUntilFinished() throws LeanException {
     // StartStreaming works synchronized, no need to get complicated about it
   }
 
@@ -129,10 +139,8 @@ public class LeanSqlConnector extends LeanBaseConnector implements ILeanConnecto
     return databaseConnectionName;
   }
 
-  /**
-   * @param databaseConnectionName The databaseConnectionName to set
-   */
-  public void setDatabaseConnectionName( String databaseConnectionName ) {
+  /** @param databaseConnectionName The databaseConnectionName to set */
+  public void setDatabaseConnectionName(String databaseConnectionName) {
     this.databaseConnectionName = databaseConnectionName;
   }
 
@@ -145,11 +153,8 @@ public class LeanSqlConnector extends LeanBaseConnector implements ILeanConnecto
     return sql;
   }
 
-  /**
-   * @param sql The sql to set
-   */
-  public void setSql( String sql ) {
+  /** @param sql The sql to set */
+  public void setSql(String sql) {
     this.sql = sql;
   }
-
 }

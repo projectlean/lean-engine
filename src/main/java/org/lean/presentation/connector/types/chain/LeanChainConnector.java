@@ -18,128 +18,131 @@ import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
-@JsonDeserialize( as = LeanChainConnector.class )
+@JsonDeserialize(as = LeanChainConnector.class)
 @LeanConnectorPlugin(
-  id="ChainConnector",
-  name="Chain connectors",
-  description = "Chain multiple connectors, encapsulate in a single connector"
-)
+    id = "ChainConnector",
+    name = "Chain connectors",
+    description = "Chain multiple connectors, encapsulate in a single connector")
 public class LeanChainConnector extends LeanBaseConnector implements ILeanConnector {
 
   public static final String STRING_LAST_CONNECTOR_NAME = "_RESULT_OF_CHAIN_";
-
-  @HopMetadataProperty
-  private List<ILeanConnector> connectors;
-
-  @JsonIgnore
-  protected ArrayBlockingQueue<Object> finishedQueue;
+  @JsonIgnore protected ArrayBlockingQueue<Object> finishedQueue;
+  @HopMetadataProperty private List<ILeanConnector> connectors;
 
   public LeanChainConnector() {
-    super( "ChainConnector" );
+    super("ChainConnector");
     finishedQueue = null;
     connectors = new ArrayList<>();
   }
 
-  public LeanChainConnector( LeanChainConnector c ) {
-    super( c );
+  public LeanChainConnector(LeanChainConnector c) {
+    super(c);
     connectors = new ArrayList<>();
-    for ( ILeanConnector connector : c.connectors ) {
-      connectors.add( connector.clone() );
+    for (ILeanConnector connector : c.connectors) {
+      connectors.add(connector.clone());
     }
   }
 
-  public LeanChainConnector clone() {
-    return new LeanChainConnector( this );
-  }
-
-  public LeanChainConnector( String sourceConnectorName, List<ILeanConnector> connectors ) {
+  public LeanChainConnector(String sourceConnectorName, List<ILeanConnector> connectors) {
     this();
     super.sourceConnectorName = sourceConnectorName;
     this.connectors = connectors;
   }
 
-  @Override public IRowMeta describeOutput( IDataContext dataContext ) throws LeanException {
+  public LeanChainConnector clone() {
+    return new LeanChainConnector(this);
+  }
+
+  @Override
+  public IRowMeta describeOutput(IDataContext dataContext) throws LeanException {
 
     // Validate input first
     //
-    LeanConnector connector = dataContext.getConnector( getSourceConnectorName() );
-    if ( connector == null ) {
-      throw new LeanException( "Unable to find connector source '" + getSourceConnectorName() + "' for passthrough connector" );
+    LeanConnector connector = dataContext.getConnector(getSourceConnectorName());
+    if (connector == null) {
+      throw new LeanException(
+          "Unable to find connector source '"
+              + getSourceConnectorName()
+              + "' for passthrough connector");
     }
 
     // Get the output after chaining...
     //
-    ChainDataContext chainDataContext = createChainContext( dataContext );
+    ChainDataContext chainDataContext = createChainContext(dataContext);
 
     // Describe output of last connector in chain
     //
     LeanConnector lastConnector = chainDataContext.getLastConnector();
-    return lastConnector.getConnector().describeOutput( dataContext );
+    return lastConnector.getConnector().describeOutput(dataContext);
   }
 
-  public ChainDataContext createChainContext( IDataContext parentDataContext ) {
+  public ChainDataContext createChainContext(IDataContext parentDataContext) {
     // We want to chain all the connectors, give them sampledata names,
     //
-    ChainDataContext chainDataContext = new ChainDataContext( parentDataContext );
+    ChainDataContext chainDataContext = new ChainDataContext(parentDataContext);
 
     String previousName = null;
-    for ( int i = 0; i < connectors.size(); i++ ) {
-      ILeanConnector connector = connectors.get( i );
+    for (int i = 0; i < connectors.size(); i++) {
+      ILeanConnector connector = connectors.get(i);
       String connectorName;
-      if ( i == connectors.size() - 1 ) {
+      if (i == connectors.size() - 1) {
         // Last connector
         connectorName = STRING_LAST_CONNECTOR_NAME;
       } else {
         connectorName = "__ChainConnector_" + i;
       }
-      LeanConnector leanConnector = new LeanConnector( connectorName, connector );
-      if ( i == 0 ) {
-        connector.setSourceConnectorName( getSourceConnectorName() );
+      LeanConnector leanConnector = new LeanConnector(connectorName, connector);
+      if (i == 0) {
+        connector.setSourceConnectorName(getSourceConnectorName());
       } else {
-        connector.setSourceConnectorName( previousName );
+        connector.setSourceConnectorName(previousName);
       }
-      chainDataContext.addConnector( leanConnector );
+      chainDataContext.addConnector(leanConnector);
       previousName = connectorName;
     }
 
     return chainDataContext;
   }
 
-  @Override public void startStreaming( IDataContext dataContext ) throws LeanException {
+  @Override
+  public void startStreaming(IDataContext dataContext) throws LeanException {
 
     // which connector do we read from?
     //
-    LeanConnector sourceConnector = dataContext.getConnector( getSourceConnectorName() );
-    if ( sourceConnector == null ) {
-      throw new LeanException( "Unable to find source '" + getSourceConnectorName() + "' for chain connector" );
+    LeanConnector sourceConnector = dataContext.getConnector(getSourceConnectorName());
+    if (sourceConnector == null) {
+      throw new LeanException(
+          "Unable to find source '" + getSourceConnectorName() + "' for chain connector");
     }
 
     // Chain the rest...
     //
-    ChainDataContext chainDataContext = createChainContext( dataContext );
+    ChainDataContext chainDataContext = createChainContext(dataContext);
     LeanConnector lastConnector = chainDataContext.getLastConnector();
 
-    if ( finishedQueue != null ) {
-      throw new LeanException( "Please don't start streaming twice in your application, wait until the connector has finished sending rows" );
+    if (finishedQueue != null) {
+      throw new LeanException(
+          "Please don't start streaming twice in your application, wait until the connector has finished sending rows");
     }
-    finishedQueue = new ArrayBlockingQueue<>( 10 );
+    finishedQueue = new ArrayBlockingQueue<>(10);
 
     // Add a row listener to the last connector to pass the data to the listeners of this connector
     //
-    lastConnector.getConnector().addRowListener( new PassthroughRowListener( this, finishedQueue ) );
+    lastConnector.getConnector().addRowListener(new PassthroughRowListener(this, finishedQueue));
 
     // Now signal start streaming...
     //
-    lastConnector.getConnector().startStreaming( chainDataContext );
+    lastConnector.getConnector().startStreaming(chainDataContext);
   }
 
-  @Override public void waitUntilFinished() throws LeanException {
+  @Override
+  public void waitUntilFinished() throws LeanException {
     try {
-      while ( finishedQueue.poll( 1, TimeUnit.DAYS ) == null ) {
+      while (finishedQueue.poll(1, TimeUnit.DAYS) == null) {
         ;
       }
-    } catch ( InterruptedException e ) {
-      throw new LeanException( "Interrupted while waiting for more rows in connector", e );
+    } catch (InterruptedException e) {
+      throw new LeanException("Interrupted while waiting for more rows in connector", e);
     }
     finishedQueue = null;
   }
@@ -153,10 +156,8 @@ public class LeanChainConnector extends LeanBaseConnector implements ILeanConnec
     return connectors;
   }
 
-  /**
-   * @param connectors The connectors to set
-   */
-  public void setConnectors( List<ILeanConnector> connectors ) {
+  /** @param connectors The connectors to set */
+  public void setConnectors(List<ILeanConnector> connectors) {
     this.connectors = connectors;
   }
 }

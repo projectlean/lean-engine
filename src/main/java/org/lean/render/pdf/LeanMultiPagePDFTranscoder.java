@@ -27,23 +27,19 @@ public class LeanMultiPagePDFTranscoder extends AbstractFOPTranscoder {
   /** Graphics2D instance that is used to paint to */
   protected LeanPDFDocumentGraphics2D graphics;
 
-  /**
-   * Constructs a new {@link PDFTranscoder}.
-   */
+  /** Constructs a new {@link PDFTranscoder}. */
   public LeanMultiPagePDFTranscoder() {
     super();
     this.handler = new LeanFOPErrorHandler();
   }
 
-  /**
-   * {@inheritDoc}
-   */
+  /** {@inheritDoc} */
   protected FOPTranscoderUserAgent createUserAgent() {
     return new AbstractFOPTranscoder.FOPTranscoderUserAgent() {
       // The PDF stuff wants everything at 72dpi
       public float getPixelUnitToMillimeter() {
         return super.getPixelUnitToMillimeter();
-        //return 25.4f / 72; //72dpi = 0.352778f;
+        // return 25.4f / 72; //72dpi = 0.352778f;
       }
     };
   }
@@ -65,14 +61,14 @@ public class LeanMultiPagePDFTranscoder extends AbstractFOPTranscoder {
    * @param output the ouput where to transcode
    * @exception TranscoderException if an error occured while transcoding
    */
-  protected void transcode(Document document, String uri,
-                           TranscoderOutput output)
-    throws TranscoderException {
+  protected void transcode(Document document, String uri, TranscoderOutput output)
+      throws TranscoderException {
 
     graphics = new LeanPDFDocumentGraphics2D(isTextStroked());
-    graphics.getPDFDocument().getInfo().setProducer("Apache FOP Version "
-      + Version.getVersion()
-      + ": PDF Transcoder for Batik");
+    graphics
+        .getPDFDocument()
+        .getInfo()
+        .setProducer("Apache FOP Version " + Version.getVersion() + ": PDF Transcoder for Batik");
     if (hints.containsKey(KEY_DEVICE_RESOLUTION)) {
       graphics.setDeviceDPI(getDeviceResolution());
     }
@@ -83,18 +79,16 @@ public class LeanMultiPagePDFTranscoder extends AbstractFOPTranscoder {
       Configuration effCfg = getEffectiveConfiguration();
 
       if (effCfg != null) {
-        PDFDocumentGraphics2DConfigurator configurator
-          = new PDFDocumentGraphics2DConfigurator();
-        boolean useComplexScriptFeatures = false; //TODO - FIX ME
+        PDFDocumentGraphics2DConfigurator configurator = new PDFDocumentGraphics2DConfigurator();
+        boolean useComplexScriptFeatures = false; // TODO - FIX ME
         configurator.configure(graphics, effCfg, useComplexScriptFeatures);
       } else {
         graphics.setupDefaultFontInfo();
       }
-      ((FOPTranscoderUserAgent) userAgent).setFontFamilyResolver(
-        new FOPFontFamilyResolverImpl(graphics.getFontInfo()));
+      ((FOPTranscoderUserAgent) userAgent)
+          .setFontFamilyResolver(new FOPFontFamilyResolverImpl(graphics.getFontInfo()));
     } catch (Exception e) {
-      throw new TranscoderException(
-        "Error while setting up PDFDocumentGraphics2D", e);
+      throw new TranscoderException("Error while setting up PDFDocumentGraphics2D", e);
     }
 
     super.transcode(document, uri, output);
@@ -104,21 +98,26 @@ public class LeanMultiPagePDFTranscoder extends AbstractFOPTranscoder {
     }
 
     // prepare the image to be painted
-    org.apache.batik.bridge.UnitProcessor.Context uctx = org.apache.batik.bridge.UnitProcessor.createContext(ctx,
-      document.getDocumentElement());
-    float widthInPt = org.apache.batik.bridge.UnitProcessor.userSpaceToSVG(width, SVGLength.SVG_LENGTHTYPE_PT,
-      org.apache.batik.bridge.UnitProcessor.HORIZONTAL_LENGTH, uctx);
-    int w = (int)(widthInPt + 0.5);
-    float heightInPt = org.apache.batik.bridge.UnitProcessor.userSpaceToSVG(height, SVGLength.SVG_LENGTHTYPE_PT,
-      UnitProcessor.HORIZONTAL_LENGTH, uctx);
-    int h = (int)(heightInPt + 0.5);
+    org.apache.batik.bridge.UnitProcessor.Context uctx =
+        org.apache.batik.bridge.UnitProcessor.createContext(ctx, document.getDocumentElement());
+    float widthInPt =
+        org.apache.batik.bridge.UnitProcessor.userSpaceToSVG(
+            width,
+            SVGLength.SVG_LENGTHTYPE_PT,
+            org.apache.batik.bridge.UnitProcessor.HORIZONTAL_LENGTH,
+            uctx);
+    int w = (int) (widthInPt + 0.5);
+    float heightInPt =
+        org.apache.batik.bridge.UnitProcessor.userSpaceToSVG(
+            height, SVGLength.SVG_LENGTHTYPE_PT, UnitProcessor.HORIZONTAL_LENGTH, uctx);
+    int h = (int) (heightInPt + 0.5);
     if (getLogger().isTraceEnabled()) {
       getLogger().trace("document size: " + w + "pt x " + h + "pt");
     }
 
     // prepare the image to be painted
-    //int w = (int)(width + 0.5);
-    //int h = (int)(height + 0.5);
+    // int w = (int)(width + 0.5);
+    // int h = (int)(height + 0.5);
 
     try {
       OutputStream out = output.getOutputStream();
@@ -129,17 +128,14 @@ public class LeanMultiPagePDFTranscoder extends AbstractFOPTranscoder {
       graphics.setSVGDimension(width, height);
 
       if (hints.containsKey(ImageTranscoder.KEY_BACKGROUND_COLOR)) {
-        graphics.setBackgroundColor(
-          (Color)hints.get(ImageTranscoder.KEY_BACKGROUND_COLOR));
+        graphics.setBackgroundColor((Color) hints.get(ImageTranscoder.KEY_BACKGROUND_COLOR));
       }
-      graphics.setGraphicContext(
-        new org.apache.xmlgraphics.java2d.GraphicContext());
+      graphics.setGraphicContext(new org.apache.xmlgraphics.java2d.GraphicContext());
       graphics.preparePainting();
 
       graphics.transform(curTxf);
       graphics.setRenderingHint(
-        RenderingHintsKeyExt.KEY_TRANSCODING,
-        RenderingHintsKeyExt.VALUE_TRANSCODING_VECTOR);
+          RenderingHintsKeyExt.KEY_TRANSCODING, RenderingHintsKeyExt.VALUE_TRANSCODING_VECTOR);
 
       this.root.paint(graphics);
 
@@ -150,7 +146,7 @@ public class LeanMultiPagePDFTranscoder extends AbstractFOPTranscoder {
   }
   /** {@inheritDoc} */
   protected BridgeContext createBridgeContext() {
-    //For compatibility with Batik 1.6
+    // For compatibility with Batik 1.6
     return createBridgeContext("1.x");
   }
 
@@ -160,9 +156,8 @@ public class LeanMultiPagePDFTranscoder extends AbstractFOPTranscoder {
     if (isTextStroked()) {
       fontInfo = null;
     }
-    BridgeContext ctx = new PDFBridgeContext(userAgent, fontInfo,
-      getImageManager(), getImageSessionContext());
+    BridgeContext ctx =
+        new PDFBridgeContext(userAgent, fontInfo, getImageManager(), getImageSessionContext());
     return ctx;
   }
-
 }

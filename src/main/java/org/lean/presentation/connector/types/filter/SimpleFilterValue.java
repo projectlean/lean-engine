@@ -2,17 +2,16 @@ package org.lean.presentation.connector.types.filter;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
-@JsonDeserialize( as = LeanSimpleFilterConnector.class )
+@JsonDeserialize(as = LeanSimpleFilterConnector.class)
 public class SimpleFilterValue {
 
   private String fieldName;
 
   private String filterValue;
 
-  public SimpleFilterValue() {
-  }
+  public SimpleFilterValue() {}
 
-  public SimpleFilterValue( String fieldName, String filterValue ) {
+  public SimpleFilterValue(String fieldName, String filterValue) {
     this.fieldName = fieldName;
     this.filterValue = filterValue;
   }
@@ -26,10 +25,8 @@ public class SimpleFilterValue {
     return fieldName;
   }
 
-  /**
-   * @param fieldName The fieldName to set
-   */
-  public void setFieldName( String fieldName ) {
+  /** @param fieldName The fieldName to set */
+  public void setFieldName(String fieldName) {
     this.fieldName = fieldName;
   }
 
@@ -42,10 +39,8 @@ public class SimpleFilterValue {
     return filterValue;
   }
 
-  /**
-   * @param filterValue The filterValue to set
-   */
-  public void setFilterValue( String filterValue ) {
+  /** @param filterValue The filterValue to set */
+  public void setFilterValue(String filterValue) {
     this.filterValue = filterValue;
   }
 }

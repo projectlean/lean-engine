@@ -11,19 +11,17 @@ public class DrawInfo {
   private DrawnItem drawnItem;
   private List<LeanInteractionAction> actions;
 
-  public DrawInfo() {
-  }
+  public DrawInfo() {}
 
-  public DrawInfo( DrawnItem drawnItem, List<LeanInteractionAction> actions ) {
+  public DrawInfo(DrawnItem drawnItem, List<LeanInteractionAction> actions) {
     this.drawnItem = drawnItem;
     this.actions = actions;
   }
 
   public String toJsonString() throws JsonProcessingException {
     ObjectMapper objectMapper = new ObjectMapper();
-    return objectMapper.writeValueAsString( this );
+    return objectMapper.writeValueAsString(this);
   }
-
 
   /**
    * Gets drawnItem
@@ -34,10 +32,8 @@ public class DrawInfo {
     return drawnItem;
   }
 
-  /**
-   * @param drawnItem The drawnItem to set
-   */
-  public void setDrawnItem( DrawnItem drawnItem ) {
+  /** @param drawnItem The drawnItem to set */
+  public void setDrawnItem(DrawnItem drawnItem) {
     this.drawnItem = drawnItem;
   }
 
@@ -50,10 +46,8 @@ public class DrawInfo {
     return actions;
   }
 
-  /**
-   * @param actions The actions to set
-   */
-  public void setActions( List<LeanInteractionAction> actions ) {
+  /** @param actions The actions to set */
+  public void setActions(List<LeanInteractionAction> actions) {
     this.actions = actions;
   }
 }
