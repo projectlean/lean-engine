@@ -41,12 +41,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-@JsonDeserialize( as = LeanCrosstabComponent.class )
+@JsonDeserialize(as = LeanCrosstabComponent.class)
 @LeanComponentPlugin(
-  id= "LeanCrosstabComponent",
-  name="Crosstab",
-  description = "A crosstab component"
-)
+    id = "LeanCrosstabComponent",
+    name = "Crosstab",
+    description = "A crosstab component")
 public class LeanCrosstabComponent extends LeanBaseAggregatingComponent implements ILeanComponent {
 
   // TODO Implement sub-totals, multiple totals
@@ -56,38 +55,32 @@ public class LeanCrosstabComponent extends LeanBaseAggregatingComponent implemen
   public static final String DATA_START_ROW = "start_row";
   public static final String DATA_END_ROW = "end_row";
 
-  @HopMetadataProperty
-  private int horizontalMargin;
+  @HopMetadataProperty private int horizontalMargin;
 
-  @HopMetadataProperty
-  private int verticalMargin;
+  @HopMetadataProperty private int verticalMargin;
 
-  @HopMetadataProperty
-  private boolean evenHeights;
+  @HopMetadataProperty private boolean evenHeights;
 
-  @HopMetadataProperty
-  private boolean headerOnEveryPage;
+  @HopMetadataProperty private boolean headerOnEveryPage;
 
-  @HopMetadataProperty
-  private boolean showingHorizontalSubtotals;
+  @HopMetadataProperty private boolean showingHorizontalSubtotals;
 
-  @HopMetadataProperty
-  private boolean showingVerticalSubtotals;
+  @HopMetadataProperty private boolean showingVerticalSubtotals;
 
   public LeanCrosstabComponent() {
-    super( "LeanCrosstabComponent" );
+    super("LeanCrosstabComponent");
     horizontalDimensions = new ArrayList<>();
     verticalDimensions = new ArrayList<>();
     facts = new ArrayList<>();
   }
 
-  public LeanCrosstabComponent( String connectorName ) {
+  public LeanCrosstabComponent(String connectorName) {
     this();
     this.sourceConnectorName = connectorName;
   }
 
-  public LeanCrosstabComponent( LeanCrosstabComponent c ) {
-    super( "LeanCrosstabComponent", c );
+  public LeanCrosstabComponent(LeanCrosstabComponent c) {
+    super("LeanCrosstabComponent", c);
     this.sourceConnectorName = c.sourceConnectorName;
     this.horizontalMargin = c.horizontalMargin;
     this.verticalMargin = c.verticalMargin;
@@ -98,31 +91,39 @@ public class LeanCrosstabComponent extends LeanBaseAggregatingComponent implemen
   }
 
   public LeanCrosstabComponent clone() {
-    return new LeanCrosstabComponent( this );
+    return new LeanCrosstabComponent(this);
   }
 
+  @Override
+  public void processSourceData(
+      LeanPresentation presentation,
+      LeanPage page,
+      LeanComponent component,
+      IDataContext dataContext,
+      IRenderContext renderContext,
+      LeanLayoutResults results)
+      throws LeanException {
 
-  @Override public void processSourceData( LeanPresentation presentation, LeanPage page, LeanComponent component, IDataContext dataContext, IRenderContext renderContext,
-                                           LeanLayoutResults results ) throws LeanException {
-
-    LeanConnector connector = dataContext.getConnector( sourceConnectorName );
-    if ( connector == null ) {
-      throw new LeanException( "Unable to find connector '" + sourceConnectorName + "'" );
+    LeanConnector connector = dataContext.getConnector(sourceConnectorName);
+    if (connector == null) {
+      throw new LeanException("Unable to find connector '" + sourceConnectorName + "'");
     }
 
     // Get the rows
     //
-    connector.getConnector().addRowListener( ( rowMeta, rowData ) -> {
-      if ( rowData != null ) {
-        // Pivot the row data...
-        //
-        pivotRow( rowMeta, rowData );
-      }
-    } );
+    connector
+        .getConnector()
+        .addRowListener(
+            (rowMeta, rowData) -> {
+              if (rowData != null) {
+                // Pivot the row data...
+                //
+                pivotRow(rowMeta, rowData);
+              }
+            });
 
-    connector.getConnector().startStreaming( dataContext );
+    connector.getConnector().startStreaming(dataContext);
     connector.getConnector().waitUntilFinished();
-
 
     // Now all the rows have been pivoted, we can render the data...
     // The vertical dimension columns are on the left.
@@ -137,45 +138,45 @@ public class LeanCrosstabComponent extends LeanBaseAggregatingComponent implemen
     // To calculate the width and height of the text in the given font we need a GC
     //
     SVGGraphics2D gc = HopSvgGraphics2D.newDocument();
-    enableFont( gc, lookupDefaultFont( renderContext ) );
+    enableFont(gc, lookupDefaultFont(renderContext));
 
     // Things to remember for every rendered row...
     //
-    if ( horizontalDimensions.size() == 0 && verticalDimensions.size() == 0 ) {
+    if (horizontalDimensions.size() == 0 && verticalDimensions.size() == 0) {
       // No dimensions
       //
       details.sortedVerticalCombinations = new ArrayList<>();
-      details.sortedHorizontalCombinations = Arrays.asList( Arrays.asList( "-" ) );
-    } else if ( horizontalDimensions.size() == 0 ) {
+      details.sortedHorizontalCombinations = Arrays.asList(Arrays.asList("-"));
+    } else if (horizontalDimensions.size() == 0) {
       // Any keySet is fine, all facts have the same vertical dimensions
       //
-      details.sortedVerticalCombinations = new ArrayList( pivotMapList.get( 0 ).keySet() );
-      sortListOfListOfStrings( details.sortedVerticalCombinations );
+      details.sortedVerticalCombinations = new ArrayList(pivotMapList.get(0).keySet());
+      sortListOfListOfStrings(details.sortedVerticalCombinations);
       details.sortedHorizontalCombinations = new ArrayList<>();
-    } else if ( verticalDimensions.size() == 0 ) {
+    } else if (verticalDimensions.size() == 0) {
       details.sortedVerticalCombinations = new ArrayList<>();
-      details.sortedHorizontalCombinations = new ArrayList<>( pivotMapList.get( 0 ).keySet() );
-      sortListOfListOfStrings( details.sortedHorizontalCombinations );
+      details.sortedHorizontalCombinations = new ArrayList<>(pivotMapList.get(0).keySet());
+      sortListOfListOfStrings(details.sortedHorizontalCombinations);
     } else {
       // Generic case with both horizontal and vertical dimensions
       //
       List<Set<String>> horizontalValues = new ArrayList<>();
       List<Set<String>> verticalValues = new ArrayList<>();
-      calculateDistinctValues( horizontalValues, verticalValues );
+      calculateDistinctValues(horizontalValues, verticalValues);
 
       // Get all dimension combinations horizontally
       // Then sort this list of lists...
       //
       Set<List<String>> horizontalCombinations = new HashSet<>();
-      getCombinations( horizontalValues, 0, horizontalCombinations, new ArrayList<>() );
-      details.sortedHorizontalCombinations = sortCombinations( horizontalCombinations );
+      getCombinations(horizontalValues, 0, horizontalCombinations, new ArrayList<>());
+      details.sortedHorizontalCombinations = sortCombinations(horizontalCombinations);
 
       // Get the vertical dimension combinations
       // Then sort this list of lists...
       //
       Set<List<String>> verticalCombinations = new HashSet<>();
-      getCombinations( verticalValues, 0, verticalCombinations, new ArrayList<>() );
-      details.sortedVerticalCombinations = sortCombinations( verticalCombinations );
+      getCombinations(verticalValues, 0, verticalCombinations, new ArrayList<>());
+      details.sortedVerticalCombinations = sortCombinations(verticalCombinations);
     }
 
     // PREPROCESSING IS DONE HERE, CALCULATE THE GRID
@@ -185,45 +186,62 @@ public class LeanCrosstabComponent extends LeanBaseAggregatingComponent implemen
     // One row for every horizontal dimension
     // Then one row with the vertical headers and the facts
     //
-    enableFont( gc, lookupHorizontalDimensionsFont( renderContext ) );
+    enableFont(gc, lookupHorizontalDimensionsFont(renderContext));
 
-
-    for ( int rowNr = 0; rowNr < horizontalDimensions.size(); rowNr++ ) {
+    for (int rowNr = 0; rowNr < horizontalDimensions.size(); rowNr++) {
       details.nrHeaderLines++;
 
       List<CellInfo> cellInfos = new ArrayList<>();
 
       // Add the blanks for the vertical dimensions...
       //
-      for ( int dimNr = 0; dimNr < verticalDimensions.size(); dimNr++ ) {
+      for (int dimNr = 0; dimNr < verticalDimensions.size(); dimNr++) {
         String columnName = " ";
-        LeanTextGeometry geometry = calculateTextGeometry( gc, columnName );
-        cellInfos.add( new CellInfo( geometry, columnName, new LeanColumn( "blank" ), LeanVerticalAlignment.TOP, LeanHorizontalAlignment.LEFT ) );
+        LeanTextGeometry geometry = calculateTextGeometry(gc, columnName);
+        cellInfos.add(
+            new CellInfo(
+                geometry,
+                columnName,
+                new LeanColumn("blank"),
+                LeanVerticalAlignment.TOP,
+                LeanHorizontalAlignment.LEFT));
       }
       // Add the horizontal values for this row
       //
-      for ( int colNr = 0; colNr < details.sortedHorizontalCombinations.size(); colNr++ ) {
-        List<String> horizontalCombination = details.sortedHorizontalCombinations.get( colNr );
-        String headerValue = horizontalCombination.get( rowNr );
-        LeanTextGeometry geometry = calculateTextGeometry( gc, headerValue );
-        LeanColumn column = horizontalDimensions.get( rowNr );
-        for ( LeanFact fact : facts ) {
-          cellInfos.add( new CellInfo( geometry, headerValue, column, column.getVerticalAlignment(), column.getHorizontalAlignment() ) );
+      for (int colNr = 0; colNr < details.sortedHorizontalCombinations.size(); colNr++) {
+        List<String> horizontalCombination = details.sortedHorizontalCombinations.get(colNr);
+        String headerValue = horizontalCombination.get(rowNr);
+        LeanTextGeometry geometry = calculateTextGeometry(gc, headerValue);
+        LeanColumn column = horizontalDimensions.get(rowNr);
+        for (LeanFact fact : facts) {
+          cellInfos.add(
+              new CellInfo(
+                  geometry,
+                  headerValue,
+                  column,
+                  column.getVerticalAlignment(),
+                  column.getHorizontalAlignment()));
         }
       }
       // Finally, see if we need to add columns for the horizontal aggregations
       //
-      if ( showingVerticalTotals ) {
+      if (showingVerticalTotals) {
         // We need to show a grand total over the vertical dimensions...
         //
-        for ( LeanFact fact : facts ) {
+        for (LeanFact fact : facts) {
           String headerValue = " "; // Empty space
-          LeanTextGeometry geometry = calculateTextGeometry( gc, headerValue );
-          cellInfos.add( new CellInfo( geometry, headerValue, fact, fact.getHeaderVerticalAlignment(), fact.getHeaderHorizontalAlignment() ) );
+          LeanTextGeometry geometry = calculateTextGeometry(gc, headerValue);
+          cellInfos.add(
+              new CellInfo(
+                  geometry,
+                  headerValue,
+                  fact,
+                  fact.getHeaderVerticalAlignment(),
+                  fact.getHeaderHorizontalAlignment()));
         }
       }
-      details.cellInfosList.add( cellInfos );
-      details.headerRowFlags.add( true );
+      details.cellInfosList.add(cellInfos);
+      details.headerRowFlags.add(true);
     }
 
     // Now add one row with the vertical dimension headers and facts
@@ -235,68 +253,91 @@ public class LeanCrosstabComponent extends LeanBaseAggregatingComponent implemen
 
       List<CellInfo> cellInfos = new ArrayList<>();
 
-      for ( int dimNr = 0; dimNr < verticalDimensions.size(); dimNr++ ) {
-        LeanColumn dimension = verticalDimensions.get( dimNr );
+      for (int dimNr = 0; dimNr < verticalDimensions.size(); dimNr++) {
+        LeanColumn dimension = verticalDimensions.get(dimNr);
         String headerName = dimension.getHeaderValue();
-        if ( headerName == null ) {
+        if (headerName == null) {
           headerName = dimension.getColumnName();
         }
-        LeanTextGeometry geometry = calculateTextGeometry( gc, headerName );
-        cellInfos.add( new CellInfo( geometry, headerName, dimension, dimension.getVerticalAlignment(), dimension.getHorizontalAlignment() ) );
+        LeanTextGeometry geometry = calculateTextGeometry(gc, headerName);
+        cellInfos.add(
+            new CellInfo(
+                geometry,
+                headerName,
+                dimension,
+                dimension.getVerticalAlignment(),
+                dimension.getHorizontalAlignment()));
       }
       // Now add the facts, loop over all the horizontal combinations.
       // If there are no horizontal dimensions, only execute once
       //
-      for ( int colNr = 0; colNr < details.sortedHorizontalCombinations.size()
-        || colNr == 0 && details.sortedHorizontalCombinations.size() == 0; colNr++ ) {
-        for ( LeanFact fact : facts ) {
+      for (int colNr = 0;
+          colNr < details.sortedHorizontalCombinations.size()
+              || colNr == 0 && details.sortedHorizontalCombinations.size() == 0;
+          colNr++) {
+        for (LeanFact fact : facts) {
           // For facts we always need to display the header value
           //
           String headerValue = fact.getHeaderValue();
-          if ( headerValue == null ) {
+          if (headerValue == null) {
             headerValue = fact.getColumnName();
           }
-          LeanTextGeometry geometry = calculateTextGeometry( gc, headerValue );
-          cellInfos.add( new CellInfo( geometry, headerValue, fact, fact.getVerticalAlignment(), fact.getHorizontalAlignment() ) );
+          LeanTextGeometry geometry = calculateTextGeometry(gc, headerValue);
+          cellInfos.add(
+              new CellInfo(
+                  geometry,
+                  headerValue,
+                  fact,
+                  fact.getVerticalAlignment(),
+                  fact.getHorizontalAlignment()));
         }
       }
-      if ( showingVerticalTotals ) {
+      if (showingVerticalTotals) {
         // We need to show a grand total over the vertical dimensions...
         //
-        for ( LeanFact fact : facts ) {
+        for (LeanFact fact : facts) {
           String headerValue = "Total"; // Empty space
-          LeanTextGeometry geometry = calculateTextGeometry( gc, headerValue );
-          cellInfos.add( new CellInfo( geometry, headerValue, fact, fact.getHeaderVerticalAlignment(), fact.getHeaderHorizontalAlignment() ) );
+          LeanTextGeometry geometry = calculateTextGeometry(gc, headerValue);
+          cellInfos.add(
+              new CellInfo(
+                  geometry,
+                  headerValue,
+                  fact,
+                  fact.getHeaderVerticalAlignment(),
+                  fact.getHeaderHorizontalAlignment()));
         }
       }
-      details.cellInfosList.add( cellInfos );
-      details.headerRowFlags.add( true );
+      details.cellInfosList.add(cellInfos);
+      details.headerRowFlags.add(true);
     }
 
     // Now we can simply loop over the horizontal and vertical combinations...
     //
-    if ( horizontalDimensions.size() == 0 && verticalDimensions.size() == 0 ) {
+    if (horizontalDimensions.size() == 0 && verticalDimensions.size() == 0) {
       // Only the facts please
       //
-      List<String> keys = Arrays.asList( "-" );
+      List<String> keys = Arrays.asList("-");
       List<CellInfo> cellInfos = new ArrayList<>();
 
-      List<String> verticalCombination = Arrays.asList( "-" );
+      List<String> verticalCombination = Arrays.asList("-");
       List<String> horizontalCombination = new ArrayList<>();
 
-      addFacts( gc, keys, cellInfos );
+      addFacts(gc, keys, cellInfos);
 
-      details.cellInfosList.add( cellInfos );
-      details.headerRowFlags.add( false );
+      details.cellInfosList.add(cellInfos);
+      details.headerRowFlags.add(false);
 
     } else {
       // The generic case.
       //
-      for ( int rowNr = 0; rowNr < details.sortedVerticalCombinations.size() || rowNr == 0 && details.sortedVerticalCombinations.size() == 0; rowNr++ ) {
+      for (int rowNr = 0;
+          rowNr < details.sortedVerticalCombinations.size()
+              || rowNr == 0 && details.sortedVerticalCombinations.size() == 0;
+          rowNr++) {
 
         List<String> verticalCombination;
-        if ( details.sortedVerticalCombinations.size() > 0 ) {
-          verticalCombination = details.sortedVerticalCombinations.get( rowNr );
+        if (details.sortedVerticalCombinations.size() > 0) {
+          verticalCombination = details.sortedVerticalCombinations.get(rowNr);
         } else {
           verticalCombination = new ArrayList<>();
         }
@@ -307,103 +348,120 @@ public class LeanCrosstabComponent extends LeanBaseAggregatingComponent implemen
 
         // Now we can add the vertical dimensions without too much of an issue
         //
-        enableFont( gc, lookupVerticalDimensionsFont( renderContext ) );
-        for ( int i = 0; i < verticalCombination.size(); i++ ) {
-          String verticalValue = verticalCombination.get( i );
-          LeanColumn dimension = verticalDimensions.get( i );
-          LeanTextGeometry geometry = calculateTextGeometry( gc, verticalValue );
-          LeanColumn column = verticalDimensions.get( i );
-          cellInfos.add( new CellInfo( geometry, verticalValue, column, column.getVerticalAlignment(), column.getHorizontalAlignment() ) );
+        enableFont(gc, lookupVerticalDimensionsFont(renderContext));
+        for (int i = 0; i < verticalCombination.size(); i++) {
+          String verticalValue = verticalCombination.get(i);
+          LeanColumn dimension = verticalDimensions.get(i);
+          LeanTextGeometry geometry = calculateTextGeometry(gc, verticalValue);
+          LeanColumn column = verticalDimensions.get(i);
+          cellInfos.add(
+              new CellInfo(
+                  geometry,
+                  verticalValue,
+                  column,
+                  column.getVerticalAlignment(),
+                  column.getHorizontalAlignment()));
         }
 
         // Loop to get the combinations...
         //
-        enableFont( gc, lookupFactsFont( renderContext ) );
-        for ( int colNr = 0; colNr < details.sortedHorizontalCombinations.size() || colNr == 0 && details.sortedHorizontalCombinations.size() == 0; colNr++ ) {
+        enableFont(gc, lookupFactsFont(renderContext));
+        for (int colNr = 0;
+            colNr < details.sortedHorizontalCombinations.size()
+                || colNr == 0 && details.sortedHorizontalCombinations.size() == 0;
+            colNr++) {
           List<String> horizontalCombination;
-          if ( details.sortedHorizontalCombinations.size() > 0 ) {
-            horizontalCombination = details.sortedHorizontalCombinations.get( colNr );
+          if (details.sortedHorizontalCombinations.size() > 0) {
+            horizontalCombination = details.sortedHorizontalCombinations.get(colNr);
           } else {
             horizontalCombination = new ArrayList<>();
           }
           // Create a key : horizontal values, then vertical
           //
           List<String> keys = new ArrayList();
-          keys.addAll( verticalCombination );
-          keys.addAll( horizontalCombination );
+          keys.addAll(verticalCombination);
+          keys.addAll(horizontalCombination);
 
           // Every combination is an extra column...
           // but we need a column for every fact
           //
-          addFacts( gc, keys, cellInfos );
+          addFacts(gc, keys, cellInfos);
         }
 
         // Now add vertical aggregations
         //
-        if ( showingVerticalTotals ) {
+        if (showingVerticalTotals) {
           // We need to show a grand total over the vertical dimensions...
           //
-          addFacts( gc, verticalCombination, cellInfos );
+          addFacts(gc, verticalCombination, cellInfos);
         }
-
 
         // Here we processed all the facts for the given vertical and horizontal dimensions
         // We can add the rowStrings to the grid
         //
-        details.cellInfosList.add( cellInfos );
-        details.headerRowFlags.add( false );
+        details.cellInfosList.add(cellInfos);
+        details.headerRowFlags.add(false);
       }
 
-      if ( showingHorizontalTotals ) {
+      if (showingHorizontalTotals) {
         // Add totals for all the horizontal combinations...
         //
         List<CellInfo> cellInfos = new ArrayList<>();
 
         // Put total in the first column, blanks in the rest
         //
-        for ( int i = 0; i < verticalDimensions.size(); i++ ) {
+        for (int i = 0; i < verticalDimensions.size(); i++) {
           String text;
-          if ( i == 0 ) {
+          if (i == 0) {
             text = "Total"; // TODO Configure this
           } else {
             text = " ";
           }
-          LeanColumn dimension = verticalDimensions.get( i );
-          LeanTextGeometry geometry = calculateTextGeometry( gc, text );
-          LeanColumn column = verticalDimensions.get( i );
+          LeanColumn dimension = verticalDimensions.get(i);
+          LeanTextGeometry geometry = calculateTextGeometry(gc, text);
+          LeanColumn column = verticalDimensions.get(i);
 
-          cellInfos.add( new CellInfo( geometry, text, dimension, dimension.getVerticalAlignment(), dimension.getHorizontalAlignment() ) );
+          cellInfos.add(
+              new CellInfo(
+                  geometry,
+                  text,
+                  dimension,
+                  dimension.getVerticalAlignment(),
+                  dimension.getHorizontalAlignment()));
         }
 
         // Now loop over all the horizontal combinations and add the fact aggregates
         //
-        for ( int colNr = 0; colNr < details.sortedHorizontalCombinations.size() || colNr == 0 && details.sortedHorizontalCombinations.size() == 0; colNr++ ) {
+        for (int colNr = 0;
+            colNr < details.sortedHorizontalCombinations.size()
+                || colNr == 0 && details.sortedHorizontalCombinations.size() == 0;
+            colNr++) {
           List<String> horizontalCombination;
-          if ( details.sortedHorizontalCombinations.size() > 0 ) {
-            horizontalCombination = details.sortedHorizontalCombinations.get( colNr );
+          if (details.sortedHorizontalCombinations.size() > 0) {
+            horizontalCombination = details.sortedHorizontalCombinations.get(colNr);
           } else {
             horizontalCombination = new ArrayList<>();
           }
           // Create a key : horizontal values, then vertical
           //
           List<String> keys = new ArrayList();
-          keys.addAll( horizontalCombination );
+          keys.addAll(horizontalCombination);
 
           // Every combination is an extra column...
           // but we need a column for every fact
           //
-          addFacts( gc, keys, cellInfos );
+          addFacts(gc, keys, cellInfos);
         }
-        if ( showingVerticalTotals ) {
+        if (showingVerticalTotals) {
           // Add the grand total
           //
-          addFacts( gc, Arrays.asList( GRANT_TOTAL_STRING ), cellInfos );
+          addFacts(gc, Arrays.asList(GRANT_TOTAL_STRING), cellInfos);
         }
 
         // Add the new line to the list
         //
-        details.cellInfosList.add( cellInfos );
-        details.headerRowFlags.add( false );
+        details.cellInfosList.add(cellInfos);
+        details.headerRowFlags.add(false);
       }
     }
 
@@ -412,12 +470,12 @@ public class LeanCrosstabComponent extends LeanBaseAggregatingComponent implemen
 
     // Calculate global min and max Y offsets
     //
-    for ( List<CellInfo> cellInfos : details.cellInfosList ) {
-      for ( CellInfo cellInfo : cellInfos ) {
-        if ( details.globalMaxYOffset < cellInfo.geometry.getOffsetY() ) {
+    for (List<CellInfo> cellInfos : details.cellInfosList) {
+      for (CellInfo cellInfo : cellInfos) {
+        if (details.globalMaxYOffset < cellInfo.geometry.getOffsetY()) {
           details.globalMaxYOffset = cellInfo.geometry.getOffsetY();
         }
-        if ( details.globalMinYOffset > cellInfo.geometry.getOffsetY() ) {
+        if (details.globalMinYOffset > cellInfo.geometry.getOffsetY()) {
           details.globalMinYOffset = cellInfo.geometry.getOffsetY();
         }
       }
@@ -426,39 +484,39 @@ public class LeanCrosstabComponent extends LeanBaseAggregatingComponent implemen
     // Now we calculate the maximum column widths so that we can render correctly from top to bottom
     //
     int nrRows = details.cellInfosList.size();
-    int nrColumns = details.cellInfosList.get( 0 ).size();
+    int nrColumns = details.cellInfosList.get(0).size();
 
     int globalMaxHeight = 0;
 
-    if ( details.cellInfosList.size() > 0 ) {
+    if (details.cellInfosList.size() > 0) {
       // Get the maximum width of every column
       // Get the maximum Y offset for every column
       //
-      for ( int colNr = 0; colNr < nrColumns; colNr++ ) {
-        details.maxWidths.add( 0 );
+      for (int colNr = 0; colNr < nrColumns; colNr++) {
+        details.maxWidths.add(0);
       }
-      for ( int colNr = 0; colNr < nrColumns; colNr++ ) {
-        for ( int rowNr = 0; rowNr < nrRows; rowNr++ ) {
-          List<CellInfo> cellInfos = details.cellInfosList.get( rowNr );
-          LeanTextGeometry geometry = cellInfos.get( colNr ).geometry;
-          if ( details.maxWidths.get( colNr ) < geometry.getWidth() ) {
-            details.maxWidths.set( colNr, geometry.getWidth() );
+      for (int colNr = 0; colNr < nrColumns; colNr++) {
+        for (int rowNr = 0; rowNr < nrRows; rowNr++) {
+          List<CellInfo> cellInfos = details.cellInfosList.get(rowNr);
+          LeanTextGeometry geometry = cellInfos.get(colNr).geometry;
+          if (details.maxWidths.get(colNr) < geometry.getWidth()) {
+            details.maxWidths.set(colNr, geometry.getWidth());
           }
         }
       }
 
       // Get the maximum height of every row
       //
-      for ( int rowNr = 0; rowNr < nrRows; rowNr++ ) {
+      for (int rowNr = 0; rowNr < nrRows; rowNr++) {
         int maxHeight = 0;
-        for ( int colNr = 0; colNr < nrColumns; colNr++ ) {
-          LeanTextGeometry geometry = details.cellInfosList.get( rowNr ).get( colNr ).geometry;
-          if ( maxHeight < geometry.getHeight() ) {
+        for (int colNr = 0; colNr < nrColumns; colNr++) {
+          LeanTextGeometry geometry = details.cellInfosList.get(rowNr).get(colNr).geometry;
+          if (maxHeight < geometry.getHeight()) {
             maxHeight = geometry.getHeight();
           }
         }
-        details.maxHeights.add( maxHeight );
-        if ( maxHeight > globalMaxHeight ) {
+        details.maxHeights.add(maxHeight);
+        if (maxHeight > globalMaxHeight) {
           globalMaxHeight = maxHeight;
         }
       }
@@ -466,36 +524,36 @@ public class LeanCrosstabComponent extends LeanBaseAggregatingComponent implemen
 
     // If evenHeights set highest row for all rows
     //
-    if ( evenHeights ) {
+    if (evenHeights) {
       // If we have a header, leave that one alone.
       //
-      for ( int i = 0; i < details.maxHeights.size(); i++ ) {
-        details.maxHeights.set( i, globalMaxHeight );
+      for (int i = 0; i < details.maxHeights.size(); i++) {
+        details.maxHeights.set(i, globalMaxHeight);
       }
     }
 
     // Total width?
     //
     details.totalWidth = 0;
-    for ( int width : details.maxWidths ) {
+    for (int width : details.maxWidths) {
       details.totalWidth += width + 2 * horizontalMargin;
     }
 
     details.totalHeight = 0;
-    for ( int height : details.maxHeights ) {
+    for (int height : details.maxHeights) {
       details.totalHeight += height + 2 * verticalMargin;
     }
 
     // Save the details for later
     //
-    results.addDataSet( component, DATA_CROSSTAB_DETAILS, details );
+    results.addDataSet(component, DATA_CROSSTAB_DETAILS, details);
   }
 
   /**
    * 1. First
-   * <p>
-   * Calculate the imageSize of the table, pretty much calculating the sizes of each element in the data grid
-   * We store all the information in the Results data set
+   *
+   * <p>Calculate the imageSize of the table, pretty much calculating the sizes of each element in
+   * the data grid We store all the information in the Results data set
    *
    * @param presentation
    * @param page
@@ -505,94 +563,117 @@ public class LeanCrosstabComponent extends LeanBaseAggregatingComponent implemen
    * @return
    * @throws LeanException
    */
-  public LeanSize getExpectedSize( LeanPresentation presentation, LeanPage page, LeanComponent component, IDataContext dataContext, IRenderContext renderContext, LeanLayoutResults results )
-    throws LeanException {
-    if ( component.isDynamic() ) {
-      CrosstabDetails details = (CrosstabDetails) results.getDataSet( component, DATA_CROSSTAB_DETAILS );
-      return new LeanSize( details.totalWidth, details.totalHeight );
-    } else {
-      return component.getSize();
-    }
+  public LeanSize getExpectedSize(
+      LeanPresentation presentation,
+      LeanPage page,
+      LeanComponent component,
+      IDataContext dataContext,
+      IRenderContext renderContext,
+      LeanLayoutResults results)
+      throws LeanException {
+
+    CrosstabDetails details =
+        (CrosstabDetails) results.getDataSet(component, DATA_CROSSTAB_DETAILS);
+    return new LeanSize(details.totalWidth, details.totalHeight);
   }
 
-  private void addFacts( SVGGraphics2D gc, List<String> keys, List<CellInfo> cellInfos ) throws LeanException {
-    for ( int factNr = 0; factNr < pivotMapList.size(); factNr++ ) {
-      LeanFact fact = facts.get( factNr );
-      Map<List<String>, Object> pivotMap = pivotMapList.get( factNr );
-      Map<List<String>, Long> countMap = countMapList.get( factNr );
+  private void addFacts(SVGGraphics2D gc, List<String> keys, List<CellInfo> cellInfos)
+      throws LeanException {
+    for (int factNr = 0; factNr < pivotMapList.size(); factNr++) {
+      LeanFact fact = facts.get(factNr);
+      Map<List<String>, Object> pivotMap = pivotMapList.get(factNr);
+      Map<List<String>, Long> countMap = countMapList.get(factNr);
 
       // Make a copy so we can change format masks
       // TODO: cache this clone somewhere for performance
       //
-      IValueMeta valueMeta = inputRowMeta.getValueMeta( factIndexes.get( factNr ) ).clone();
-      if ( fact.getFormatMask() != null ) {
-        valueMeta.setConversionMask( fact.getFormatMask() );
+      IValueMeta valueMeta = inputRowMeta.getValueMeta(factIndexes.get(factNr)).clone();
+      if (fact.getFormatMask() != null) {
+        valueMeta.setConversionMask(fact.getFormatMask());
       }
 
-      Long count = countMap.get( keys );
-      Object object = pivotMap.get( keys );
+      Long count = countMap.get(keys);
+      Object object = pivotMap.get(keys);
       String factString;
       try {
-        switch ( fact.getAggregationMethod() ) {
+        switch (fact.getAggregationMethod()) {
           case SUM:
-            if ( valueMeta.isNull( object ) ) {
+            if (valueMeta.isNull(object)) {
               factString = " ";
             } else {
-              factString = valueMeta.getString( object );
+              factString = valueMeta.getString(object);
             }
             break;
           case AVERAGE:
-            if ( valueMeta.isNull( object ) ) {
+            if (valueMeta.isNull(object)) {
               factString = " ";
             } else {
               Double sum = (Double) object;
               sum /= count;
-              factString = valueMeta.getString( sum );
+              factString = valueMeta.getString(sum);
             }
             break;
           case COUNT:
-            if ( count == null ) {
+            if (count == null) {
               factString = " ";
             } else {
-              ValueMetaInteger intValueMeta = new ValueMetaInteger( valueMeta.getName() );
-              intValueMeta.setConversionMask( valueMeta.getConversionMask() );
-              factString = intValueMeta.getString( count );
+              ValueMetaInteger intValueMeta = new ValueMetaInteger(valueMeta.getName());
+              intValueMeta.setConversionMask(valueMeta.getConversionMask());
+              factString = intValueMeta.getString(count);
             }
             break;
           default:
-            throw new LeanException( "Unsupported aggregation exception : " + fact.getAggregationMethod() );
+            throw new LeanException(
+                "Unsupported aggregation exception : " + fact.getAggregationMethod());
         }
-      } catch ( HopValueException e ) {
+      } catch (HopValueException e) {
         factString = "!?";
       }
 
-      LeanTextGeometry geometry = calculateTextGeometry( gc, factString );
-      CellInfo cellInfo = new CellInfo( geometry, factString, fact, fact.getVerticalAlignment(), fact.getHorizontalAlignment() );
-      cellInfos.add( cellInfo );
+      LeanTextGeometry geometry = calculateTextGeometry(gc, factString);
+      CellInfo cellInfo =
+          new CellInfo(
+              geometry,
+              factString,
+              fact,
+              fact.getVerticalAlignment(),
+              fact.getHorizontalAlignment());
+      cellInfos.add(cellInfo);
     }
   }
 
-  private void processVertical( List<List<String>> sortedVerticalValues,
-                                int columnNr, int verticalIndex,
-                                List<List<String>> rowStringsList, List<String> currentRow ) {
-  }
+  private void processVertical(
+      List<List<String>> sortedVerticalValues,
+      int columnNr,
+      int verticalIndex,
+      List<List<String>> rowStringsList,
+      List<String> currentRow) {}
 
-  @SuppressWarnings( "unchecked" )
-  @Override public void doLayout( LeanPresentation presentation, LeanPage page, LeanComponent component, IDataContext dataContext, IRenderContext renderContext,
-                                  LeanLayoutResults results ) throws LeanException {
+  @SuppressWarnings("unchecked")
+  @Override
+  public void doLayout(
+      LeanPresentation presentation,
+      LeanPage page,
+      LeanComponent component,
+      IDataContext dataContext,
+      IRenderContext renderContext,
+      LeanLayoutResults results)
+      throws LeanException {
 
     // Get the current page on which we're rendering...
     // Create a new one if we need to move on to a next page
     //
-    LeanRenderPage renderPage = results.getCurrentRenderPage( page );
+    LeanRenderPage renderPage = results.getCurrentRenderPage(page);
 
     // Calculate the expected geometry for this component
     //
-    LeanGeometry expectedGeometry = getExpectedGeometry( presentation, page, component, dataContext, renderContext, results );
+    LeanGeometry expectedGeometry =
+        getExpectedGeometry(presentation, page, component, dataContext, renderContext, results);
 
     // Get the details back
     //
-    CrosstabDetails details = (CrosstabDetails) results.getDataSet( component, DATA_CROSSTAB_DETAILS );
+    CrosstabDetails details =
+        (CrosstabDetails) results.getDataSet(component, DATA_CROSSTAB_DETAILS);
 
     // Calculate the height until the end of the page...
     // How much more can we fit onto the page?
@@ -600,7 +681,7 @@ public class LeanCrosstabComponent extends LeanBaseAggregatingComponent implemen
     boolean addFragment = true;
     int partNumber = 1;
 
-    int remainingHeight = presentation.getUsableHeight( page ) - expectedGeometry.getY();
+    int remainingHeight = presentation.getUsableHeight(page) - expectedGeometry.getY();
 
     List<List<CellInfo>> cellInfosList = details.cellInfosList;
     List<Integer> maxWidths = details.maxWidths;
@@ -613,102 +694,117 @@ public class LeanCrosstabComponent extends LeanBaseAggregatingComponent implemen
     int partHeight = 0;
 
     int rowNr = 0;
-    for ( ; rowNr < maxHeights.size(); rowNr++ ) {
-      int maxHeight = maxHeights.get( rowNr );
+    for (; rowNr < maxHeights.size(); rowNr++) {
+      int maxHeight = maxHeights.get(rowNr);
       int rowHeight = maxHeight + 2 * verticalMargin;
       partHeight += rowHeight;
 
       // Did we leave the page at the bottom?
       //
-      if ( partHeight > remainingHeight ) {
+      if (partHeight > remainingHeight) {
 
         // Save previous until the previous row...
         //
         LeanGeometry partGeometry = expectedGeometry.clone();
         partHeight -= rowHeight;
 
-        if ( headerOnEveryPage && partNumber > 1 ) {
+        if (headerOnEveryPage && partNumber > 1) {
           // The part is actually a bit taller...
           // Add the header lines * 2*margin per line
           //
-          partHeight += details.nrHeaderLines * ( maxHeights.get( 0 ) + 2 * verticalMargin );
+          partHeight += details.nrHeaderLines * (maxHeights.get(0) + 2 * verticalMargin);
         }
-        partGeometry.setHeight( partHeight );
+        partGeometry.setHeight(partHeight);
 
         // Add this as a new component part
         //
-        addPartLayoutResult( results, renderPage, page, component, partGeometry, partNumber, startLine, rowNr );
+        addPartLayoutResult(
+            results, renderPage, page, component, partGeometry, partNumber, startLine, rowNr);
 
         // Create a new page
         //
         partNumber++;
-        renderPage = results.addNewPage( page, renderPage.getPageNumber() + 1 );
-        remainingHeight = presentation.getUsableHeight( page );
+        renderPage = results.addNewPage(page, renderPage);
+        remainingHeight = presentation.getUsableHeight(page);
 
-        if ( headerOnEveryPage ) {
+        if (headerOnEveryPage) {
           // Reserve room for a header on the new page...
           //
-          remainingHeight -= maxHeights.get( 0 );
+          remainingHeight -= maxHeights.get(0);
         }
 
         // keep track for the new part...
         //
         startLine = rowNr;
         partHeight = rowHeight;
-        expectedGeometry.setY( 0 );
+        expectedGeometry.setY(0);
       }
     }
 
     // Let's not forget the top part on the last page...
     //
-    if ( partHeight > 0 ) {
+    if (partHeight > 0) {
       LeanGeometry partGeometry = expectedGeometry.clone();
       // Only a part of the total height!
       //
-      partGeometry.setHeight( partHeight );
+      partGeometry.setHeight(partHeight);
 
       // Extra for the new table header?
       //
-      if ( headerOnEveryPage && partNumber > 1 ) {
+      if (headerOnEveryPage && partNumber > 1) {
         // The part is actually a bit taller...
         //
-        partGeometry.incHeight( details.nrHeaderLines * ( maxHeights.get( 0 ) + 2 * verticalMargin ) );
+        partGeometry.incHeight(details.nrHeaderLines * (maxHeights.get(0) + 2 * verticalMargin));
       }
 
-      addPartLayoutResult( results, renderPage, page, component, partGeometry, partNumber, startLine, rowNr );
+      addPartLayoutResult(
+          results, renderPage, page, component, partGeometry, partNumber, startLine, rowNr);
     }
-
   }
 
-  private void addPartLayoutResult( LeanLayoutResults results, LeanRenderPage renderPage, LeanPage page, LeanComponent component, LeanGeometry partGeometry, int partNumber, int startLine,
-                                    int endLine ) {
+  private void addPartLayoutResult(
+      LeanLayoutResults results,
+      LeanRenderPage renderPage,
+      LeanPage page,
+      LeanComponent component,
+      LeanGeometry partGeometry,
+      int partNumber,
+      int startLine,
+      int endLine) {
     LeanComponentLayoutResult result = new LeanComponentLayoutResult();
-    result.setRenderPage( renderPage );
-    result.setSourcePage( page );
-    result.setComponent( component );
-    result.setGeometry( partGeometry );
-    result.setPartNumber( partNumber );
-    result.getDataMap().put( DATA_START_ROW, startLine );
-    result.getDataMap().put( DATA_END_ROW, endLine );
+    result.setRenderPage(renderPage);
+    result.setSourcePage(page);
+    result.setComponent(component);
+    result.setGeometry(partGeometry);
+    result.setPartNumber(partNumber);
+    result.getDataMap().put(DATA_START_ROW, startLine);
+    result.getDataMap().put(DATA_END_ROW, endLine);
 
     // Store the geometry also in the results for layout purposes...
     //
-    results.addComponentGeometry( component.getName(), partGeometry );
+    results.addComponentGeometry(component.getName(), partGeometry);
 
-    renderPage.getLayoutResults().add( result );
+    renderPage.getLayoutResults().add(result);
 
-    // renderPage.addDrawnItem( component.getName(), partNumber, DrawnItemType.ComponentPart, null, 0, 0, partGeometry );
+    // renderPage.addDrawnItem( component.getName(), partNumber, DrawnItemType.ComponentPart, null,
+    // 0, 0, partGeometry );
   }
 
-  @Override public void render( LeanComponentLayoutResult layoutResult, LeanLayoutResults results, IRenderContext renderContext, LeanPosition offSet ) throws LeanException {
+  @Override
+  public void render(
+      LeanComponentLayoutResult layoutResult,
+      LeanLayoutResults results,
+      IRenderContext renderContext,
+      LeanPosition offSet)
+      throws LeanException {
 
     LeanComponent component = layoutResult.getComponent();
     LeanGeometry componentGeometry = layoutResult.getGeometry();
-    CrosstabDetails details = (CrosstabDetails) results.getDataSet( component, DATA_CROSSTAB_DETAILS );
+    CrosstabDetails details =
+        (CrosstabDetails) results.getDataSet(component, DATA_CROSSTAB_DETAILS);
 
     SVGGraphics2D gc = layoutResult.getRenderPage().getGc();
     List<DrawnItem> drawnItems = layoutResult.getRenderPage().getDrawnItems();
-
 
     // Get sizes and string values from data set...
     //
@@ -718,46 +814,87 @@ public class LeanCrosstabComponent extends LeanBaseAggregatingComponent implemen
     int globalMaxYOffset = details.globalMaxYOffset;
     int globalMinYOffset = details.globalMinYOffset;
 
-    int avgYOffset = ( globalMaxYOffset + globalMinYOffset ) / 2;
+    int avgYOffset = (globalMaxYOffset + globalMinYOffset) / 2;
 
-    int startRow = (int) layoutResult.getDataMap().get( DATA_START_ROW );
-    int endRow = (int) layoutResult.getDataMap().get( DATA_END_ROW );
+    int startRow = (int) layoutResult.getDataMap().get(DATA_START_ROW);
+    int endRow = (int) layoutResult.getDataMap().get(DATA_END_ROW);
 
     // Now start drawing the table...
     //
     int y = componentGeometry.getY();
     int nrHeaderRows = horizontalDimensions.size() + 1;
 
-    if ( headerOnEveryPage && startRow > 0 ) {
+    if (headerOnEveryPage && startRow > 0) {
       // Render the header, data is on rows 0-dimensions.imageSize()+1
       // Plus one for the vertical dimension headers and the facts
       //
-      int maxHeight = maxHeights.get( 0 );
-      for ( int i = 0; i < nrHeaderRows; i++ ) {
-        y = renderLine( gc, drawnItems, layoutResult, y, i, maxHeight, cellInfosList,
-          componentGeometry, maxWidths, true, nrHeaderRows, avgYOffset, renderContext, offSet );
+      int maxHeight = maxHeights.get(0);
+      for (int i = 0; i < nrHeaderRows; i++) {
+        y =
+            renderLine(
+                gc,
+                drawnItems,
+                layoutResult,
+                y,
+                i,
+                maxHeight,
+                cellInfosList,
+                componentGeometry,
+                maxWidths,
+                true,
+                nrHeaderRows,
+                avgYOffset,
+                renderContext,
+                offSet);
       }
     }
 
-    for ( int rowNr = startRow; rowNr < endRow; rowNr++ ) {
-      int maxHeight = maxHeights.get( rowNr );
-      y = renderLine( gc, drawnItems, layoutResult, y, rowNr, maxHeight, cellInfosList,
-        componentGeometry, maxWidths, rowNr < nrHeaderRows, nrHeaderRows, avgYOffset, renderContext, offSet );
+    for (int rowNr = startRow; rowNr < endRow; rowNr++) {
+      int maxHeight = maxHeights.get(rowNr);
+      y =
+          renderLine(
+              gc,
+              drawnItems,
+              layoutResult,
+              y,
+              rowNr,
+              maxHeight,
+              cellInfosList,
+              componentGeometry,
+              maxWidths,
+              rowNr < nrHeaderRows,
+              nrHeaderRows,
+              avgYOffset,
+              renderContext,
+              offSet);
     }
 
-    drawBorder( gc, componentGeometry, renderContext );
+    drawBorder(gc, componentGeometry, renderContext);
   }
 
-  private int renderLine( SVGGraphics2D gc, List<DrawnItem> drawnItems, LeanComponentLayoutResult layoutResult, int y, int rowNr, int maxHeight, List<List<CellInfo>> cellInfosList,
-                          LeanGeometry componentGeometry, List<Integer> maxWidths,
-                          boolean headerRow, int nrHeaderRows, int yOffset, IRenderContext renderContext, LeanPosition offSet ) throws LeanException {
+  private int renderLine(
+      SVGGraphics2D gc,
+      List<DrawnItem> drawnItems,
+      LeanComponentLayoutResult layoutResult,
+      int y,
+      int rowNr,
+      int maxHeight,
+      List<List<CellInfo>> cellInfosList,
+      LeanGeometry componentGeometry,
+      List<Integer> maxWidths,
+      boolean headerRow,
+      int nrHeaderRows,
+      int yOffset,
+      IRenderContext renderContext,
+      LeanPosition offSet)
+      throws LeanException {
 
-    List<CellInfo> cellInfos = cellInfosList.get( rowNr );
+    List<CellInfo> cellInfos = cellInfosList.get(rowNr);
 
     int x = componentGeometry.getX();
 
-    if ( maxWidths.size() != cellInfos.size() ) {
-      throw new RuntimeException( "Grid calculation error!" );
+    if (maxWidths.size() != cellInfos.size()) {
+      throw new RuntimeException("Grid calculation error!");
     }
 
     // Grouping information
@@ -771,35 +908,35 @@ public class LeanCrosstabComponent extends LeanBaseAggregatingComponent implemen
     LeanHorizontalAlignment groupHorizontalAlignment = null;
     LeanVerticalAlignment groupVerticalAlignment = null;
 
-    for ( int columnNr = 0; columnNr < cellInfos.size(); columnNr++ ) {
-      int maxWidth = maxWidths.get( columnNr );
-      LeanTextGeometry textGeometry = cellInfos.get( columnNr ).geometry;
-      LeanColumn leanColumn = cellInfos.get( columnNr ).column;
-      String text = cellInfos.get( columnNr ).text;
-      LeanHorizontalAlignment horizontalAlignment = cellInfos.get( columnNr ).horizontalAlignment;
-      LeanVerticalAlignment verticalAlignment = cellInfos.get( columnNr ).verticalAlignment;
+    for (int columnNr = 0; columnNr < cellInfos.size(); columnNr++) {
+      int maxWidth = maxWidths.get(columnNr);
+      LeanTextGeometry textGeometry = cellInfos.get(columnNr).geometry;
+      LeanColumn leanColumn = cellInfos.get(columnNr).column;
+      String text = cellInfos.get(columnNr).text;
+      LeanHorizontalAlignment horizontalAlignment = cellInfos.get(columnNr).horizontalAlignment;
+      LeanVerticalAlignment verticalAlignment = cellInfos.get(columnNr).verticalAlignment;
 
-      if ( rowNr < nrHeaderRows || headerOnEveryPage && headerRow ) {
+      if (rowNr < nrHeaderRows || headerOnEveryPage && headerRow) {
         // The header rows block...
         // Get the column from the headers...
         //
-        enableFont( gc, lookupHorizontalDimensionsFont( renderContext ) );
-        enableColor( gc, lookupHorizontalDimensionsColor( renderContext ) );
+        enableFont(gc, lookupHorizontalDimensionsFont(renderContext));
+        enableColor(gc, lookupHorizontalDimensionsColor(renderContext));
       } else {
-        if ( columnNr < verticalDimensions.size() ) {
-          enableFont( gc, lookupVerticalDimensionsFont( renderContext ) );
-          enableColor( gc, lookupVerticalDimensionsColor( renderContext ) );
+        if (columnNr < verticalDimensions.size()) {
+          enableFont(gc, lookupVerticalDimensionsFont(renderContext));
+          enableColor(gc, lookupVerticalDimensionsColor(renderContext));
         } else {
-          enableFont( gc, lookupFactsFont( renderContext ) );
-          enableColor( gc, lookupFactsColor( renderContext ) );
+          enableFont(gc, lookupFactsFont(renderContext));
+          enableColor(gc, lookupFactsColor(renderContext));
         }
       }
 
       // See if we need to group values together in the header
       //
-      if ( rowNr < nrHeaderRows || headerOnEveryPage && headerRow ) {
+      if (rowNr < nrHeaderRows || headerOnEveryPage && headerRow) {
 
-        if ( text.equals( groupText ) ) {
+        if (text.equals(groupText)) {
           // Extend the active group
           //
           groupWidth += maxWidth + horizontalMargin * 2;
@@ -807,10 +944,26 @@ public class LeanCrosstabComponent extends LeanBaseAggregatingComponent implemen
         } else {
           // Draw the previous group if there is one, start a new one
           //
-          if ( groupText != null ) {
-            renderLineCell( gc, drawnItems, layoutResult, groupStartX, y, rowNr, groupColNr, groupText,
-              nrHeaderRows, groupWidth, maxHeight, yOffset, groupColumn, groupTextGeometry,
-              groupHorizontalAlignment, groupVerticalAlignment, renderContext, offSet );
+          if (groupText != null) {
+            renderLineCell(
+                gc,
+                drawnItems,
+                layoutResult,
+                groupStartX,
+                y,
+                rowNr,
+                groupColNr,
+                groupText,
+                nrHeaderRows,
+                groupWidth,
+                maxHeight,
+                yOffset,
+                groupColumn,
+                groupTextGeometry,
+                groupHorizontalAlignment,
+                groupVerticalAlignment,
+                renderContext,
+                offSet);
           }
           groupStartX = x;
           groupText = text;
@@ -822,48 +975,96 @@ public class LeanCrosstabComponent extends LeanBaseAggregatingComponent implemen
           groupVerticalAlignment = verticalAlignment;
         }
       } else {
-        renderLineCell( gc, drawnItems, layoutResult, x, y, rowNr, columnNr, text, nrHeaderRows, maxWidth, maxHeight, yOffset,
-          leanColumn, textGeometry, horizontalAlignment, verticalAlignment, renderContext, offSet );
+        renderLineCell(
+            gc,
+            drawnItems,
+            layoutResult,
+            x,
+            y,
+            rowNr,
+            columnNr,
+            text,
+            nrHeaderRows,
+            maxWidth,
+            maxHeight,
+            yOffset,
+            leanColumn,
+            textGeometry,
+            horizontalAlignment,
+            verticalAlignment,
+            renderContext,
+            offSet);
       }
       x += maxWidth + horizontalMargin * 2;
     }
     // See if we need to draw the last group
     //
-    if ( groupText != null ) {
-      renderLineCell( gc, drawnItems, layoutResult, groupStartX, y, rowNr, groupColNr, groupText, nrHeaderRows, groupWidth, maxHeight, yOffset,
-        groupColumn, groupTextGeometry, groupHorizontalAlignment, groupVerticalAlignment, renderContext, offSet );
+    if (groupText != null) {
+      renderLineCell(
+          gc,
+          drawnItems,
+          layoutResult,
+          groupStartX,
+          y,
+          rowNr,
+          groupColNr,
+          groupText,
+          nrHeaderRows,
+          groupWidth,
+          maxHeight,
+          yOffset,
+          groupColumn,
+          groupTextGeometry,
+          groupHorizontalAlignment,
+          groupVerticalAlignment,
+          renderContext,
+          offSet);
     }
     y += maxHeight + verticalMargin * 2;
 
     return y;
   }
 
-  private void renderLineCell( SVGGraphics2D gc, List<DrawnItem> drawnItems, LeanComponentLayoutResult layoutResult, int x, int y, int rowNr, int c, String text, int nrHeaderRows,
-                               int maxWidth, int maxHeight,
-                               int yOffset, LeanColumn leanColumn,
-                               LeanTextGeometry textGeometry, LeanHorizontalAlignment horizontalAlignment, LeanVerticalAlignment verticalAlignment, IRenderContext renderContext,
-                               LeanPosition offSet )
-    throws LeanException {
+  private void renderLineCell(
+      SVGGraphics2D gc,
+      List<DrawnItem> drawnItems,
+      LeanComponentLayoutResult layoutResult,
+      int x,
+      int y,
+      int rowNr,
+      int c,
+      String text,
+      int nrHeaderRows,
+      int maxWidth,
+      int maxHeight,
+      int yOffset,
+      LeanColumn leanColumn,
+      LeanTextGeometry textGeometry,
+      LeanHorizontalAlignment horizontalAlignment,
+      LeanVerticalAlignment verticalAlignment,
+      IRenderContext renderContext,
+      LeanPosition offSet)
+      throws LeanException {
     // Don't theme in the top left cell
     //
     boolean emptyCell = c < verticalDimensions.size() && rowNr < nrHeaderRows - 1;
-    if ( !emptyCell ) {
+    if (!emptyCell) {
       // Fill the background of the cell
       //
-      if ( isBackground() ) {
-        enableColor( gc, lookupBackgroundColor( renderContext ) );
-        gc.fillRect( x, y, maxWidth + horizontalMargin * 2, maxHeight + verticalMargin * 2 );
+      if (isBackground()) {
+        enableColor(gc, lookupBackgroundColor(renderContext));
+        gc.fillRect(x, y, maxWidth + horizontalMargin * 2, maxHeight + verticalMargin * 2);
       }
     }
 
-    enableColor( gc, lookupDefaultColor( renderContext ) );
+    enableColor(gc, lookupDefaultColor(renderContext));
 
     int cellWidth = maxWidth + horizontalMargin * 2;
     int cellHeight = maxHeight + verticalMargin * 2;
     int positionX;
     int positionY;
 
-    switch ( verticalAlignment ) {
+    switch (verticalAlignment) {
       case TOP:
         positionY = y + textGeometry.getHeight() + verticalMargin;
         break;
@@ -874,10 +1075,10 @@ public class LeanCrosstabComponent extends LeanBaseAggregatingComponent implemen
         positionY = y + cellHeight / 2 + textGeometry.getHeight() / 2;
         break;
       default:
-        throw new LeanException( "Unsupported vertical alignment : " + verticalAlignment );
+        throw new LeanException("Unsupported vertical alignment : " + verticalAlignment);
     }
 
-    switch ( horizontalAlignment ) {
+    switch (horizontalAlignment) {
       case LEFT:
         positionX = x + textGeometry.getOffsetX() + horizontalMargin;
         break;
@@ -885,53 +1086,55 @@ public class LeanCrosstabComponent extends LeanBaseAggregatingComponent implemen
         positionX = x + cellWidth - horizontalMargin - textGeometry.getWidth();
         break;
       case CENTER:
-        positionX = x + ( cellWidth - textGeometry.getWidth() ) / 2;
+        positionX = x + (cellWidth - textGeometry.getWidth()) / 2;
         break;
       default:
-        throw new LeanException( "Unsupported horizontal alignment : " + horizontalAlignment );
+        throw new LeanException("Unsupported horizontal alignment : " + horizontalAlignment);
     }
 
     Stroke baseStroke = gc.getStroke();
 
-    //gc.setStroke(new BasicStroke(0.1f));
-    //gc.drawRect( positionX, positionY-textGeometry.getHeight(), textGeometry.getWidth(), textGeometry.getHeight() );
-    //gc.setStroke( baseStroke );
+    // gc.setStroke(new BasicStroke(0.1f));
+    // gc.drawRect( positionX, positionY-textGeometry.getHeight(), textGeometry.getWidth(),
+    // textGeometry.getHeight() );
+    // gc.setStroke( baseStroke );
 
-    gc.drawString( text, positionX, positionY );
-
+    gc.drawString(text, positionX, positionY);
 
     // Don't draw a rectangle around the top left cell
     //
-    if ( !emptyCell ) {
+    if (!emptyCell) {
       // draw the rectangle
       //
-      LeanColorRGB oldColor = enableColor( gc, lookupGridColor( renderContext ) );
-      gc.setStroke( new BasicStroke( 0.5f ) );
-      gc.drawRect( x, y, cellWidth, cellHeight );
-      gc.setStroke( baseStroke );
-      enableColor( gc, oldColor );
-
+      LeanColorRGB oldColor = enableColor(gc, lookupGridColor(renderContext));
+      gc.setStroke(new BasicStroke(0.5f));
+      gc.drawRect(x, y, cellWidth, cellHeight);
+      gc.setStroke(baseStroke);
+      enableColor(gc, oldColor);
 
       // Add the drawn item for this cell...
       //
       int componentX = layoutResult.getGeometry().getX();
       int componentY = layoutResult.getGeometry().getY();
 
-      DrawnItem drawnItem = new DrawnItem(
-        layoutResult.getComponent().getName(),
-        layoutResult.getComponent().getComponent().getPluginId(),
-        layoutResult.getPartNumber(),
-        DrawnItemType.ComponentItem,
-        DrawnItem.Category.Cell.name(),
-        rowNr,
-        c,
-        new LeanGeometry(offSet.getX()+componentX+x, offSet.getY()+componentY+y, cellWidth, cellHeight),
-        new DrawnContext(text)
-        );
-      drawnItems.add( drawnItem );
+      DrawnItem drawnItem =
+          new DrawnItem(
+              layoutResult.getComponent().getName(),
+              layoutResult.getComponent().getComponent().getPluginId(),
+              layoutResult.getPartNumber(),
+              DrawnItemType.ComponentItem,
+              DrawnItem.Category.Cell.name(),
+              rowNr,
+              c,
+              new LeanGeometry(
+                  offSet.getX() + componentX + x,
+                  offSet.getY() + componentY + y,
+                  cellWidth,
+                  cellHeight),
+              new DrawnContext(text));
+      drawnItems.add(drawnItem);
     }
   }
-
 
   /**
    * Gets horizontalMargin
@@ -942,10 +1145,8 @@ public class LeanCrosstabComponent extends LeanBaseAggregatingComponent implemen
     return horizontalMargin;
   }
 
-  /**
-   * @param horizontalMargin The horizontalMargin to set
-   */
-  public void setHorizontalMargin( int horizontalMargin ) {
+  /** @param horizontalMargin The horizontalMargin to set */
+  public void setHorizontalMargin(int horizontalMargin) {
     this.horizontalMargin = horizontalMargin;
   }
 
@@ -958,10 +1159,8 @@ public class LeanCrosstabComponent extends LeanBaseAggregatingComponent implemen
     return verticalMargin;
   }
 
-  /**
-   * @param verticalMargin The verticalMargin to set
-   */
-  public void setVerticalMargin( int verticalMargin ) {
+  /** @param verticalMargin The verticalMargin to set */
+  public void setVerticalMargin(int verticalMargin) {
     this.verticalMargin = verticalMargin;
   }
 
@@ -974,10 +1173,8 @@ public class LeanCrosstabComponent extends LeanBaseAggregatingComponent implemen
     return evenHeights;
   }
 
-  /**
-   * @param evenHeights The evenHeights to set
-   */
-  public void setEvenHeights( boolean evenHeights ) {
+  /** @param evenHeights The evenHeights to set */
+  public void setEvenHeights(boolean evenHeights) {
     this.evenHeights = evenHeights;
   }
 
@@ -990,10 +1187,8 @@ public class LeanCrosstabComponent extends LeanBaseAggregatingComponent implemen
     return headerOnEveryPage;
   }
 
-  /**
-   * @param headerOnEveryPage The headerOnEveryPage to set
-   */
-  public void setHeaderOnEveryPage( boolean headerOnEveryPage ) {
+  /** @param headerOnEveryPage The headerOnEveryPage to set */
+  public void setHeaderOnEveryPage(boolean headerOnEveryPage) {
     this.headerOnEveryPage = headerOnEveryPage;
   }
 
@@ -1006,10 +1201,8 @@ public class LeanCrosstabComponent extends LeanBaseAggregatingComponent implemen
     return showingHorizontalSubtotals;
   }
 
-  /**
-   * @param showingHorizontalSubtotals The showingHorizontalSubtotals to set
-   */
-  public void setShowingHorizontalSubtotals( boolean showingHorizontalSubtotals ) {
+  /** @param showingHorizontalSubtotals The showingHorizontalSubtotals to set */
+  public void setShowingHorizontalSubtotals(boolean showingHorizontalSubtotals) {
     this.showingHorizontalSubtotals = showingHorizontalSubtotals;
   }
 
@@ -1022,10 +1215,8 @@ public class LeanCrosstabComponent extends LeanBaseAggregatingComponent implemen
     return showingVerticalSubtotals;
   }
 
-  /**
-   * @param showingVerticalSubtotals The showingVerticalSubtotals to set
-   */
-  public void setShowingVerticalSubtotals( boolean showingVerticalSubtotals ) {
+  /** @param showingVerticalSubtotals The showingVerticalSubtotals to set */
+  public void setShowingVerticalSubtotals(boolean showingVerticalSubtotals) {
     this.showingVerticalSubtotals = showingVerticalSubtotals;
   }
 }

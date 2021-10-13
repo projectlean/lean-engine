@@ -1,7 +1,7 @@
 package org.lean.presentation.component.types.chart;
 
-import org.lean.core.LeanTextGeometry;
 import org.apache.hop.core.row.IValueMeta;
+import org.lean.core.LeanTextGeometry;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -52,7 +52,7 @@ public class ChartDetails {
   public int legendMarkerSize;
   public int maxNrLegendColumns;
 
-  public ChartDetails( int x, int y, int width, int height ) {
+  public ChartDetails(int x, int y, int width, int height) {
     this.x = x;
     this.y = y;
     this.width = width;

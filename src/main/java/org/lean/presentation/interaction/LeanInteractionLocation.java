@@ -29,7 +29,7 @@ public class LeanInteractionLocation {
     this.itemCategory = itemCategory;
   }
 
-  public LeanInteractionLocation( LeanInteractionLocation location ) {
+  public LeanInteractionLocation(LeanInteractionLocation location) {
     this();
     this.componentName = location.componentName;
     this.componentPluginId = location.componentPluginId;
@@ -37,31 +37,30 @@ public class LeanInteractionLocation {
     this.itemCategory = location.itemCategory;
   }
 
-  public boolean matches( DrawnItem drawnItem ) {
+  public boolean matches(DrawnItem drawnItem) {
 
     if (StringUtils.isNotEmpty(componentName)) {
-      if (!drawnItem.getComponentName().equals( componentName )) {
+      if (!drawnItem.getComponentName().equals(componentName)) {
         return false;
       }
     }
     if (StringUtils.isNotEmpty(componentPluginId)) {
-      if (!drawnItem.getComponentPluginId().equals( componentPluginId )) {
+      if (!drawnItem.getComponentPluginId().equals(componentPluginId)) {
         return false;
       }
     }
     if (StringUtils.isNotEmpty(itemType)) {
-      if (!drawnItem.getType().name().equals( itemType )) {
+      if (!drawnItem.getType().name().equals(itemType)) {
         return false;
       }
     }
     if (StringUtils.isNotEmpty(itemCategory)) {
-      if (!drawnItem.getCategory().equals( itemCategory )) {
+      if (!drawnItem.getCategory().equals(itemCategory)) {
         return false;
       }
     }
     return true;
   }
-
 
   /**
    * Gets componentName
@@ -118,5 +117,4 @@ public class LeanInteractionLocation {
   public void setItemCategory(String itemCategory) {
     this.itemCategory = itemCategory;
   }
-
 }

@@ -6,43 +6,41 @@ import java.util.Date;
 import java.util.Objects;
 
 public class LeanUserHistoryAction {
-  @HopMetadataProperty
-  private String objectType;
+  @HopMetadataProperty private String objectType;
 
-  @HopMetadataProperty
-  private String objectName;
+  @HopMetadataProperty private String objectName;
 
-  @HopMetadataProperty
-  private Date actionDate;
+  @HopMetadataProperty private Date actionDate;
 
   public LeanUserHistoryAction() {
     actionDate = new Date();
   }
 
-  public LeanUserHistoryAction( String objectType, String objectName ) {
-    this( objectType, objectName, new Date() );
+  public LeanUserHistoryAction(String objectType, String objectName) {
+    this(objectType, objectName, new Date());
   }
 
-  public LeanUserHistoryAction( String objectType, String objectName, Date actionDate ) {
+  public LeanUserHistoryAction(String objectType, String objectName, Date actionDate) {
     this.objectType = objectType;
     this.objectName = objectName;
     this.actionDate = actionDate;
   }
 
-  @Override public boolean equals( Object o ) {
-    if ( this == o ) {
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
       return true;
     }
-    if ( o == null || getClass() != o.getClass() ) {
+    if (o == null || getClass() != o.getClass()) {
       return false;
     }
     LeanUserHistoryAction that = (LeanUserHistoryAction) o;
-    return objectType.equals( that.objectType ) &&
-      objectName.equals( that.objectName );
+    return objectType.equals(that.objectType) && objectName.equals(that.objectName);
   }
 
-  @Override public int hashCode() {
-    return Objects.hash( objectType, objectName );
+  @Override
+  public int hashCode() {
+    return Objects.hash(objectType, objectName);
   }
 
   /**
@@ -54,10 +52,8 @@ public class LeanUserHistoryAction {
     return objectType;
   }
 
-  /**
-   * @param objectType The objectType to set
-   */
-  public void setObjectType( String objectType ) {
+  /** @param objectType The objectType to set */
+  public void setObjectType(String objectType) {
     this.objectType = objectType;
   }
 
@@ -70,10 +66,8 @@ public class LeanUserHistoryAction {
     return objectName;
   }
 
-  /**
-   * @param objectName The objectName to set
-   */
-  public void setObjectName( String objectName ) {
+  /** @param objectName The objectName to set */
+  public void setObjectName(String objectName) {
     this.objectName = objectName;
   }
 
@@ -86,10 +80,8 @@ public class LeanUserHistoryAction {
     return actionDate;
   }
 
-  /**
-   * @param actionDate The actionDate to set
-   */
-  public void setActionDate( Date actionDate ) {
+  /** @param actionDate The actionDate to set */
+  public void setActionDate(Date actionDate) {
     this.actionDate = actionDate;
   }
 }

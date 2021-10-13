@@ -20,29 +20,31 @@ public class ChainDataContext implements IDataContext {
     connectorsMap = new HashMap<>();
   }
 
-  public ChainDataContext( IDataContext parentDataContext ) {
+  public ChainDataContext(IDataContext parentDataContext) {
     this.parentDataContext = parentDataContext;
     connectorsMap = new HashMap<>();
   }
 
-  @Override public LeanConnector getConnector( String name ) throws LeanException {
-    LeanConnector connector = parentDataContext.getConnector( name );
-    if ( connector == null ) {
-      connector = connectorsMap.get( name );
+  @Override
+  public LeanConnector getConnector(String name) throws LeanException {
+    LeanConnector connector = parentDataContext.getConnector(name);
+    if (connector == null) {
+      connector = connectorsMap.get(name);
     }
-    if ( connector != null ) {
-      connector = new LeanConnector( connector );
+    if (connector != null) {
+      connector = new LeanConnector(connector);
     }
     return connector;
   }
 
-  @Override public IVariables getVariables() {
+  @Override
+  public IVariables getVariables() {
     return parentDataContext.getVariables();
   }
 
-  public void addConnector( LeanConnector leanConnector ) {
+  public void addConnector(LeanConnector leanConnector) {
     this.lastConnector = leanConnector;
-    connectorsMap.put( leanConnector.getName(), leanConnector );
+    connectorsMap.put(leanConnector.getName(), leanConnector);
   }
 
   /**
@@ -54,10 +56,8 @@ public class ChainDataContext implements IDataContext {
     return parentDataContext;
   }
 
-  /**
-   * @param parentDataContext The parentDataContext to set
-   */
-  public void setParentDataContext( IDataContext parentDataContext ) {
+  /** @param parentDataContext The parentDataContext to set */
+  public void setParentDataContext(IDataContext parentDataContext) {
     this.parentDataContext = parentDataContext;
   }
 
@@ -70,10 +70,8 @@ public class ChainDataContext implements IDataContext {
     return connectorsMap;
   }
 
-  /**
-   * @param connectorsMap The connectorsMap to set
-   */
-  public void setConnectorsMap( Map<String, LeanConnector> connectorsMap ) {
+  /** @param connectorsMap The connectorsMap to set */
+  public void setConnectorsMap(Map<String, LeanConnector> connectorsMap) {
     this.connectorsMap = connectorsMap;
   }
 
@@ -86,14 +84,13 @@ public class ChainDataContext implements IDataContext {
     return lastConnector;
   }
 
-  /**
-   * @param lastConnector The lastConnector to set
-   */
-  public void setLastConnector( LeanConnector lastConnector ) {
+  /** @param lastConnector The lastConnector to set */
+  public void setLastConnector(LeanConnector lastConnector) {
     this.lastConnector = lastConnector;
   }
 
-  @Override public IHopMetadataProvider getMetadataProvider() {
+  @Override
+  public IHopMetadataProvider getMetadataProvider() {
     return parentDataContext.getMetadataProvider();
   }
 }

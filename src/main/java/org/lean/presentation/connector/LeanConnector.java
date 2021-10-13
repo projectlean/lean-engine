@@ -18,31 +18,21 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
 @HopMetadata(
-  key = "connector",
-  name = "Connector",
-  description = "Connector between components and data sources"
-)
+    key = "connector",
+    name = "Connector",
+    description = "Connector between components and data sources")
 public class LeanConnector extends HopMetadataBase implements IHopMetadata {
 
-  /**
-   * The name of the connector
-   */
-  @JsonProperty
-  @HopMetadataProperty
-  private String name;
+  /** The name of the connector */
+  @JsonProperty @HopMetadataProperty private String name;
 
-  @HopMetadataProperty
-  @JsonProperty
-  private ILeanConnector connector;
+  @HopMetadataProperty @JsonProperty private ILeanConnector connector;
 
-  @HopMetadataProperty
-  @JsonProperty
-  private boolean shared;
+  @HopMetadataProperty @JsonProperty private boolean shared;
 
-  public LeanConnector() {
-  }
+  public LeanConnector() {}
 
-  public LeanConnector( String name, ILeanConnector connector ) {
+  public LeanConnector(String name, ILeanConnector connector) {
     this();
     this.name = name;
     this.connector = connector;
@@ -53,7 +43,7 @@ public class LeanConnector extends HopMetadataBase implements IHopMetadata {
    *
    * @param c
    */
-  public LeanConnector( LeanConnector c ) {
+  public LeanConnector(LeanConnector c) {
     this.name = c.name;
     this.connector = c.connector == null ? null : c.connector.clone();
     this.shared = c.shared;
@@ -65,52 +55,53 @@ public class LeanConnector extends HopMetadataBase implements IHopMetadata {
    * @return all the rows from the connector
    * @throws LeanException
    */
-  public List<RowMetaAndData> retrieveRows( IDataContext dataContext ) throws LeanException {
+  public List<RowMetaAndData> retrieveRows(IDataContext dataContext) throws LeanException {
     try {
       final List<RowMetaAndData> rows = new ArrayList<>();
 
       // Add a listener to the connector data
       // Whenever we get a row, we add it to the list...
       //
-      final ArrayBlockingQueue<Object> finishedQueue = new ArrayBlockingQueue<>( 10 );
-      ILeanRowListener listener = ( rowMeta, rowData ) -> {
-        if ( rowData == null ) {
-          finishedQueue.add( new Object() );
-        } else {
-          rows.add( new RowMetaAndData( rowMeta, rowData ) );
-        }
-      };
-      connector.addRowListener( listener );
+      final ArrayBlockingQueue<Object> finishedQueue = new ArrayBlockingQueue<>(10);
+      ILeanRowListener listener =
+          (rowMeta, rowData) -> {
+            if (rowData == null) {
+              finishedQueue.add(new Object());
+            } else {
+              rows.add(new RowMetaAndData(rowMeta, rowData));
+            }
+          };
+      connector.addRowListener(listener);
 
       // Start streaming data
       //
-      connector.startStreaming( dataContext );
+      connector.startStreaming(dataContext);
 
       // Wait for it to end.
       //
-      while ( finishedQueue.poll( 1L, TimeUnit.DAYS ) == null ) {
+      while (finishedQueue.poll(1L, TimeUnit.DAYS) == null) {
         ;
       }
 
       connector.waitUntilFinished();
 
-      connector.removeDataListener( listener );
+      connector.removeDataListener(listener);
 
       return rows;
-    } catch ( Exception e ) {
-      throw new LeanException( "Error getting all rows from connector", e );
+    } catch (Exception e) {
+      throw new LeanException("Error getting all rows from connector", e);
     }
   }
 
-  public IRowMeta describeOutput( IDataContext dataContext ) throws LeanException {
-    return connector.describeOutput( dataContext );
+  public IRowMeta describeOutput(IDataContext dataContext) throws LeanException {
+    return connector.describeOutput(dataContext);
   }
 
   public String getName() {
     return name;
   }
 
-  public void setName( String name ) {
+  public void setName(String name) {
     this.name = name;
   }
 
@@ -118,7 +109,7 @@ public class LeanConnector extends HopMetadataBase implements IHopMetadata {
     return connector;
   }
 
-  public void setConnector( ILeanConnector connector ) {
+  public void setConnector(ILeanConnector connector) {
     this.connector = connector;
   }
 
@@ -126,7 +117,7 @@ public class LeanConnector extends HopMetadataBase implements IHopMetadata {
     return shared;
   }
 
-  public void setShared( boolean shared ) {
+  public void setShared(boolean shared) {
     this.shared = shared;
   }
 }

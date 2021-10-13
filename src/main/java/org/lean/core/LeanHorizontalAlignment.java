@@ -1,5 +1,7 @@
 package org.lean.core;
 
 public enum LeanHorizontalAlignment {
-  LEFT, RIGHT, CENTER;
+  LEFT,
+  RIGHT,
+  CENTER;
 }

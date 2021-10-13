@@ -1,5 +1,8 @@
 package org.lean.presentation.component.type;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import org.apache.hop.core.logging.ILogChannel;
 import org.lean.core.LeanColorRGB;
 import org.lean.core.LeanFont;
 import org.lean.core.LeanGeometry;
@@ -13,46 +16,58 @@ import org.lean.presentation.datacontext.IDataContext;
 import org.lean.presentation.layout.LeanLayoutResults;
 import org.lean.presentation.page.LeanPage;
 import org.lean.render.IRenderContext;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import org.apache.hop.core.logging.ILogChannel;
 
 /**
- * This interface identifies component type plugin classes. These contain the specific attributes of a component.
+ * This interface identifies component type plugin classes. These contain the specific attributes of
+ * a component.
  *
  * @author matt
  */
-@JsonDeserialize( using = ILeanComponentDeserializer.class )
+@JsonDeserialize(using = ILeanComponentDeserializer.class)
 public interface ILeanComponent extends Cloneable {
 
   /**
-   * If a component needs data from a connector, this is where that happens.
-   * You can obviously read elsewhere and stub this method if you want to draw on the fly but otherwise, do it here.
+   * If a component needs data from a connector, this is where that happens. You can obviously read
+   * elsewhere and stub this method if you want to draw on the fly but otherwise, do it here.
    */
-  void processSourceData( LeanPresentation presentation, LeanPage page, LeanComponent component, IDataContext dataContext, IRenderContext renderContext, LeanLayoutResults results ) throws
-    LeanException;
+  void processSourceData(
+      LeanPresentation presentation,
+      LeanPage page,
+      LeanComponent component,
+      IDataContext dataContext,
+      IRenderContext renderContext,
+      LeanLayoutResults results)
+      throws LeanException;
 
   /**
-   * First thing a component does: determine its expected size.
-   * Calculate the expected size: either the size specified on the component OR the calculated size if not specified and as such dynamic
-   *
+   * First thing a component does: determine its expected size. Calculate the expected size: either
+   * the size specified on the component OR the calculated size if not specified and as such dynamic
    */
-  LeanSize getExpectedSize( LeanPresentation presentation, LeanPage page, LeanComponent component, IDataContext dataContext, IRenderContext renderContext, LeanLayoutResults results ) throws LeanException;
+  LeanSize getExpectedSize(
+      LeanPresentation presentation,
+      LeanPage page,
+      LeanComponent component,
+      IDataContext dataContext,
+      IRenderContext renderContext,
+      LeanLayoutResults results)
+      throws LeanException;
 
   /**
-   * Second we get the natural geometry of a component: imageSize and location based on absolute page location with the expected imageSize
-   *
+   * Next we calculate the expected geometry of a component based on the specified attachments to
+   * other components, relative positions and so on.
    */
-  LeanGeometry getNaturalGeometry( LeanPresentation presentation, LeanPage page, LeanComponent component, IDataContext dataContext, IRenderContext renderContext, LeanLayoutResults results ) throws LeanException;
+  LeanGeometry getExpectedGeometry(
+      LeanPresentation presentation,
+      LeanPage page,
+      LeanComponent component,
+      IDataContext dataContext,
+      IRenderContext renderContext,
+      LeanLayoutResults results)
+      throws LeanException;
 
   /**
-   * Third we calculate the expected geometry of a component based on the specified attachments to other components, relative positions and so on.
-   *
-   */
-  LeanGeometry getExpectedGeometry( LeanPresentation presentation, LeanPage page, LeanComponent component, IDataContext dataContext, IRenderContext renderContext, LeanLayoutResults results ) throws LeanException;
-
-  /**
-   * Perform the layout of this component on the given page of a presentation, modify the results list.
+   * Perform the layout of this component on the given page of a presentation, modify the results
+   * list.
    *
    * @param presentation
    * @param page
@@ -62,29 +77,37 @@ public interface ILeanComponent extends Cloneable {
    * @param results
    * @throws LeanException
    */
-  void doLayout( LeanPresentation presentation, LeanPage page, LeanComponent component, IDataContext dataContext, IRenderContext renderContext, LeanLayoutResults results ) throws LeanException;
+  void doLayout(
+      LeanPresentation presentation,
+      LeanPage page,
+      LeanComponent component,
+      IDataContext dataContext,
+      IRenderContext renderContext,
+      LeanLayoutResults results)
+      throws LeanException;
 
-  /**
-   * Render the component using the layout results after having done the layout.
-   */
-  void render( LeanComponentLayoutResult layoutResult, LeanLayoutResults results, IRenderContext renderContext, LeanPosition offSet ) throws LeanException;
+  /** Render the component using the layout results after having done the layout. */
+  void render(
+      LeanComponentLayoutResult layoutResult,
+      LeanLayoutResults results,
+      IRenderContext renderContext,
+      LeanPosition offSet)
+      throws LeanException;
 
   @JsonIgnore
   ILogChannel getLogChannel();
 
   @JsonIgnore
-  void setLogChannel( ILogChannel log );
+  void setLogChannel(ILogChannel log);
 
-  /**
-   * @return a copy of this components metadata
-   */
+  /** @return a copy of this components metadata */
   ILeanComponent clone();
 
   /**
-   * @return Null if the dialog class is determined automatically.  Otherwise returns the dialog class name.
+   * @return Null if the dialog class is determined automatically. Otherwise returns the dialog
+   *     class name.
    */
   String getDialogClassname();
-
 
   /**
    * Gets pluginId
@@ -93,10 +116,8 @@ public interface ILeanComponent extends Cloneable {
    */
   String getPluginId();
 
-  /**
-   * @param pluginId The pluginId to set
-   */
-  void setPluginId( String pluginId );
+  /** @param pluginId The pluginId to set */
+  void setPluginId(String pluginId);
 
   /**
    * Gets sourceConnectorName
@@ -105,10 +126,8 @@ public interface ILeanComponent extends Cloneable {
    */
   String getSourceConnectorName();
 
-  /**
-   * @param sourceConnectorName The sourceConnectorName to set
-   */
-  void setSourceConnectorName( String sourceConnectorName );
+  /** @param sourceConnectorName The sourceConnectorName to set */
+  void setSourceConnectorName(String sourceConnectorName);
 
   /**
    * Gets defaultFont
@@ -117,10 +136,8 @@ public interface ILeanComponent extends Cloneable {
    */
   LeanFont getDefaultFont();
 
-  /**
-   * @param defaultFont The defaultFont to set
-   */
-  void setDefaultFont( LeanFont defaultFont );
+  /** @param defaultFont The defaultFont to set */
+  void setDefaultFont(LeanFont defaultFont);
 
   /**
    * Gets defaultColor
@@ -129,10 +146,8 @@ public interface ILeanComponent extends Cloneable {
    */
   LeanColorRGB getDefaultColor();
 
-  /**
-   * @param defaultColor The defaultColor to set
-   */
-  void setDefaultColor( LeanColorRGB defaultColor );
+  /** @param defaultColor The defaultColor to set */
+  void setDefaultColor(LeanColorRGB defaultColor);
 
   /**
    * Gets background
@@ -141,10 +156,8 @@ public interface ILeanComponent extends Cloneable {
    */
   boolean isBackground();
 
-  /**
-   * @param background The background to set
-   */
-  void setBackground( boolean background );
+  /** @param background The background to set */
+  void setBackground(boolean background);
 
   /**
    * Gets backGroundColor
@@ -153,10 +166,8 @@ public interface ILeanComponent extends Cloneable {
    */
   LeanColorRGB getBackGroundColor();
 
-  /**
-   * @param backGroundColor The backGroundColor to set
-   */
-  void setBackGroundColor( LeanColorRGB backGroundColor );
+  /** @param backGroundColor The backGroundColor to set */
+  void setBackGroundColor(LeanColorRGB backGroundColor);
 
   /**
    * Gets border
@@ -165,10 +176,8 @@ public interface ILeanComponent extends Cloneable {
    */
   boolean isBorder();
 
-  /**
-   * @param border The border to set
-   */
-  void setBorder( boolean border );
+  /** @param border The border to set */
+  void setBorder(boolean border);
 
   /**
    * Gets borderColor
@@ -177,9 +186,12 @@ public interface ILeanComponent extends Cloneable {
    */
   LeanColorRGB getBorderColor();
 
-  /**
-   * @param borderColor The borderColor to set
-   */
-  void setBorderColor( LeanColorRGB borderColor );
+  /** @param borderColor The borderColor to set */
+  void setBorderColor(LeanColorRGB borderColor);
 
+  /** @return The theme to use to render this component */
+  String getThemeName();
+
+  /** @param themeName The themeName to set */
+  void setThemeName(String themeName);
 }

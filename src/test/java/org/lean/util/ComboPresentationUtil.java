@@ -14,18 +14,20 @@ import org.lean.presentation.component.LeanComponent;
 import org.lean.presentation.component.types.chart.LeanLineChartComponent;
 import org.lean.presentation.component.types.crosstab.LeanCrosstabComponent;
 import org.lean.presentation.component.types.svg.LeanSvgComponent;
+import org.lean.presentation.component.types.svg.ScaleType;
 import org.lean.presentation.interaction.LeanInteraction;
 import org.lean.presentation.interaction.LeanInteractionAction;
 import org.lean.presentation.interaction.LeanInteractionLocation;
 import org.lean.presentation.interaction.LeanInteractionMethod;
 import org.lean.presentation.layout.LeanLayout;
+import org.lean.presentation.layout.LeanLayoutBuilder;
 import org.lean.presentation.page.LeanPage;
 
 import java.util.Arrays;
 
 public class ComboPresentationUtil extends BasePresentationUtil {
 
-  public ComboPresentationUtil( IHopMetadataProvider metadataProvider, IVariables variables ) {
+  public ComboPresentationUtil(IHopMetadataProvider metadataProvider, IVariables variables) {
     super(metadataProvider, variables);
   }
 
@@ -92,7 +94,6 @@ public class ComboPresentationUtil extends BasePresentationUtil {
       crosstab.setShowingHorizontalTotals(true);
       LeanComponent crosstabComponent = new LeanComponent("Crosstab", crosstab);
       crosstabComponent.setLayout(new LeanLayout(0, 0));
-      crosstabComponent.setSize(null);
 
       // Add the table to the first page.
       //
@@ -153,17 +154,10 @@ public class ComboPresentationUtil extends BasePresentationUtil {
     // Add a rotated LEAN! label in the background
     //
     {
-      LeanSvgComponent rotatedLabel = new LeanSvgComponent("lean-logo.svg");
-      rotatedLabel.setScalePercent("125");
+      LeanSvgComponent rotatedLabel = new LeanSvgComponent("lean-logo.svg", ScaleType.MAX);
       rotatedLabel.setBorder(false);
       LeanComponent imageComponent = new LeanComponent("Logo", rotatedLabel);
-      LeanLayout imageLayout = new LeanLayout();
-      imageLayout.setRight(
-          new LeanAttachment(
-              null, 0, 0, LeanAttachment.Alignment.RIGHT)); // Right of the header/page
-      imageLayout.setTop(
-          new LeanAttachment(null, 0, 0, LeanAttachment.Alignment.TOP)); // Top of the header/page
-      imageComponent.setLayout(imageLayout);
+      imageComponent.setLayout(new LeanLayoutBuilder().top().right().bottom().build());
 
       LeanComponent labelComponent = new LeanComponent("RotatedLabel", rotatedLabel);
       LeanLayout labelLayout = new LeanLayout();

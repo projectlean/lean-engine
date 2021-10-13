@@ -9,7 +9,5 @@ public class GroupRowDetails {
   public LeanSize groupExpectedRowSize;
   public LeanComponent groupRowComponent;
 
-  public GroupRowDetails() {
-  }
-
+  public GroupRowDetails() {}
 }

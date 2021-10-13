@@ -1,16 +1,16 @@
 package org.lean.render.svg;
 
+import org.junit.Test;
 import org.lean.presentation.LeanPresentation;
 import org.lean.util.TablePresentationUtil;
-import org.junit.Test;
 
 public class LeanPresentationTableTest extends LeanPresentationTestBase {
-  
+
   @Test
   public void testTableRender() throws Exception {
 
-    LeanPresentation presentation = new TablePresentationUtil( metadataProvider, variables ).createTablePresentation( 2000 );
-    testRendering( presentation, "table_test");
+    LeanPresentation presentation =
+        new TablePresentationUtil(metadataProvider, variables).createTablePresentation(2000);
+    testRendering(presentation, "table_test");
   }
-
 }

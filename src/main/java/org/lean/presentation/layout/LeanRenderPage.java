@@ -1,6 +1,5 @@
 package org.lean.presentation.layout;
 
-import org.apache.hop.core.gui.Point;
 import org.apache.hop.core.svg.HopSvgGraphics2D;
 import org.lean.core.LeanGeometry;
 import org.lean.core.LeanPosition;
@@ -16,7 +15,7 @@ import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.lean.core.draw.DrawnItem.*;
+import static org.lean.core.draw.DrawnItem.Category;
 
 /** A page on which we can render... */
 public class LeanRenderPage {
@@ -75,10 +74,13 @@ public class LeanRenderPage {
       int rowNr,
       int colNr,
       LeanGeometry geometry) {
-    drawnItems.add(new DrawnItem(componentName, componentPluginId, partNumber, type, category, rowNr, colNr, geometry));
+    drawnItems.add(
+        new DrawnItem(
+            componentName, componentPluginId, partNumber, type, category, rowNr, colNr, geometry));
   }
 
-  public void addComponentDrawnItem( LeanComponent component, LeanGeometry componentGeometry, LeanPosition offSet ) {
+  public void addComponentDrawnItem(
+      LeanComponent component, LeanGeometry componentGeometry, LeanPosition offSet) {
 
     LeanGeometry geometry = new LeanGeometry(componentGeometry);
     geometry.translate(offSet);
@@ -133,8 +135,8 @@ public class LeanRenderPage {
   public DrawnItem lookupDrawnItem(int x, int y, boolean excludeComponents) {
     for (int i = drawnItems.size() - 1; i >= 0; i--) {
       DrawnItem item = drawnItems.get(i);
-      if (!excludeComponents || item.getType()!=DrawnItemType.Component) {
-        if (item.getGeometry().contains( x, y )) {
+      if (!excludeComponents || item.getType() != DrawnItemType.Component) {
+        if (item.getGeometry().contains(x, y)) {
           return item;
         }
       }
@@ -144,8 +146,8 @@ public class LeanRenderPage {
 
   public LeanGeometry lookupComponentGeometry(String componentName) {
     for (DrawnItem item : drawnItems) {
-      if (item.getType()==DrawnItemType.Component) {
-        if (item.getComponentName().equals( componentName )) {
+      if (item.getType() == DrawnItemType.Component) {
+        if (item.getComponentName().equals(componentName)) {
           return item.getGeometry();
         }
       }

@@ -4,35 +4,26 @@ import org.apache.hop.metadata.api.HopMetadataProperty;
 
 public class LeanColumn {
 
-  @HopMetadataProperty
-  private String columnName;
+  @HopMetadataProperty private String columnName;
 
-  @HopMetadataProperty
-  private String headerValue;
+  @HopMetadataProperty private String headerValue;
 
-  @HopMetadataProperty
-  private LeanHorizontalAlignment horizontalAlignment;
+  @HopMetadataProperty private LeanHorizontalAlignment horizontalAlignment;
 
-  @HopMetadataProperty
-  private LeanVerticalAlignment verticalAlignment;
+  @HopMetadataProperty private LeanVerticalAlignment verticalAlignment;
 
-  @HopMetadataProperty
-  private int width;
+  @HopMetadataProperty private int width;
 
-  @HopMetadataProperty
-  private String formatMask;
+  @HopMetadataProperty private String formatMask;
 
-  @HopMetadataProperty
-  @Deprecated
-  private LeanFont font;
-
+  @HopMetadataProperty @Deprecated private LeanFont font;
 
   public LeanColumn() {
     horizontalAlignment = LeanHorizontalAlignment.LEFT;
     verticalAlignment = LeanVerticalAlignment.TOP;
   }
 
-  public LeanColumn( LeanColumn c ) {
+  public LeanColumn(LeanColumn c) {
     this.columnName = c.columnName;
     this.headerValue = c.headerValue;
     this.horizontalAlignment = c.horizontalAlignment;
@@ -41,12 +32,16 @@ public class LeanColumn {
     this.formatMask = c.formatMask;
   }
 
-  public LeanColumn( String columnName ) {
+  public LeanColumn(String columnName) {
     this();
     this.columnName = columnName;
   }
 
-  public LeanColumn( String columnName, String headerValue, LeanHorizontalAlignment horizontalAlignment, LeanVerticalAlignment verticalAlignment ) {
+  public LeanColumn(
+      String columnName,
+      String headerValue,
+      LeanHorizontalAlignment horizontalAlignment,
+      LeanVerticalAlignment verticalAlignment) {
     this.columnName = columnName;
     this.headerValue = headerValue;
     this.horizontalAlignment = horizontalAlignment;
@@ -62,10 +57,8 @@ public class LeanColumn {
     return columnName;
   }
 
-  /**
-   * @param columnName The columnName to set
-   */
-  public void setColumnName( String columnName ) {
+  /** @param columnName The columnName to set */
+  public void setColumnName(String columnName) {
     this.columnName = columnName;
   }
 
@@ -78,10 +71,8 @@ public class LeanColumn {
     return horizontalAlignment;
   }
 
-  /**
-   * @param horizontalAlignment The horizontalAlignment to set
-   */
-  public void setHorizontalAlignment( LeanHorizontalAlignment horizontalAlignment ) {
+  /** @param horizontalAlignment The horizontalAlignment to set */
+  public void setHorizontalAlignment(LeanHorizontalAlignment horizontalAlignment) {
     this.horizontalAlignment = horizontalAlignment;
   }
 
@@ -94,10 +85,8 @@ public class LeanColumn {
     return verticalAlignment;
   }
 
-  /**
-   * @param verticalAlignment The verticalAlignment to set
-   */
-  public void setVerticalAlignment( LeanVerticalAlignment verticalAlignment ) {
+  /** @param verticalAlignment The verticalAlignment to set */
+  public void setVerticalAlignment(LeanVerticalAlignment verticalAlignment) {
     this.verticalAlignment = verticalAlignment;
   }
 
@@ -110,10 +99,8 @@ public class LeanColumn {
     return headerValue;
   }
 
-  /**
-   * @param headerValue The headerValue to set
-   */
-  public void setHeaderValue( String headerValue ) {
+  /** @param headerValue The headerValue to set */
+  public void setHeaderValue(String headerValue) {
     this.headerValue = headerValue;
   }
 
@@ -126,10 +113,8 @@ public class LeanColumn {
     return width;
   }
 
-  /**
-   * @param width The width to set
-   */
-  public void setWidth( int width ) {
+  /** @param width The width to set */
+  public void setWidth(int width) {
     this.width = width;
   }
 
@@ -142,10 +127,8 @@ public class LeanColumn {
     return formatMask;
   }
 
-  /**
-   * @param formatMask The formatMask to set
-   */
-  public void setFormatMask( String formatMask ) {
+  /** @param formatMask The formatMask to set */
+  public void setFormatMask(String formatMask) {
     this.formatMask = formatMask;
   }
 
@@ -159,11 +142,9 @@ public class LeanColumn {
     return font;
   }
 
-  /**
-   * @param font The font to set
-   */
+  /** @param font The font to set */
   @Deprecated
-  public void setFont( LeanFont font ) {
+  public void setFont(LeanFont font) {
     this.font = font;
   }
 }

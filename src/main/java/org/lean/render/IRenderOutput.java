@@ -2,18 +2,15 @@ package org.lean.render;
 
 import org.lean.core.LeanRenderType;
 
-/**
- * This contains all sorts of rendering outputs
- *
- */
+/** This contains all sorts of rendering outputs */
 public interface IRenderOutput {
 
   /**
    * The render type of the output
+   *
    * @return
    */
   public LeanRenderType getRenderType();
-
 
   /*
    * Apply the render context (sizes, default colors, ...)

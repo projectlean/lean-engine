@@ -1,7 +1,7 @@
 package org.lean.presentation.component.types.group;
 
-import org.lean.core.LeanSize;
 import org.apache.hop.core.RowMetaAndData;
+import org.lean.core.LeanSize;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,8 +14,6 @@ public class GroupDetails {
 
   public GroupDetails() {
     this.rows = new ArrayList<>();
-    this.rowDetails = new ArrayList<>(  );
+    this.rowDetails = new ArrayList<>();
   }
-
-
 }

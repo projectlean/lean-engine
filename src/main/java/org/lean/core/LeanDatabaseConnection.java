@@ -10,42 +10,38 @@ import org.lean.core.metastore.IHasIdentity;
 
 import javax.ws.rs.Path;
 
-/**
- * For now we assume sane defaults like JDBC, no generic connections, ...
- */
+/** For now we assume sane defaults like JDBC, no generic connections, ... */
 @HopMetadata(
-  key = "lean-database-connection",
-  name = "Lean Database Connection",
-  description = "A description of a connection to a relational database"
-)
-@Path( "databases" )
+    key = "lean-database-connection",
+    name = "Lean Database Connection",
+    description = "A description of a connection to a relational database")
+@Path("databases")
 public class LeanDatabaseConnection extends HopMetadataBase implements IHopMetadata, IHasIdentity {
 
-  /**
-   * This is a reference to Hop database type codes (MYSQL, POSTGRESQL, MSSQL, ORACLE, ...)
-   */
-  @HopMetadataProperty
-  private String databaseTypeCode;
+  /** This is a reference to Hop database type codes (MYSQL, POSTGRESQL, MSSQL, ORACLE, ...) */
+  @HopMetadataProperty private String databaseTypeCode;
 
-  @HopMetadataProperty
-  private String hostname;
+  @HopMetadataProperty private String hostname;
 
-  @HopMetadataProperty
-  private String port;
+  @HopMetadataProperty private String port;
 
-  @HopMetadataProperty
-  private String databaseName;
+  @HopMetadataProperty private String databaseName;
 
-  @HopMetadataProperty
-  private String username;
+  @HopMetadataProperty private String username;
 
-  @HopMetadataProperty( password = true )
+  @HopMetadataProperty(password = true)
   private String password;
 
-  public LeanDatabaseConnection() {
-  }
+  public LeanDatabaseConnection() {}
 
-  public LeanDatabaseConnection( String name, String databaseTypeCode, String hostname, String port, String databaseName, String username, String password ) {
+  public LeanDatabaseConnection(
+      String name,
+      String databaseTypeCode,
+      String hostname,
+      String port,
+      String databaseName,
+      String username,
+      String password) {
     this();
     this.name = name;
     this.databaseTypeCode = databaseTypeCode;
@@ -58,9 +54,10 @@ public class LeanDatabaseConnection extends HopMetadataBase implements IHopMetad
 
   public DatabaseMeta createDatabaseMeta() throws LeanException {
     try {
-      return new DatabaseMeta( name, databaseTypeCode, "JDBC", hostname, databaseName, port, username, password );
-    } catch ( Exception e ) {
-      throw new LeanException( "Unable to create (convert to) Hop database connection object", e );
+      return new DatabaseMeta(
+          name, databaseTypeCode, "JDBC", hostname, databaseName, port, username, password);
+    } catch (Exception e) {
+      throw new LeanException("Unable to create (convert to) Hop database connection object", e);
     }
   }
 
@@ -73,10 +70,8 @@ public class LeanDatabaseConnection extends HopMetadataBase implements IHopMetad
     return databaseTypeCode;
   }
 
-  /**
-   * @param databaseTypeCode The databaseTypeCode to set
-   */
-  public void setDatabaseTypeCode( String databaseTypeCode ) {
+  /** @param databaseTypeCode The databaseTypeCode to set */
+  public void setDatabaseTypeCode(String databaseTypeCode) {
     this.databaseTypeCode = databaseTypeCode;
   }
 
@@ -89,10 +84,8 @@ public class LeanDatabaseConnection extends HopMetadataBase implements IHopMetad
     return hostname;
   }
 
-  /**
-   * @param hostname The hostname to set
-   */
-  public void setHostname( String hostname ) {
+  /** @param hostname The hostname to set */
+  public void setHostname(String hostname) {
     this.hostname = hostname;
   }
 
@@ -105,10 +98,8 @@ public class LeanDatabaseConnection extends HopMetadataBase implements IHopMetad
     return port;
   }
 
-  /**
-   * @param port The port to set
-   */
-  public void setPort( String port ) {
+  /** @param port The port to set */
+  public void setPort(String port) {
     this.port = port;
   }
 
@@ -121,10 +112,8 @@ public class LeanDatabaseConnection extends HopMetadataBase implements IHopMetad
     return databaseName;
   }
 
-  /**
-   * @param databaseName The databaseName to set
-   */
-  public void setDatabaseName( String databaseName ) {
+  /** @param databaseName The databaseName to set */
+  public void setDatabaseName(String databaseName) {
     this.databaseName = databaseName;
   }
 
@@ -137,10 +126,8 @@ public class LeanDatabaseConnection extends HopMetadataBase implements IHopMetad
     return username;
   }
 
-  /**
-   * @param username The username to set
-   */
-  public void setUsername( String username ) {
+  /** @param username The username to set */
+  public void setUsername(String username) {
     this.username = username;
   }
 
@@ -153,10 +140,8 @@ public class LeanDatabaseConnection extends HopMetadataBase implements IHopMetad
     return password;
   }
 
-  /**
-   * @param password The password to set
-   */
-  public void setPassword( String password ) {
+  /** @param password The password to set */
+  public void setPassword(String password) {
     this.password = password;
   }
 }

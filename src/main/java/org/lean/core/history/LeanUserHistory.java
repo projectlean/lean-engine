@@ -9,20 +9,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 @HopMetadata(
-  key = "user-history",
-  name = "Lean User History",
-  description = "Describes user action history"
-)
+    key = "user-history",
+    name = "Lean User History",
+    description = "Describes user action history")
 public class LeanUserHistory extends HopMetadataBase implements IHopMetadata {
 
-  @HopMetadataProperty
-  private List<LeanUserHistoryAction> actions;
+  @HopMetadataProperty private List<LeanUserHistoryAction> actions;
 
   public LeanUserHistory() {
     actions = new ArrayList<>();
   }
 
-  public LeanUserHistory( String name, List<LeanUserHistoryAction> actions ) {
+  public LeanUserHistory(String name, List<LeanUserHistoryAction> actions) {
     this.name = name;
     this.actions = actions;
   }
@@ -36,10 +34,8 @@ public class LeanUserHistory extends HopMetadataBase implements IHopMetadata {
     return actions;
   }
 
-  /**
-   * @param actions The actions to set
-   */
-  public void setActions( List<LeanUserHistoryAction> actions ) {
+  /** @param actions The actions to set */
+  public void setActions(List<LeanUserHistoryAction> actions) {
     this.actions = actions;
   }
 }

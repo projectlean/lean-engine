@@ -10,22 +10,10 @@ import java.util.List;
 /** This describes an action that can be taken by a user on a presentation. */
 public class LeanInteractionAction {
 
-  // TODO: make the action types plugins with a way to provide a JavaScript function for the browser
-  // side functionality
-  //
-  public enum ActionType {
-    OpenPresentation,
-    FilterOnly,
-    FilterInclude,
-    FilterExclude,
-  }
-
   // The type of action to take
   @HopMetadataProperty private ActionType actionType;
-
   // The name of the object to reference
   @HopMetadataProperty private String objectName;
-
   // The parameter to set
   @HopMetadataProperty private List<LeanInteractionParameter> parameters;
 
@@ -90,10 +78,18 @@ public class LeanInteractionAction {
     return parameters;
   }
 
-  /**
-   * @param parameters The parameters to set
-   */
-  public void setParameters( List<LeanInteractionParameter> parameters ) {
+  /** @param parameters The parameters to set */
+  public void setParameters(List<LeanInteractionParameter> parameters) {
     this.parameters = parameters;
+  }
+
+  // TODO: make the action types plugins with a way to provide a JavaScript function for the browser
+  // side functionality
+  //
+  public enum ActionType {
+    OpenPresentation,
+    FilterOnly,
+    FilterInclude,
+    FilterExclude,
   }
 }

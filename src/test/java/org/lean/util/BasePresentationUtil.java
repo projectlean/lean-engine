@@ -14,15 +14,19 @@ import org.lean.presentation.LeanPresentation;
 import org.lean.presentation.component.LeanComponent;
 import org.lean.presentation.component.types.label.LeanLabelComponent;
 import org.lean.presentation.component.types.svg.LeanSvgComponent;
+import org.lean.presentation.component.types.svg.ScaleType;
 import org.lean.presentation.connector.LeanConnector;
 import org.lean.presentation.connector.type.ILeanConnector;
 import org.lean.presentation.connector.types.sampledata.LeanSampleDataConnector;
 import org.lean.presentation.layout.LeanLayout;
+import org.lean.presentation.layout.LeanLayoutBuilder;
 import org.lean.presentation.page.LeanPage;
 import org.lean.presentation.theme.LeanTheme;
 
 public class BasePresentationUtil {
 
+  public static final String HEADER_MESSAGE_LABEL = "HeaderLabel";
+  public static String CONNECTOR_SAMPLE_ROWS = "Sample rows";
   protected IHopMetadataProvider metadataProvider;
   protected IVariables variables;
 
@@ -30,9 +34,6 @@ public class BasePresentationUtil {
     this.metadataProvider = metadataProvider;
     this.variables = variables;
   }
-
-  public static final String HEADER_MESSAGE_LABEL = "HeaderLabel";
-  public static String CONNECTOR_SAMPLE_ROWS = "Sample rows";
 
   public static void registerTestPlugins() throws HopPluginException {
     PluginRegistry.getInstance()
@@ -44,38 +45,6 @@ public class BasePresentationUtil {
     PluginRegistry.getInstance()
         .registerPluginClass(
             MySqlDatabaseMeta.class.getName(), DatabasePluginType.class, DatabaseMetaPlugin.class);
-  }
-
-  public LeanPresentation[] getAvailablePresentations() throws Exception {
-    int nr = 1;
-    return new LeanPresentation[] {
-      new BarChartPresentationUtil(metadataProvider, variables)
-          .createBarChartPresentation(100 * nr),
-      new BarChartPresentationUtil(metadataProvider, variables)
-          .createStackedBarChartPresentation(100 * nr),
-      new LabelPresentationUtil(metadataProvider, variables).createLabelPresentation(100 * nr++),
-      new LineChartPresentationUtil(metadataProvider, variables)
-          .createLineChartPresentation(100 * nr++),
-      new LineChartPresentationUtil(metadataProvider, variables)
-          .createLineChartSeriesPresentation(100 * nr++),
-      new LineChartPresentationUtil(metadataProvider, variables)
-          .createLineChartNoLabelsPresentation(100 * nr++),
-      new ComboPresentationUtil(metadataProvider, variables).createComboPresentation(100 * nr++),
-      new CompositePresentationUtil(metadataProvider, variables)
-          .createSimpleCompositePresentation(100 * nr++),
-      new CrosstabPresentationUtil(metadataProvider, variables)
-          .createCrosstabPresentation(100 * nr++),
-      new CrosstabPresentationUtil(metadataProvider, variables)
-          .createCrosstabPresentationOnlyVerticalDimensions(100 * nr++),
-      new CrosstabPresentationUtil(metadataProvider, variables)
-          .createCrosstabPresentationOnlyHorizontalDimensions(100 * nr++),
-      new CrosstabPresentationUtil(metadataProvider, variables)
-          .createCrosstabPresentationOnlyFacts(100 * nr++),
-      new GroupCompositePresentationUtil(metadataProvider, variables)
-          .createGroupCompositePresentation(100 * nr++),
-      new GroupPresentationUtil(metadataProvider, variables)
-          .createSimpleGroupedLabelPresentation(100 * nr++),
-    };
   }
 
   protected static LeanPresentation createBasePresentation(
@@ -119,47 +88,25 @@ public class BasePresentationUtil {
       LeanPresentation presentation, String headerMessage, boolean portrait) {
     // Add a header with a logo at the top of the page
     //
-    LeanPage header = LeanPage.getHeaderFooter(-1, portrait, 50);
-    header.getComponents().add(createHeaderImageComponent());
+    LeanPage header = LeanPage.getHeaderFooter(true, portrait, 50);
     header.getComponents().add(createHeaderLabelComponent(headerMessage));
     header.getComponents().add(createPresentationNameLabelComponent());
+    header.getComponents().add(createHeaderImageComponent());
     presentation.setHeader(header);
 
     // Add a footer with a single label at the bottom of the page.
     //
-    LeanPage footer = LeanPage.getHeaderFooter(-2, portrait, 25);
+    LeanPage footer = LeanPage.getHeaderFooter(false, portrait, 25);
     footer.getComponents().add(createPageNumberLabelComponent());
     footer.getComponents().add(createSysdateLabelComponent());
     presentation.setFooter(footer);
   }
 
-  /*
   protected static LeanComponent createHeaderImageComponent() {
-    LeanSvgComponent leanImage = new LeanSvgComponent( "lean-logo.png" );
-    leanImage.setBorder( false );
-    leanImage.setScalePercent( "5" );
-    LeanComponent imageComponent = new LeanComponent( "Logo", leanImage );
-    imageComponent.setSize( null );
-    LeanLayout imageLayout = new LeanLayout();
-    imageLayout.setTop( new LeanAttachment( null, 0, 0, LeanAttachment.Alignment.TOP ) ); // Top of the page
-    imageLayout.setRight( new LeanAttachment( null, 0, 0, LeanAttachment.Alignment.RIGHT ) ); // Right of the page
-    imageComponent.setLayout( imageLayout );
-
-    return imageComponent;
-  } */
-
-  protected static LeanComponent createHeaderImageComponent() {
-    LeanSvgComponent leanLabel = new LeanSvgComponent("lean-logo.svg");
-    leanLabel.setScalePercent("25");
-    leanLabel.setBorder(false);
+    LeanSvgComponent leanLabel = new LeanSvgComponent("lean-logo.svg", ScaleType.MIN);
+    leanLabel.setBorder(true);
     LeanComponent imageComponent = new LeanComponent("Logo", leanLabel);
-    LeanLayout imageLayout = new LeanLayout();
-    imageLayout.setRight(
-        new LeanAttachment(null, 0, 0, LeanAttachment.Alignment.RIGHT)); // Right of the header/page
-    imageLayout.setTop(
-        new LeanAttachment(null, 0, 0, LeanAttachment.Alignment.TOP)); // Top of the header/page
-    imageComponent.setLayout(imageLayout);
-
+    imageComponent.setLayout(new LeanLayoutBuilder().top().right().bottom().build());
     return imageComponent;
   }
 
@@ -170,7 +117,7 @@ public class BasePresentationUtil {
     LeanComponent labelComponent = new LeanComponent(HEADER_MESSAGE_LABEL, label);
     LeanLayout labelLayout = new LeanLayout();
     labelLayout.setLeft(new LeanAttachment(null, 0, 0, LeanAttachment.Alignment.CENTER));
-    labelLayout.setTop(new LeanAttachment("Logo", 0, 0, LeanAttachment.Alignment.CENTER));
+    labelLayout.setTop(new LeanAttachment(null, 0, 0, LeanAttachment.Alignment.CENTER));
     labelComponent.setLayout(labelLayout);
     return labelComponent;
   }
@@ -182,7 +129,7 @@ public class BasePresentationUtil {
     LeanComponent labelComponent = new LeanComponent("PresentationName", label);
     LeanLayout labelLayout = new LeanLayout();
     labelLayout.setLeft(new LeanAttachment(null, 0, 0, LeanAttachment.Alignment.LEFT));
-    labelLayout.setTop(new LeanAttachment("Logo", 0, 0, LeanAttachment.Alignment.CENTER));
+    labelLayout.setTop(new LeanAttachment(null, 0, 0, LeanAttachment.Alignment.CENTER));
     labelComponent.setLayout(labelLayout);
     return labelComponent;
   }
@@ -192,10 +139,7 @@ public class BasePresentationUtil {
     label.setLabel("Page #${PAGE_NUMBER}");
     label.setBorder(false);
     LeanComponent labelComponent = new LeanComponent("FooterLabel", label);
-    LeanLayout labelLayout = new LeanLayout();
-    labelLayout.setTop(new LeanAttachment(null, 0, 0, LeanAttachment.Alignment.TOP));
-    labelLayout.setLeft(new LeanAttachment(null, 0, 0, LeanAttachment.Alignment.LEFT));
-    labelComponent.setLayout(labelLayout);
+    labelComponent.setLayout(new LeanLayoutBuilder().left().bottom().build());
     return labelComponent;
   }
 
@@ -204,11 +148,40 @@ public class BasePresentationUtil {
     label.setLabel("${SYSTEM_DATE}");
     label.setBorder(false);
     LeanComponent labelComponent = new LeanComponent("SystemDate", label);
-    LeanLayout labelLayout = new LeanLayout();
-    labelLayout.setTop(new LeanAttachment(null, 0, 0, LeanAttachment.Alignment.TOP));
-    labelLayout.setRight(new LeanAttachment(null, 0, 0, LeanAttachment.Alignment.RIGHT));
-    labelComponent.setLayout(labelLayout);
+    labelComponent.setLayout(new LeanLayoutBuilder().right().bottom().build());
     return labelComponent;
+  }
+
+  public LeanPresentation[] getAvailablePresentations() throws Exception {
+    int nr = 1;
+    return new LeanPresentation[] {
+      new BarChartPresentationUtil(metadataProvider, variables)
+          .createBarChartPresentation(100 * nr),
+      new BarChartPresentationUtil(metadataProvider, variables)
+          .createStackedBarChartPresentation(100 * nr),
+      new LabelPresentationUtil(metadataProvider, variables).createLabelPresentation(100 * nr++),
+      new LineChartPresentationUtil(metadataProvider, variables)
+          .createLineChartPresentation(100 * nr++),
+      new LineChartPresentationUtil(metadataProvider, variables)
+          .createLineChartSeriesPresentation(100 * nr++),
+      new LineChartPresentationUtil(metadataProvider, variables)
+          .createLineChartNoLabelsPresentation(100 * nr++),
+      new ComboPresentationUtil(metadataProvider, variables).createComboPresentation(100 * nr++),
+      new CompositePresentationUtil(metadataProvider, variables)
+          .createSimpleCompositePresentation(100 * nr++),
+      new CrosstabPresentationUtil(metadataProvider, variables)
+          .createCrosstabPresentation(100 * nr++),
+      new CrosstabPresentationUtil(metadataProvider, variables)
+          .createCrosstabPresentationOnlyVerticalDimensions(100 * nr++),
+      new CrosstabPresentationUtil(metadataProvider, variables)
+          .createCrosstabPresentationOnlyHorizontalDimensions(100 * nr++),
+      new CrosstabPresentationUtil(metadataProvider, variables)
+          .createCrosstabPresentationOnlyFacts(100 * nr++),
+      new GroupCompositePresentationUtil(metadataProvider, variables)
+          .createGroupCompositePresentation(100 * nr++),
+      new GroupPresentationUtil(metadataProvider, variables)
+          .createSimpleGroupedLabelPresentation(100 * nr++),
+    };
   }
 
   /**

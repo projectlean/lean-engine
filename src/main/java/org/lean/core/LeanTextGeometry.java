@@ -10,20 +10,16 @@ public class LeanTextGeometry {
 
   private int offsetY;
 
-  /**
-   * This constructor is needed for serialization purposes, keep it public
-   */
-  public LeanTextGeometry() {
-  }
+  /** This constructor is needed for serialization purposes, keep it public */
+  public LeanTextGeometry() {}
 
   /**
-
    * @param width
    * @param height
    * @param offsetX
    * @param offsetY
    */
-  public LeanTextGeometry( int width, int height, int offsetX, int offsetY) {
+  public LeanTextGeometry(int width, int height, int offsetX, int offsetY) {
     super();
     this.width = width;
     this.height = height;
@@ -31,31 +27,23 @@ public class LeanTextGeometry {
     this.offsetY = offsetY;
   }
 
-  /**
-   * @return the width
-   */
+  /** @return the width */
   public int getWidth() {
     return width;
   }
 
-  /**
-   * @param width the width to set
-   */
-  public void setWidth( int width ) {
+  /** @param width the width to set */
+  public void setWidth(int width) {
     this.width = width;
   }
 
-  /**
-   * @return the height
-   */
+  /** @return the height */
   public int getHeight() {
     return height;
   }
 
-  /**
-   * @param height the height to set
-   */
-  public void setHeight( int height ) {
+  /** @param height the height to set */
+  public void setHeight(int height) {
     this.height = height;
   }
 
@@ -68,10 +56,8 @@ public class LeanTextGeometry {
     return offsetX;
   }
 
-  /**
-   * @param offsetX The offsetX to set
-   */
-  public void setOffsetX( int offsetX ) {
+  /** @param offsetX The offsetX to set */
+  public void setOffsetX(int offsetX) {
     this.offsetX = offsetX;
   }
 
@@ -84,10 +70,8 @@ public class LeanTextGeometry {
     return offsetY;
   }
 
-  /**
-   * @param offsetY The offsetY to set
-   */
-  public void setOffsetY( int offsetY ) {
+  /** @param offsetY The offsetY to set */
+  public void setOffsetY(int offsetY) {
     this.offsetY = offsetY;
   }
 }

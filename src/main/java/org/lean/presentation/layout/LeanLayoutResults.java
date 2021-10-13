@@ -23,9 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-/**
- * Contains layout results of a presentation
- */
+/** Contains layout results of a presentation */
 public class LeanLayoutResults {
 
   private Map<String, LeanGeometry> componentGeometryMap;
@@ -38,7 +36,7 @@ public class LeanLayoutResults {
 
   private String id;
 
-  public LeanLayoutResults( ILogChannel log ) {
+  public LeanLayoutResults(ILogChannel log) {
     this.log = log;
     componentGeometryMap = new HashMap<>();
     componentDataSetMap = new HashMap<>();
@@ -46,194 +44,243 @@ public class LeanLayoutResults {
     id = UUID.randomUUID().toString();
   }
 
-  public LeanGeometry findGeometry( String componentName ) {
-    return componentGeometryMap.get( componentName );
+  public LeanGeometry findGeometry(String componentName) {
+    return componentGeometryMap.get(componentName);
   }
 
-  public void addComponentGeometry( String componentName, LeanGeometry geometry ) {
-    componentGeometryMap.put( componentName, geometry );
+  public void addComponentGeometry(String componentName, LeanGeometry geometry) {
+    componentGeometryMap.put(componentName, geometry);
   }
 
-  public void addDataSet( LeanComponent component, String key, Object dataSet ) {
-    Map<String, Object> dataSetMap = componentDataSetMap.get( component.getName() );
-    if ( dataSetMap == null ) {
+  public void addDataSet(LeanComponent component, String key, Object dataSet) {
+    Map<String, Object> dataSetMap = componentDataSetMap.get(component.getName());
+    if (dataSetMap == null) {
       dataSetMap = new HashMap<>();
-      componentDataSetMap.put( component.getName(), dataSetMap );
+      componentDataSetMap.put(component.getName(), dataSetMap);
     }
-    dataSetMap.put( key, dataSet );
+    dataSetMap.put(key, dataSet);
   }
 
-  public Object getDataSet( LeanComponent component, String key ) {
-    Map<String, Object> dataSetMap = componentDataSetMap.get( component.getName() );
-    if ( dataSetMap == null ) {
+  public Object getDataSet(LeanComponent component, String key) {
+    Map<String, Object> dataSetMap = componentDataSetMap.get(component.getName());
+    if (dataSetMap == null) {
       return null;
     }
-    return dataSetMap.get( key );
+    return dataSetMap.get(key);
   }
 
-  public LeanRenderPage addNewPage( LeanPage page, int pageNumber ) {
-    LeanRenderPage renderPage = new LeanRenderPage( page );
-    renderPage.setPageNumber( pageNumber );
-    renderPages.add( renderPage );
-    return renderPage;
+  public LeanRenderPage addNewPage(LeanPage page, LeanRenderPage currentRenderPage) {
+
+    int pageNumber;
+    if (currentRenderPage == null) {
+      pageNumber = page.getFirstPageNumber();
+    } else {
+      pageNumber = currentRenderPage.getPageNumber() + 1;
+    }
+    // If we're dealing with a header or a footer we obviously don't want to add extra render pages
+    //
+    if (page.isHeader() || page.isFooter()) {
+      if (currentRenderPage == null) {
+        LeanRenderPage renderPage = new LeanRenderPage(page);
+        renderPage.setPageNumber(pageNumber);
+        renderPages.add(renderPage);
+        return renderPage;
+      } else {
+        return currentRenderPage;
+      }
+    } else {
+      // Regular rendering page: always create a new one...
+      //
+      LeanRenderPage renderPage = new LeanRenderPage(page);
+      renderPage.setPageNumber(pageNumber);
+      renderPages.add(renderPage);
+      return renderPage;
+    }
   }
 
-  public LeanRenderPage getCurrentRenderPage( LeanPage page ) {
+  public LeanRenderPage getCurrentRenderPage(LeanPage page) {
     LeanRenderPage renderPage = null;
 
-    for ( int i = renderPages.size() - 1; i >= 0; i-- ) {
-      if ( renderPages.get( i ).getPage().getPageNumber() == page.getPageNumber() ) {
-        renderPage = renderPages.get( i );
+    for (int i = renderPages.size() - 1; i >= 0; i--) {
+      boolean found = false;
+      if (page.isHeader() && renderPages.get(i).getPage().isHeader()) {
+        found = true;
+      } else if (page.isFooter() && renderPages.get(i).getPage().isFooter()) {
+        found = true;
+      } else if (renderPages.get(i).getPage().getPageNumber() == page.getPageNumber()) {
+        found = true;
+      }
+      if (found) {
+        renderPage = renderPages.get(i);
         break;
       }
     }
 
     // No page with this number found, create a new one...
     //
-    if ( renderPage == null ) {
-      renderPage = addNewPage( page, 1 );
+    if (renderPage == null) {
+      renderPage = addNewPage(page, null);
     }
 
     return renderPage;
   }
 
-  public void replaceGCForHeaderFooter( HopSvgGraphics2D gc ) throws LeanException {
+  public void replaceGCForHeaderFooter(HopSvgGraphics2D gc) throws LeanException {
 
-    if ( renderPages.size() > 1 ) {
-      throw new LeanException( "Multi-page headers or footers are not supported!" );
+    if (renderPages.size() > 1) {
+      throw new LeanException("Multi-page headers or footers are not supported!");
     }
-    if ( renderPages.isEmpty() ) {
+    if (renderPages.isEmpty()) {
       return;
     }
 
-    LeanRenderPage renderPage = renderPages.get( 0 );
-    renderPage.setGc( gc );
+    LeanRenderPage renderPage = renderPages.get(0);
+    renderPage.setGc(gc);
   }
 
-  public void replaceDrawnItemsForHeaderFooter( List<DrawnItem> drawnItems ) throws LeanException {
-    if ( renderPages.size() > 1 ) {
-      throw new LeanException( "Multi-page headers or footers are not supported!" );
+  public void replaceDrawnItemsForHeaderFooter(List<DrawnItem> drawnItems) throws LeanException {
+    if (renderPages.size() > 1) {
+      throw new LeanException("Multi-page headers or footers are not supported!");
     }
-    if ( renderPages.isEmpty() ) {
+    if (renderPages.isEmpty()) {
       return;
     }
 
-    LeanRenderPage renderPage = renderPages.get( 0 );
-    renderPage.setDrawnItems( drawnItems );
+    LeanRenderPage renderPage = renderPages.get(0);
+    renderPage.setDrawnItems(drawnItems);
   }
 
-  /**
-   * Set the page numbers on the render pages
-   */
+  /** Set the page numbers on the render pages */
   public void setRenderPageNumbers() {
-    for ( int i = 0; i < renderPages.size(); i++ ) {
-      renderPages.get( i ).setPageNumber( i + 1 );
+    for (int i = 0; i < renderPages.size(); i++) {
+      renderPages.get(i).setPageNumber(i + 1);
     }
   }
 
+  public void saveSvgPages(
+      String baseFolder,
+      String baseName,
+      boolean convertToPdfs,
+      boolean mergePdfs,
+      boolean splitFolders)
+      throws LeanException {
 
-  public void saveSvgPages( String baseFolder, String baseName, boolean convertToPdfs, boolean mergePdfs, boolean splitFolders ) throws LeanException {
-
-    if ( splitFolders ) {
-      File baseParent = new File( baseFolder );
-      if ( !baseParent.exists() ) {
+    if (splitFolders) {
+      File baseParent = new File(baseFolder);
+      if (!baseParent.exists()) {
         baseParent.mkdirs();
       }
-      File svgsFolder = new File( baseParent.toString() + File.separator + "svgs" );
-      if ( !svgsFolder.exists() ) {
+      File svgsFolder = new File(baseParent.toString() + File.separator + "svgs");
+      if (!svgsFolder.exists()) {
         svgsFolder.mkdirs();
       }
-      File pdfsFolder = new File( baseParent.toString() + File.separator + "pdfs" );
-      if ( !pdfsFolder.exists() ) {
+      File pdfsFolder = new File(baseParent.toString() + File.separator + "pdfs");
+      if (!pdfsFolder.exists()) {
         pdfsFolder.mkdirs();
       }
-      File pdfFolder = new File( baseParent.toString() + File.separator + "pdf" );
-      if ( !pdfFolder.exists() ) {
+      File pdfFolder = new File(baseParent.toString() + File.separator + "pdf");
+      if (!pdfFolder.exists()) {
         pdfFolder.mkdirs();
       }
     }
 
     PDFMergerUtility mergerUtility = null;
-    if ( convertToPdfs && mergePdfs ) {
+    if (convertToPdfs && mergePdfs) {
       // For performance reasons
-      System.setProperty( "sun.java2d.cmm", "sun.java2d.cmm.kcms.KcmsServiceProvider" );
+      System.setProperty("sun.java2d.cmm", "sun.java2d.cmm.kcms.KcmsServiceProvider");
       mergerUtility = new PDFMergerUtility();
     }
     List<String> svgFilenames = new ArrayList<>();
     List<String> pdfFilenames = new ArrayList<>();
 
-    for ( int i = 0; i < renderPages.size(); i++ ) {
-      LeanRenderPage renderPage = renderPages.get( i );
+    for (int i = 0; i < renderPages.size(); i++) {
+      LeanRenderPage renderPage = renderPages.get(i);
 
       String svgFilename;
       String pdfFilename;
-      if ( splitFolders ) {
-        svgFilename = baseFolder + File.separator + "svgs" + File.separator + baseName + "_" + ( i + 1 ) + ".svg";
-        pdfFilename = baseFolder + File.separator + "pdfs" + File.separator + baseName + "_" + ( i + 1 ) + ".pdf";
+      if (splitFolders) {
+        svgFilename =
+            baseFolder
+                + File.separator
+                + "svgs"
+                + File.separator
+                + baseName
+                + "_"
+                + (i + 1)
+                + ".svg";
+        pdfFilename =
+            baseFolder
+                + File.separator
+                + "pdfs"
+                + File.separator
+                + baseName
+                + "_"
+                + (i + 1)
+                + ".pdf";
       } else {
-        svgFilename = baseFolder + File.separator + baseName + "_" + ( i + 1 ) + ".svg";
-        pdfFilename = baseFolder + File.separator + baseName + "_" + ( i + 1 ) + ".pdf";
+        svgFilename = baseFolder + File.separator + baseName + "_" + (i + 1) + ".svg";
+        pdfFilename = baseFolder + File.separator + baseName + "_" + (i + 1) + ".pdf";
       }
 
-      svgFilenames.add( svgFilename );
-      pdfFilenames.add( pdfFilename );
+      svgFilenames.add(svgFilename);
+      pdfFilenames.add(pdfFilename);
 
       try {
-        FileOutputStream stream = new FileOutputStream( svgFilename );
+        FileOutputStream stream = new FileOutputStream(svgFilename);
         try {
-          stream.write( renderPage.getSvgXml().getBytes( "UTF-8" ) );
+          stream.write(renderPage.getSvgXml().getBytes("UTF-8"));
           stream.flush();
-        } catch ( Exception e ) {
-          throw new LeanException( "Unable to convert rendering to SVG XML", e );
+        } catch (Exception e) {
+          throw new LeanException("Unable to convert rendering to SVG XML", e);
         } finally {
           try {
             stream.close();
-          } catch ( IOException e ) {
-            throw new LeanException( "Unable to close file", e );
+          } catch (IOException e) {
+            throw new LeanException("Unable to close file", e);
           }
         }
 
         // Save file to PDF as well...
         //
-        if ( convertToPdfs ) {
+        if (convertToPdfs) {
           try {
 
-            FileInputStream svgInputStream = new FileInputStream( svgFilename );
-            TranscoderInput input = new TranscoderInput( svgInputStream );
-            TranscoderOutput output = new TranscoderOutput( new FileOutputStream( pdfFilename ) );
+            FileInputStream svgInputStream = new FileInputStream(svgFilename);
+            TranscoderInput input = new TranscoderInput(svgInputStream);
+            TranscoderOutput output = new TranscoderOutput(new FileOutputStream(pdfFilename));
             PDFTranscoder transcoder = new PDFTranscoder();
-            transcoder.transcode( input, output );
+            transcoder.transcode(input, output);
 
-          } catch ( Exception e ) {
-            throw new LeanException( "Unable to transcode SVG '" + svgFilename + "' to PDF '" + pdfFilename, e );
+          } catch (Exception e) {
+            throw new LeanException(
+                "Unable to transcode SVG '" + svgFilename + "' to PDF '" + pdfFilename, e);
           }
 
-          if ( mergePdfs ) {
-            mergerUtility.addSource( pdfFilename );
+          if (mergePdfs) {
+            mergerUtility.addSource(pdfFilename);
           }
         }
 
-      } catch ( IOException e ) {
-        throw new LeanException( "Unable to write to file " + svgFilename, e );
+      } catch (IOException e) {
+        throw new LeanException("Unable to write to file " + svgFilename, e);
       }
     }
 
-    if ( convertToPdfs && mergePdfs ) {
+    if (convertToPdfs && mergePdfs) {
       String pdfFilename;
-      if ( splitFolders ) {
+      if (splitFolders) {
         pdfFilename = baseFolder + File.separator + "pdf" + File.separator + baseName + ".pdf";
       } else {
         pdfFilename = baseFolder + File.separator + baseName + ".pdf";
       }
-      mergerUtility.setDestinationFileName( pdfFilename );
+      mergerUtility.setDestinationFileName(pdfFilename);
       try {
-        mergerUtility.mergeDocuments( MemoryUsageSetting.setupMainMemoryOnly() );
-      } catch ( IOException e ) {
-        throw new LeanException( "Error merging PDF documents into " + pdfFilename, e );
+        mergerUtility.mergeDocuments(MemoryUsageSetting.setupMainMemoryOnly());
+      } catch (IOException e) {
+        throw new LeanException("Error merging PDF documents into " + pdfFilename, e);
       }
     }
   }
-
 
   /**
    * Gets renderPages
@@ -244,10 +291,8 @@ public class LeanLayoutResults {
     return renderPages;
   }
 
-  /**
-   * @param renderPages The renderPages to set
-   */
-  public void setRenderPages( List<LeanRenderPage> renderPages ) {
+  /** @param renderPages The renderPages to set */
+  public void setRenderPages(List<LeanRenderPage> renderPages) {
     this.renderPages = renderPages;
   }
 
@@ -260,10 +305,8 @@ public class LeanLayoutResults {
     return log;
   }
 
-  /**
-   * @param log The log to set
-   */
-  public void setLog( ILogChannel log ) {
+  /** @param log The log to set */
+  public void setLog(ILogChannel log) {
     this.log = log;
   }
 
@@ -276,11 +319,8 @@ public class LeanLayoutResults {
     return id;
   }
 
-  /**
-   * @param id The id to set
-   */
-  public void setId( String id ) {
+  /** @param id The id to set */
+  public void setId(String id) {
     this.id = id;
   }
 }
-

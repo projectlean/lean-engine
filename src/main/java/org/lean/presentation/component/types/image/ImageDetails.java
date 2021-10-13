@@ -10,6 +10,5 @@ public class ImageDetails {
   public LeanSize imageSize;
   public LeanSize originalSize;
 
-  public ImageDetails() {
-  }
+  public ImageDetails() {}
 }

@@ -24,11 +24,11 @@ public class SimpleRenderContext implements IRenderContext {
     themeColorIndexMap = new HashMap<>();
   }
 
-  public SimpleRenderContext( int width, int height, List<LeanTheme> themes ) {
-    this(new LeanSize( width, height ), themes);
+  public SimpleRenderContext(int width, int height, List<LeanTheme> themes) {
+    this(new LeanSize(width, height), themes);
   }
 
-  public SimpleRenderContext( LeanSize canvasSize, List<LeanTheme> themes ) {
+  public SimpleRenderContext(LeanSize canvasSize, List<LeanTheme> themes) {
     this();
     this.canvasSize = canvasSize;
     this.themes = themes;
@@ -40,27 +40,28 @@ public class SimpleRenderContext implements IRenderContext {
    * @param themeName the scheme name to look for
    * @return The theme scheme or null if nothing could be found
    */
-  public LeanTheme lookupTheme( String themeName ) {
-    for ( LeanTheme theme : themes ) {
-      if (theme.getName().equalsIgnoreCase( themeName )) {
+  public LeanTheme lookupTheme(String themeName) {
+    for (LeanTheme theme : themes) {
+      if (theme.getName().equalsIgnoreCase(themeName)) {
         return theme;
       }
     }
     return null;
   }
 
-  @Override public LeanColorRGB getStableColor( String themeName, String value ) {
+  @Override
+  public LeanColorRGB getStableColor(String themeName, String value) {
 
-    LeanTheme theme = lookupTheme( themeName );
-    if ( theme == null ) {
+    LeanTheme theme = lookupTheme(themeName);
+    if (theme == null) {
       return null;
     }
 
     // Is the value found?
     //
     int colorIndex;
-    Map<String, Integer> valueColorMap = themeValueColorMap.get( themeName );
-    if ( valueColorMap == null ) {
+    Map<String, Integer> valueColorMap = themeValueColorMap.get(themeName);
+    if (valueColorMap == null) {
 
       // First usage of this theme in the map.
       //
@@ -70,16 +71,17 @@ public class SimpleRenderContext implements IRenderContext {
     } else {
       // Get the index of the last color used.
       //
-      Integer index = valueColorMap.get( value );
-      if (index==null) {
+      Integer index = valueColorMap.get(value);
+      if (index == null) {
         // First time we see this value...
         // Get the last index used...
         //
         index = themeColorIndexMap.get(themeName);
-        if (index==null) {
-          throw new RuntimeException( "Index out of sync for theme '"+themeName+"' and value: '"+value+"'");
+        if (index == null) {
+          throw new RuntimeException(
+              "Index out of sync for theme '" + themeName + "' and value: '" + value + "'");
         }
-        colorIndex = index+1;
+        colorIndex = index + 1;
       } else {
         // We recognized the color, return the same index...
         //
@@ -87,8 +89,8 @@ public class SimpleRenderContext implements IRenderContext {
       }
     }
 
-    if (colorIndex>=theme.getColors().size()) {
-      colorIndex=0;
+    if (colorIndex >= theme.getColors().size()) {
+      colorIndex = 0;
     }
     LeanColorRGB color = theme.getColors().get(colorIndex);
 
@@ -103,8 +105,6 @@ public class SimpleRenderContext implements IRenderContext {
     return color;
   }
 
-
-
   /**
    * Gets canvasSize
    *
@@ -114,10 +114,8 @@ public class SimpleRenderContext implements IRenderContext {
     return canvasSize;
   }
 
-  /**
-   * @param canvasSize The canvasSize to set
-   */
-  public void setCanvasSize( LeanSize canvasSize ) {
+  /** @param canvasSize The canvasSize to set */
+  public void setCanvasSize(LeanSize canvasSize) {
     this.canvasSize = canvasSize;
   }
 
@@ -130,10 +128,8 @@ public class SimpleRenderContext implements IRenderContext {
     return themes;
   }
 
-  /**
-   * @param themes The themes to set
-   */
-  public void setThemes( List<LeanTheme> themes ) {
+  /** @param themes The themes to set */
+  public void setThemes(List<LeanTheme> themes) {
     this.themes = themes;
   }
 }

@@ -7,21 +7,9 @@ import java.util.List;
 
 public class LeanSortMethod {
 
-  public enum Type {
-    NATIVE_VALUE,
-    STRING_ALPHA,
-    STRING_NUMERIC,
-    STRING_CUSTOM;
-  }
-
-  @HopMetadataProperty
-  private Type type;
-
-  @HopMetadataProperty
-  private boolean ascending;
-
-  @HopMetadataProperty
-  private List<String> customOrder;
+  @HopMetadataProperty private Type type;
+  @HopMetadataProperty private boolean ascending;
+  @HopMetadataProperty private List<String> customOrder;
 
   public LeanSortMethod() {
     type = Type.NATIVE_VALUE;
@@ -29,24 +17,24 @@ public class LeanSortMethod {
     customOrder = new ArrayList<>();
   }
 
-  public LeanSortMethod( Type type, boolean ascending ) {
+  public LeanSortMethod(Type type, boolean ascending) {
     this();
     this.type = type;
     this.ascending = ascending;
   }
 
-  public LeanSortMethod( Type type, boolean ascending, List<String> customOrder ) {
+  public LeanSortMethod(Type type, boolean ascending, List<String> customOrder) {
     this.type = type;
     this.ascending = ascending;
     this.customOrder = customOrder;
   }
 
-  public LeanSortMethod( LeanSortMethod m ) {
+  public LeanSortMethod(LeanSortMethod m) {
     this();
     this.type = m.type;
     this.ascending = m.ascending;
-    for ( String s : m.customOrder ) {
-      this.customOrder.add( s );
+    for (String s : m.customOrder) {
+      this.customOrder.add(s);
     }
   }
 
@@ -59,10 +47,8 @@ public class LeanSortMethod {
     return type;
   }
 
-  /**
-   * @param type The type to set
-   */
-  public void setType( Type type ) {
+  /** @param type The type to set */
+  public void setType(Type type) {
     this.type = type;
   }
 
@@ -75,10 +61,8 @@ public class LeanSortMethod {
     return ascending;
   }
 
-  /**
-   * @param ascending The ascending to set
-   */
-  public void setAscending( boolean ascending ) {
+  /** @param ascending The ascending to set */
+  public void setAscending(boolean ascending) {
     this.ascending = ascending;
   }
 
@@ -91,10 +75,15 @@ public class LeanSortMethod {
     return customOrder;
   }
 
-  /**
-   * @param customOrder The customOrder to set
-   */
-  public void setCustomOrder( List<String> customOrder ) {
+  /** @param customOrder The customOrder to set */
+  public void setCustomOrder(List<String> customOrder) {
     this.customOrder = customOrder;
+  }
+
+  public enum Type {
+    NATIVE_VALUE,
+    STRING_ALPHA,
+    STRING_NUMERIC,
+    STRING_CUSTOM;
   }
 }

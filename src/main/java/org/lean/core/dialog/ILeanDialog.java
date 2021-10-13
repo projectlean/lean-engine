@@ -1,4 +1,3 @@
 package org.lean.core.dialog;
 
-public class ILeanDialog {
-}
+public class ILeanDialog {}

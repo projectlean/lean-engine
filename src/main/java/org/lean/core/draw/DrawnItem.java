@@ -20,25 +20,6 @@ public class DrawnItem {
   private LeanGeometry geometry;
   private DrawnContext context;
 
-  public enum DrawnItemType {
-    Component,
-    ComponentItem,
-  }
-
-  public enum Category {
-    ComponentArea,
-    Label,
-    Cell,
-    Header,
-    Title,
-    LegendTitle,
-    LegendEntry,
-    XAxisLabel,
-    YAxisLabel,
-    ChartSeriesLabel,
-    ChartLabel,
-  }
-
   public DrawnItem() {}
 
   public DrawnItem(
@@ -107,25 +88,32 @@ public class DrawnItem {
     return string;
   }
 
-  @Override public boolean equals( Object o ) {
-    if ( this == o ) {
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
       return true;
     }
-    if ( o == null || getClass() != o.getClass() ) {
+    if (o == null || getClass() != o.getClass()) {
       return false;
     }
     DrawnItem drawnItem = (DrawnItem) o;
-    return partNumber == drawnItem.partNumber && rowNr == drawnItem.rowNr && colNr == drawnItem.colNr && Objects.equals( componentName, drawnItem.componentName ) && Objects
-      .equals( componentPluginId, drawnItem.componentPluginId ) && type == drawnItem.type && Objects.equals( category, drawnItem.category );
+    return partNumber == drawnItem.partNumber
+        && rowNr == drawnItem.rowNr
+        && colNr == drawnItem.colNr
+        && Objects.equals(componentName, drawnItem.componentName)
+        && Objects.equals(componentPluginId, drawnItem.componentPluginId)
+        && type == drawnItem.type
+        && Objects.equals(category, drawnItem.category);
   }
 
-  @Override public int hashCode() {
-    return Objects.hash( componentName, componentPluginId, partNumber, type, category, rowNr, colNr );
+  @Override
+  public int hashCode() {
+    return Objects.hash(componentName, componentPluginId, partNumber, type, category, rowNr, colNr);
   }
 
   public String toJsonString() throws JsonProcessingException {
     ObjectMapper objectMapper = new ObjectMapper();
-    return objectMapper.writeValueAsString( this );
+    return objectMapper.writeValueAsString(this);
   }
 
   /**
@@ -193,10 +181,8 @@ public class DrawnItem {
     return category;
   }
 
-  /**
-   * @param category The category to set
-   */
-  public void setCategory( String category ) {
+  /** @param category The category to set */
+  public void setCategory(String category) {
     this.category = category;
   }
 
@@ -254,5 +240,24 @@ public class DrawnItem {
   /** @param context The context to set */
   public void setContext(DrawnContext context) {
     this.context = context;
+  }
+
+  public enum DrawnItemType {
+    Component,
+    ComponentItem,
+  }
+
+  public enum Category {
+    ComponentArea,
+    Label,
+    Cell,
+    Header,
+    Title,
+    LegendTitle,
+    LegendEntry,
+    XAxisLabel,
+    YAxisLabel,
+    ChartSeriesLabel,
+    ChartLabel,
   }
 }

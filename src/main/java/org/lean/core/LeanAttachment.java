@@ -2,26 +2,13 @@ package org.lean.core;
 
 import org.apache.hop.metadata.api.HopMetadataProperty;
 
-/**
- * To attach the location of one component to another
- */
+/** To attach the location of one component to another */
 public class LeanAttachment {
 
-  public enum Alignment {
-    DEFAULT, TOP, BOTTOM, LEFT, RIGHT, CENTER,
-  }
-
-  @HopMetadataProperty
-  private String componentName;
-
-  @HopMetadataProperty
-  private int percentage;
-
-  @HopMetadataProperty
-  private int offset;
-
-  @HopMetadataProperty
-  private Alignment alignment;
+  @HopMetadataProperty private String componentName;
+  @HopMetadataProperty private int percentage;
+  @HopMetadataProperty private int offset;
+  @HopMetadataProperty private Alignment alignment;
 
   public LeanAttachment() {
     componentName = null;
@@ -30,31 +17,40 @@ public class LeanAttachment {
     alignment = Alignment.DEFAULT;
   }
 
-  public LeanAttachment( int percentage, int offset ) {
+  public LeanAttachment(int percentage, int offset) {
     this.percentage = percentage;
     this.offset = offset;
     alignment = Alignment.DEFAULT;
   }
 
-  public LeanAttachment( String componentName, int percentage, int offset ) {
+  public LeanAttachment(String componentName, int percentage, int offset) {
     this.componentName = componentName;
     this.percentage = percentage;
     this.offset = offset;
     alignment = Alignment.DEFAULT;
   }
 
-  public LeanAttachment( String componentName, int percentage, int offset, Alignment alignment ) {
+  public LeanAttachment(String componentName, int percentage, int offset, Alignment alignment) {
     this.componentName = componentName;
     this.percentage = percentage;
     this.offset = offset;
     this.alignment = alignment;
   }
 
-  public LeanAttachment( LeanAttachment attachment ) {
+  public LeanAttachment(LeanAttachment attachment) {
     this.componentName = attachment.componentName;
     this.percentage = attachment.percentage;
     this.offset = attachment.offset;
     this.alignment = attachment.alignment;
+  }
+
+  @Override public String toString() {
+    return "LeanAttachment{" +
+      "componentName='" + componentName + '\'' +
+      ", percentage=" + percentage +
+      ", offset=" + offset +
+      ", alignment=" + alignment +
+      '}';
   }
 
   /**
@@ -66,10 +62,8 @@ public class LeanAttachment {
     return componentName;
   }
 
-  /**
-   * @param componentName The componentName to set
-   */
-  public void setComponentName( String componentName ) {
+  /** @param componentName The componentName to set */
+  public void setComponentName(String componentName) {
     this.componentName = componentName;
   }
 
@@ -82,10 +76,8 @@ public class LeanAttachment {
     return percentage;
   }
 
-  /**
-   * @param percentage The percentage to set
-   */
-  public void setPercentage( int percentage ) {
+  /** @param percentage The percentage to set */
+  public void setPercentage(int percentage) {
     this.percentage = percentage;
   }
 
@@ -98,10 +90,8 @@ public class LeanAttachment {
     return offset;
   }
 
-  /**
-   * @param offset The offset to set
-   */
-  public void setOffset( int offset ) {
+  /** @param offset The offset to set */
+  public void setOffset(int offset) {
     this.offset = offset;
   }
 
@@ -114,10 +104,17 @@ public class LeanAttachment {
     return alignment;
   }
 
-  /**
-   * @param alignment The alignment to set
-   */
-  public void setAlignment( Alignment alignment ) {
+  /** @param alignment The alignment to set */
+  public void setAlignment(Alignment alignment) {
     this.alignment = alignment;
+  }
+
+  public enum Alignment {
+    DEFAULT,
+    TOP,
+    BOTTOM,
+    LEFT,
+    RIGHT,
+    CENTER,
   }
 }

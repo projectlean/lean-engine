@@ -1,9 +1,9 @@
 package org.lean.core.log;
 
-import org.lean.core.exception.LeanException;
 import org.apache.hop.core.logging.ILogChannel;
 import org.apache.hop.core.logging.MetricsRegistry;
 import org.apache.hop.core.metrics.IMetricsSnapshot;
+import org.lean.core.exception.LeanException;
 
 import java.util.Queue;
 import java.util.concurrent.atomic.AtomicLong;
@@ -21,48 +21,69 @@ public class LeanMetricsUtil {
 
   /**
    * Return the time difference in miliseconds between the end and the start
+   *
    * @param log
    * @param startMetricsCode
    * @param finishMetricsCode
-   * @throws LeanException in case the logChannel, start or end code couldn't be found in the registry
+   * @throws LeanException in case the logChannel, start or end code couldn't be found in the
+   *     registry
    * @return
    */
-  public static long getLastDuration( ILogChannel log, String startMetricsCode, String finishMetricsCode ) throws LeanException {
+  public static long getLastDuration(
+      ILogChannel log, String startMetricsCode, String finishMetricsCode) throws LeanException {
 
     String logChannelId = log.getLogChannelId();
 
     MetricsRegistry registry = MetricsRegistry.getInstance();
 
-    final AtomicLong startTime = new AtomicLong( -1L );
-    final AtomicLong endTime = new AtomicLong( -1L );
+    final AtomicLong startTime = new AtomicLong(-1L);
+    final AtomicLong endTime = new AtomicLong(-1L);
 
-    Queue<IMetricsSnapshot> snapshotList = registry.getSnapshotList( logChannelId );
-    if (snapshotList==null) {
-      throw new LeanException( "Unable to find metrics snapshot list for log channel ID "+logChannelId );
+    Queue<IMetricsSnapshot> snapshotList = registry.getSnapshotList(logChannelId);
+    if (snapshotList == null) {
+      throw new LeanException(
+          "Unable to find metrics snapshot list for log channel ID " + logChannelId);
     }
 
-    long duration = snapshotList.stream().filter( snapshot -> snapshot.getKey().equals( startMetricsCode ) || snapshot.getKey().equals( finishMetricsCode ) )
-      .mapToLong( snapshot->{ return snapshot.getDate().getTime(); } )
-      .reduce( 0, (a, b) -> Math.abs(a-b) );
+    long duration =
+        snapshotList.stream()
+            .filter(
+                snapshot ->
+                    snapshot.getKey().equals(startMetricsCode)
+                        || snapshot.getKey().equals(finishMetricsCode))
+            .mapToLong(
+                snapshot -> {
+                  return snapshot.getDate().getTime();
+                })
+            .reduce(0, (a, b) -> Math.abs(a - b));
 
     // log.logError("Alternative duration : "+duration);
 
-      snapshotList.stream().forEach( snapshot -> {
-        if (snapshot.getKey().equals(startMetricsCode)) {
-          startTime.set( snapshot.getDate().getTime() );
-        }
-        if (snapshot.getKey().equals(finishMetricsCode)) {
-          endTime.set( snapshot.getDate().getTime() );
-        }
-      } );
+    snapshotList.stream()
+        .forEach(
+            snapshot -> {
+              if (snapshot.getKey().equals(startMetricsCode)) {
+                startTime.set(snapshot.getDate().getTime());
+              }
+              if (snapshot.getKey().equals(finishMetricsCode)) {
+                endTime.set(snapshot.getDate().getTime());
+              }
+            });
 
-    if (startTime.get()<0) {
-      throw new LeanException( "Unable to find start metrics for code '"+startMetricsCode+"' in log channel with ID "+logChannelId );
+    if (startTime.get() < 0) {
+      throw new LeanException(
+          "Unable to find start metrics for code '"
+              + startMetricsCode
+              + "' in log channel with ID "
+              + logChannelId);
     }
-    if (endTime.get()<0) {
-      throw new LeanException( "Unable to find end metrics for code '"+finishMetricsCode+"' in log channel with ID "+logChannelId );
+    if (endTime.get() < 0) {
+      throw new LeanException(
+          "Unable to find end metrics for code '"
+              + finishMetricsCode
+              + "' in log channel with ID "
+              + logChannelId);
     }
-    return Math.abs( endTime.get() - startTime.get());
+    return Math.abs(endTime.get() - startTime.get());
   }
-
 }

@@ -14,7 +14,7 @@ public class LeanDataSet {
     rows = new ArrayList<>();
   }
 
-  public LeanDataSet( IRowMeta rowMeta, List<Object[]> rows ) {
+  public LeanDataSet(IRowMeta rowMeta, List<Object[]> rows) {
     this.rowMeta = rowMeta;
     this.rows = rows;
   }
@@ -28,10 +28,8 @@ public class LeanDataSet {
     return rowMeta;
   }
 
-  /**
-   * @param rowMeta The rowMeta to set
-   */
-  public void setRowMeta( IRowMeta rowMeta ) {
+  /** @param rowMeta The rowMeta to set */
+  public void setRowMeta(IRowMeta rowMeta) {
     this.rowMeta = rowMeta;
   }
 
@@ -44,10 +42,8 @@ public class LeanDataSet {
     return rows;
   }
 
-  /**
-   * @param rows The rows to set
-   */
-  public void setRows( List<Object[]> rows ) {
+  /** @param rows The rows to set */
+  public void setRows(List<Object[]> rows) {
     this.rows = rows;
   }
 }

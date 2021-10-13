@@ -38,9 +38,8 @@ import java.io.OutputStream;
 @HopServerServlet(id = "pipelineImage", name = "Generate a PNG image of a pipeline")
 public class GetPresentationSvgServlet extends HttpServlet {
 
-  private static final long serialVersionUID = -4365372274638005929L;
-
   public static final String CONTEXT_PATH = "/lean/presentationSvg";
+  private static final long serialVersionUID = -4365372274638005929L;
 
   public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
     if (!request.getServletPath().startsWith(CONTEXT_PATH)) {

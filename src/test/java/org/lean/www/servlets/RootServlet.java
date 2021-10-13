@@ -31,10 +31,9 @@ import java.io.PrintWriter;
 import java.nio.file.Files;
 
 public class RootServlet extends HttpServlet {
-  private static final Class<?> PKG = RootServlet.class; // Needed by Translator
-
-  private static final long serialVersionUID = 3634806745372015720L;
   public static final String CONTEXT_PATH = "/lean/view";
+  private static final Class<?> PKG = RootServlet.class; // Needed by Translator
+  private static final long serialVersionUID = 3634806745372015720L;
 
   public RootServlet() {}
 

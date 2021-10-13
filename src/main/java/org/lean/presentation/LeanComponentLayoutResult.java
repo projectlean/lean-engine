@@ -9,42 +9,29 @@ import org.lean.presentation.page.LeanPage;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * The result of doing a layout on a component with all the data read
- */
+/** The result of doing a layout on a component with all the data read */
 public class LeanComponentLayoutResult {
-  /**
-   * The component for which we did the layout
-   */
+  /** The component for which we did the layout */
   private LeanComponent component;
 
-  /**
-   * The part number for components split into multiple parts over multiple pages
-   */
+  /** The part number for components split into multiple parts over multiple pages */
   private int partNumber;
 
-  /**
-   * The page from which this result originally came
-   */
+  /** The page from which this result originally came */
   private LeanPage sourcePage;
 
-  /**
-   * The page on which we render
-   */
+  /** The page on which we render */
   private LeanRenderPage renderPage;
 
-  /**
-   * All the data read by the component, cached in memory
-   */
+  /** All the data read by the component, cached in memory */
   private LeanDataSet dataSet;
 
-  /**
-   * The resulting location and imageSize after the layout
-   */
+  /** The resulting location and imageSize after the layout */
   private LeanGeometry geometry;
 
   /**
-   * All extra data a component might want to store between doing a layout and the actual rendering of the component
+   * All extra data a component might want to store between doing a layout and the actual rendering
+   * of the component
    */
   private Map<String, Object> dataMap;
 
@@ -52,7 +39,7 @@ public class LeanComponentLayoutResult {
     dataMap = new HashMap<>();
   }
 
-  public LeanComponentLayoutResult( LeanComponentLayoutResult layoutResult ) {
+  public LeanComponentLayoutResult(LeanComponentLayoutResult layoutResult) {
     this.component = layoutResult.component;
     this.partNumber = layoutResult.partNumber;
     this.sourcePage = layoutResult.sourcePage;
@@ -71,10 +58,8 @@ public class LeanComponentLayoutResult {
     return component;
   }
 
-  /**
-   * @param component The component to set
-   */
-  public void setComponent( LeanComponent component ) {
+  /** @param component The component to set */
+  public void setComponent(LeanComponent component) {
     this.component = component;
   }
 
@@ -87,10 +72,8 @@ public class LeanComponentLayoutResult {
     return partNumber;
   }
 
-  /**
-   * @param partNumber The partNumber to set
-   */
-  public void setPartNumber( int partNumber ) {
+  /** @param partNumber The partNumber to set */
+  public void setPartNumber(int partNumber) {
     this.partNumber = partNumber;
   }
 
@@ -103,10 +86,8 @@ public class LeanComponentLayoutResult {
     return sourcePage;
   }
 
-  /**
-   * @param sourcePage The sourcePage to set
-   */
-  public void setSourcePage( LeanPage sourcePage ) {
+  /** @param sourcePage The sourcePage to set */
+  public void setSourcePage(LeanPage sourcePage) {
     this.sourcePage = sourcePage;
   }
 
@@ -119,10 +100,8 @@ public class LeanComponentLayoutResult {
     return dataSet;
   }
 
-  /**
-   * @param dataSet The dataSet to set
-   */
-  public void setDataSet( LeanDataSet dataSet ) {
+  /** @param dataSet The dataSet to set */
+  public void setDataSet(LeanDataSet dataSet) {
     this.dataSet = dataSet;
   }
 
@@ -135,10 +114,8 @@ public class LeanComponentLayoutResult {
     return geometry;
   }
 
-  /**
-   * @param geometry The geometry to set
-   */
-  public void setGeometry( LeanGeometry geometry ) {
+  /** @param geometry The geometry to set */
+  public void setGeometry(LeanGeometry geometry) {
     this.geometry = geometry;
   }
 
@@ -151,10 +128,8 @@ public class LeanComponentLayoutResult {
     return dataMap;
   }
 
-  /**
-   * @param dataMap The dataMap to set
-   */
-  public void setDataMap( Map<String, Object> dataMap ) {
+  /** @param dataMap The dataMap to set */
+  public void setDataMap(Map<String, Object> dataMap) {
     this.dataMap = dataMap;
   }
 
@@ -167,10 +142,8 @@ public class LeanComponentLayoutResult {
     return renderPage;
   }
 
-  /**
-   * @param renderPage The renderPage to set
-   */
-  public void setRenderPage( LeanRenderPage renderPage ) {
+  /** @param renderPage The renderPage to set */
+  public void setRenderPage(LeanRenderPage renderPage) {
     this.renderPage = renderPage;
   }
 }

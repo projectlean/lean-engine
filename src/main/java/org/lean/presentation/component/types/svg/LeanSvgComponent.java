@@ -2,13 +2,13 @@ package org.lean.presentation.component.types.svg;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import org.apache.commons.lang.StringUtils;
-import org.apache.hop.core.Const;
 import org.apache.hop.core.svg.HopSvgGraphics2D;
 import org.apache.hop.core.svg.SvgCache;
 import org.apache.hop.core.svg.SvgCacheEntry;
 import org.apache.hop.core.svg.SvgFile;
 import org.apache.hop.core.variables.IVariables;
 import org.apache.hop.metadata.api.HopMetadataProperty;
+import org.lean.core.LeanAttachment;
 import org.lean.core.LeanGeometry;
 import org.lean.core.LeanPosition;
 import org.lean.core.LeanSize;
@@ -20,52 +20,56 @@ import org.lean.presentation.component.type.ILeanComponent;
 import org.lean.presentation.component.type.LeanBaseComponent;
 import org.lean.presentation.component.type.LeanComponentPlugin;
 import org.lean.presentation.datacontext.IDataContext;
+import org.lean.presentation.layout.LeanLayout;
 import org.lean.presentation.layout.LeanLayoutResults;
 import org.lean.presentation.layout.LeanRenderPage;
 import org.lean.presentation.page.LeanPage;
 import org.lean.render.IRenderContext;
 import org.w3c.dom.Node;
 
-@JsonDeserialize( as = LeanSvgComponent.class )
-@LeanComponentPlugin(
-  id= "LeanSvgComponent",
-  name="SVG",
-  description = "An SVG component"
-)
+@JsonDeserialize(as = LeanSvgComponent.class)
+@LeanComponentPlugin(id = "LeanSvgComponent", name = "SVG", description = "An SVG component")
 public class LeanSvgComponent extends LeanBaseComponent implements ILeanComponent {
 
   public static final String DATA_SVG_DETAILS = "SVG Details";
 
-  @HopMetadataProperty
-  private String filename;
+  @HopMetadataProperty private String filename;
 
-  @HopMetadataProperty
-  private String scalePercent;
+  @HopMetadataProperty private ScaleType scaleType;
 
   public LeanSvgComponent() {
-    super( "LeanSvgComponent" );
+    super("LeanSvgComponent");
+    scaleType = ScaleType.MIN;
   }
 
-  public LeanSvgComponent( String filename ) {
+  public LeanSvgComponent(String filename, ScaleType scaleType) {
     this();
     this.filename = filename;
+    this.scaleType = scaleType;
   }
 
-  public LeanSvgComponent( LeanSvgComponent c ) {
-    super( "LeanSvgComponent", c );
+  public LeanSvgComponent(LeanSvgComponent c) {
+    super("LeanSvgComponent", c);
     this.filename = c.filename;
-    this.scalePercent = c.scalePercent;
+    this.scaleType = c.scaleType;
   }
 
   public LeanSvgComponent clone() {
-    return new LeanSvgComponent( this );
+    return new LeanSvgComponent(this);
   }
 
-  @Override public void processSourceData( LeanPresentation presentation, LeanPage page, LeanComponent component, IDataContext dataContext, IRenderContext renderContext,
-                                           LeanLayoutResults results ) throws LeanException {
+  @Override
+  public void processSourceData(
+      LeanPresentation presentation,
+      LeanPage page,
+      LeanComponent component,
+      IDataContext dataContext,
+      IRenderContext renderContext,
+      LeanLayoutResults results)
+      throws LeanException {
 
-    if ( StringUtils.isEmpty( filename ) ) {
-      throw new LeanException( "No image file specified" );
+    if (StringUtils.isEmpty(filename)) {
+      throw new LeanException("No image file specified");
     }
 
     IVariables variables = dataContext.getVariables();
@@ -74,84 +78,143 @@ public class LeanSvgComponent extends LeanBaseComponent implements ILeanComponen
 
     // The real filename after variable substitution?
     //
-    String realFilename = variables.resolve( filename );
+    String realFilename = variables.resolve(filename);
 
     // Load the SVG XML document
     //
     try {
-      SvgCacheEntry svgCacheEntry = SvgCache.loadSvg( new SvgFile( realFilename, getClass().getClassLoader() ) );
-      details.originalSize = new LeanSize((int)svgCacheEntry.getWidth(), (int)svgCacheEntry.getHeight());
+      SvgCacheEntry svgCacheEntry =
+          SvgCache.loadSvg(new SvgFile(realFilename, getClass().getClassLoader()));
+      details.imageGeometry =
+          new LeanGeometry(
+              svgCacheEntry.getX(),
+              svgCacheEntry.getY(),
+              (int) svgCacheEntry.getWidth(),
+              (int) svgCacheEntry.getHeight());
       details.svgDocument = svgCacheEntry.getSvgDocument();
-    } catch ( Exception e ) {
-      throw new LeanException( "Unable to load SVG file '" + realFilename + "'", e );
+    } catch (Exception e) {
+      throw new LeanException("Unable to load SVG file '" + realFilename + "'", e);
     }
-
-    details.scaleFactor = Const.toDouble( variables.resolve(scalePercent), 100.0 ) / 100;
-
-    details.imageSize = new LeanSize(
-      (int) ( details.originalSize.getWidth() * details.scaleFactor ),
-      (int) ( details.originalSize.getHeight() * details.scaleFactor )
-    );
 
     // Don't calculate this twice...
     //
-    results.addDataSet( component, DATA_SVG_DETAILS, details );
+    results.addDataSet(component, DATA_SVG_DETAILS, details);
   }
 
-  public LeanSize getExpectedSize( LeanPresentation leanPresentation, LeanPage page, LeanComponent component, IDataContext dataContext, IRenderContext renderContext, LeanLayoutResults results )
+  @Override public LeanSize getExpectedSize( LeanPresentation presentation, LeanPage page, LeanComponent component, IDataContext dataContext, IRenderContext renderContext, LeanLayoutResults results )
     throws LeanException {
-
-    SvgDetails details = (SvgDetails) results.getDataSet( component, DATA_SVG_DETAILS );
-    return details.imageSize;
+    SvgDetails details = (SvgDetails) results.getDataSet(component, DATA_SVG_DETAILS);
+    return new LeanSize(details.imageGeometry.getWidth(), details.imageGeometry.getHeight());
   }
 
   @Override
   public LeanGeometry getExpectedGeometry( LeanPresentation presentation, LeanPage page, LeanComponent component, IDataContext dataContext, IRenderContext renderContext, LeanLayoutResults results )
     throws LeanException {
-    return super.getExpectedGeometry( presentation, page, component, dataContext, renderContext, results );
+
+    SvgDetails details = (SvgDetails) results.getDataSet(component, DATA_SVG_DETAILS);
+
+    // Calculate the boundaries of this image based on the layout
+    //
+    LeanGeometry geometry = super.getExpectedGeometry( presentation, page, component, dataContext, renderContext, results );
+
+    // Now if one of the sides of the layout wasn't specified we can adjust the location or size...
+    //
+    LeanLayout layout = component.getLayout();
+    LeanAttachment left = layout.getLeft();
+    LeanAttachment top = layout.getTop();
+    LeanAttachment right = layout.getRight();
+    LeanAttachment bottom = layout.getBottom();
+
+
+    // See if we need to scale the SVG to fit the target...
+    //
+    // Zoom in or out to make the image fit onto the parent page (it's the best use-case for now)
+    //
+    float xMagnification =
+      (float) geometry.getWidth() / (float) details.imageGeometry.getWidth();
+    float yMagnification =
+      (float) geometry.getHeight() / (float) details.imageGeometry.getHeight();
+
+    // Based on the scale type we calculate the magnifications...
+    //
+    switch (scaleType) {
+      case NONE:
+        xMagnification = 1.0f;
+        yMagnification = 1.0f;
+        break;
+      case FILL:
+        break;
+      case FILL_HORIZONTAL:
+        yMagnification = 1.0f;
+        break;
+      case FILL_VERTICAL:
+        xMagnification = 1.0f;
+        break;
+      case MIN:
+        float magnification = Math.min(xMagnification, yMagnification);
+        xMagnification = magnification;
+        yMagnification = magnification;
+        break;
+      case MAX:
+        magnification = Math.max(xMagnification, yMagnification);
+        xMagnification = magnification;
+        yMagnification = magnification;
+        break;
+    }
+
+    details.xMagnification = xMagnification;
+    details.yMagnification = yMagnification;
+
+    int width = Math.round(xMagnification * details.imageGeometry.getWidth());
+    int xDifference = geometry.getWidth()-width;
+
+    int height = Math.round(yMagnification * details.imageGeometry.getHeight());
+    int yDifference = geometry.getHeight()-height;
+
+    geometry.setWidth(width);
+    geometry.setHeight(height);
+    geometry.incX(xDifference);
+    geometry.incY(yDifference);
+
+    return geometry;
   }
 
-  public void render( LeanComponentLayoutResult layoutResult, LeanLayoutResults results, IRenderContext renderContext, LeanPosition offSet ) throws LeanException {
+  public void render(
+      LeanComponentLayoutResult layoutResult,
+      LeanLayoutResults results,
+      IRenderContext renderContext,
+      LeanPosition offSet)
+      throws LeanException {
 
     LeanRenderPage renderPage = layoutResult.getRenderPage();
     LeanGeometry componentGeometry = layoutResult.getGeometry();
     LeanComponent component = layoutResult.getComponent();
 
-    HopSvgGraphics2D gc = layoutResult.getRenderPage().getGc();
+    HopSvgGraphics2D gc = renderPage.getGc();
 
     // Draw background for the full imageSize of the component area
     //
-    setBackgroundBorderFont( gc, componentGeometry, renderContext );
+    setBackgroundBorderFont(gc, componentGeometry, renderContext);
 
     // Remember the details
     //
-    SvgDetails details = (SvgDetails) results.getDataSet( component, DATA_SVG_DETAILS );
+    SvgDetails details = (SvgDetails) results.getDataSet(component, DATA_SVG_DETAILS);
     Node imageSvgNode = details.svgDocument.getRootElement();
+
 
     // Embed the SVG into the presentation
     //
     gc.embedSvg(
-      imageSvgNode,
-      filename,
-      componentGeometry.getX(),
-      componentGeometry.getY(),
-      details.imageSize.getWidth(),
-      details.imageSize.getHeight(),
-      (float) details.scaleFactor,
-      (float) details.scaleFactor,
-      0d
-    );
-
-    if ( isBorder() ) {
-      enableColor( gc, lookupBorderColor( renderContext ) );
-      gc.drawRect( componentGeometry.getX(), componentGeometry.getY(), details.imageSize.getWidth(), details.imageSize.getHeight() );
-    }
-
-    // addd drawnItem for this
-    //
-    // renderPage.addComponentDrawnItem( component, componentGeometry );
+        imageSvgNode,
+        filename,
+        componentGeometry.getX(),
+        componentGeometry.getY(),
+        details.imageGeometry.getWidth(),
+        details.imageGeometry.getHeight(),
+        details.xMagnification,
+        details.yMagnification,
+        0d);
   }
-
 
   /**
    * Gets filename
@@ -162,26 +225,22 @@ public class LeanSvgComponent extends LeanBaseComponent implements ILeanComponen
     return filename;
   }
 
-  /**
-   * @param filename The filename to set
-   */
-  public void setFilename( String filename ) {
+  /** @param filename The filename to set */
+  public void setFilename(String filename) {
     this.filename = filename;
   }
 
   /**
-   * Gets scalePercent
+   * Gets scaleType
    *
-   * @return value of scalePercent
+   * @return value of scaleType
    */
-  public String getScalePercent() {
-    return scalePercent;
+  public ScaleType getScaleType() {
+    return scaleType;
   }
 
-  /**
-   * @param scalePercent The scalePercent to set
-   */
-  public void setScalePercent( String scalePercent ) {
-    this.scalePercent = scalePercent;
+  /** @param scaleType The scaleType to set */
+  public void setScaleType(ScaleType scaleType) {
+    this.scaleType = scaleType;
   }
 }

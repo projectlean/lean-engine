@@ -25,46 +25,47 @@ import java.awt.geom.AffineTransform;
 import java.io.IOException;
 import java.net.URL;
 
-@JsonDeserialize( as = LeanImageComponent.class )
-@LeanComponentPlugin(
-  id= "LeanImageComponent",
-  name="Image",
-  description = "An image component"
-)
+@JsonDeserialize(as = LeanImageComponent.class)
+@LeanComponentPlugin(id = "LeanImageComponent", name = "Image", description = "An image component")
 public class LeanImageComponent extends LeanBaseComponent implements ILeanComponent {
 
   public static final String DATA_IMAGE_DETAILS = "Image Details";
 
-  @HopMetadataProperty
-  private String filename;
+  @HopMetadataProperty private String filename;
 
-  @HopMetadataProperty
-  private String scalePercent;
+  @HopMetadataProperty private String scalePercent;
 
   public LeanImageComponent() {
-    super( "LeanSvgComponent" );
+    super("LeanSvgComponent");
   }
 
-  public LeanImageComponent( String filename ) {
+  public LeanImageComponent(String filename) {
     this();
     this.filename = filename;
   }
 
-  public LeanImageComponent( LeanImageComponent c ) {
-    super( "LeanSvgComponent", c );
+  public LeanImageComponent(LeanImageComponent c) {
+    super("LeanSvgComponent", c);
     this.filename = c.filename;
     this.scalePercent = c.scalePercent;
   }
 
   public LeanImageComponent clone() {
-    return new LeanImageComponent( this );
+    return new LeanImageComponent(this);
   }
 
-  @Override public void processSourceData( LeanPresentation presentation, LeanPage page, LeanComponent component, IDataContext dataContext, IRenderContext renderContext,
-                                           LeanLayoutResults results ) throws LeanException {
+  @Override
+  public void processSourceData(
+      LeanPresentation presentation,
+      LeanPage page,
+      LeanComponent component,
+      IDataContext dataContext,
+      IRenderContext renderContext,
+      LeanLayoutResults results)
+      throws LeanException {
 
-    if ( StringUtils.isEmpty( filename ) ) {
-      throw new LeanException( "No image file specified" );
+    if (StringUtils.isEmpty(filename)) {
+      throw new LeanException("No image file specified");
     }
 
     ImageDetails details = new ImageDetails();
@@ -72,39 +73,53 @@ public class LeanImageComponent extends LeanBaseComponent implements ILeanCompon
     // Get the width and height of the image
     //
     try {
-      URL resource = this.getClass().getClassLoader().getResource( filename );
-      if (resource==null) {
-        throw new LeanException("Unable to find image file '"+filename+"'");
+      URL resource = this.getClass().getClassLoader().getResource(filename);
+      if (resource == null) {
+        throw new LeanException("Unable to find image file '" + filename + "'");
       }
 
-      details.image = ImageIO.read( resource.openStream() );
-    } catch ( IOException e ) {
-      throw new LeanException( "Unable to load image file '" + filename + "'", e );
+      details.image = ImageIO.read(resource.openStream());
+    } catch (IOException e) {
+      throw new LeanException("Unable to load image file '" + filename + "'", e);
     }
 
-    if ( details.image == null ) {
+    if (details.image == null) {
       // Probably unsupported image type
       //
-      throw new LeanException( "Unable to load file '" + filename + "' (Unsupported type?)" );
+      throw new LeanException("Unable to load file '" + filename + "' (Unsupported type?)");
     }
 
-    details.scaleFactor = (double) Const.toDouble( scalePercent, 100.0 ) / 100;
+    details.scaleFactor = (double) Const.toDouble(scalePercent, 100.0) / 100;
 
-    details.originalSize = new LeanSize( details.image.getWidth(), details.image.getHeight() );
-    details.imageSize = new LeanSize( (int) ( details.image.getWidth() * details.scaleFactor ), (int) ( details.image.getHeight() * details.scaleFactor ) );
+    details.originalSize = new LeanSize(details.image.getWidth(), details.image.getHeight());
+    details.imageSize =
+        new LeanSize(
+            (int) (details.image.getWidth() * details.scaleFactor),
+            (int) (details.image.getHeight() * details.scaleFactor));
 
     // Don't calculate this twice...
     //
-    results.addDataSet( component, DATA_IMAGE_DETAILS, details );
+    results.addDataSet(component, DATA_IMAGE_DETAILS, details);
   }
 
-  public LeanSize getExpectedSize( LeanPresentation leanPresentation, LeanPage page, LeanComponent component, IDataContext dataContext, IRenderContext renderContext, LeanLayoutResults results )
-    throws LeanException {
-    ImageDetails details = (ImageDetails) results.getDataSet( component, DATA_IMAGE_DETAILS );
+  public LeanSize getExpectedSize(
+      LeanPresentation leanPresentation,
+      LeanPage page,
+      LeanComponent component,
+      IDataContext dataContext,
+      IRenderContext renderContext,
+      LeanLayoutResults results)
+      throws LeanException {
+    ImageDetails details = (ImageDetails) results.getDataSet(component, DATA_IMAGE_DETAILS);
     return details.imageSize;
   }
 
-  public void render( LeanComponentLayoutResult layoutResult, LeanLayoutResults results, IRenderContext renderContext, LeanPosition offSet ) throws LeanException {
+  public void render(
+      LeanComponentLayoutResult layoutResult,
+      LeanLayoutResults results,
+      IRenderContext renderContext,
+      LeanPosition offSet)
+      throws LeanException {
 
     LeanGeometry componentGeometry = layoutResult.getGeometry();
     LeanComponent component = layoutResult.getComponent();
@@ -113,32 +128,35 @@ public class LeanImageComponent extends LeanBaseComponent implements ILeanCompon
 
     // Draw background for the full imageSize of the component area
     //
-    setBackgroundBorderFont( gc, componentGeometry, renderContext );
+    setBackgroundBorderFont(gc, componentGeometry, renderContext);
 
     // Remember the details
     //
-    ImageDetails details = (ImageDetails) results.getDataSet( component, DATA_IMAGE_DETAILS );
+    ImageDetails details = (ImageDetails) results.getDataSet(component, DATA_IMAGE_DETAILS);
 
     // This allow us to make the image smaller or larger
     //
     AffineTransform oldTransform = gc.getTransform();
-    gc.scale( details.scaleFactor, details.scaleFactor );
+    gc.scale(details.scaleFactor, details.scaleFactor);
 
     // Don't scale the location...
-    int x = (int) ( componentGeometry.getX() / details.scaleFactor );
-    int y = (int) ( componentGeometry.getY() / details.scaleFactor );
-    gc.drawImage( details.image, x, y, null );
+    int x = (int) (componentGeometry.getX() / details.scaleFactor);
+    int y = (int) (componentGeometry.getY() / details.scaleFactor);
+    gc.drawImage(details.image, x, y, null);
 
     // Set the drawing scale back to normal
     //
-    gc.setTransform( oldTransform );
+    gc.setTransform(oldTransform);
 
-    if ( isBorder() ) {
-      enableColor( gc, lookupBorderColor( renderContext ) );
-      gc.drawRect( componentGeometry.getX(), componentGeometry.getY(), details.imageSize.getWidth(), details.imageSize.getHeight() );
+    if (isBorder()) {
+      enableColor(gc, lookupBorderColor(renderContext));
+      gc.drawRect(
+          componentGeometry.getX(),
+          componentGeometry.getY(),
+          details.imageSize.getWidth(),
+          details.imageSize.getHeight());
     }
   }
-
 
   /**
    * Gets filename
@@ -149,10 +167,8 @@ public class LeanImageComponent extends LeanBaseComponent implements ILeanCompon
     return filename;
   }
 
-  /**
-   * @param filename The filename to set
-   */
-  public void setFilename( String filename ) {
+  /** @param filename The filename to set */
+  public void setFilename(String filename) {
     this.filename = filename;
   }
 
@@ -165,10 +181,8 @@ public class LeanImageComponent extends LeanBaseComponent implements ILeanCompon
     return scalePercent;
   }
 
-  /**
-   * @param scalePercent The scalePercent to set
-   */
-  public void setScalePercent( String scalePercent ) {
+  /** @param scalePercent The scalePercent to set */
+  public void setScalePercent(String scalePercent) {
     this.scalePercent = scalePercent;
   }
 }

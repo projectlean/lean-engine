@@ -33,7 +33,7 @@ public class App {
     GetPresentationDrawnInfoServlet getPresentationDrawnInfoServlet =
         new GetPresentationDrawnInfoServlet();
     contextHandler.addServlet(
-        new ServletHolder( getPresentationDrawnInfoServlet ),
+        new ServletHolder(getPresentationDrawnInfoServlet),
         GetPresentationDrawnInfoServlet.CONTEXT_PATH);
 
     Server jettyServer = new Server(8080);

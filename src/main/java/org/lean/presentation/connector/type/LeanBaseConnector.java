@@ -13,23 +13,18 @@ import java.util.List;
 
 public abstract class LeanBaseConnector implements ILeanConnector {
 
-  @HopMetadataProperty
-  @JsonProperty
-  protected String pluginId;
+  @HopMetadataProperty @JsonProperty protected String pluginId;
 
-  @HopMetadataProperty
-  @JsonProperty
-  protected String sourceConnectorName;
+  @HopMetadataProperty @JsonProperty protected String sourceConnectorName;
 
-  @JsonIgnore
-  protected List<ILeanRowListener> rowListeners;
+  @JsonIgnore protected List<ILeanRowListener> rowListeners;
 
-  public LeanBaseConnector( String pluginId ) {
+  public LeanBaseConnector(String pluginId) {
     this.pluginId = pluginId;
     rowListeners = new ArrayList<>();
   }
 
-  public LeanBaseConnector( LeanBaseConnector c ) {
+  public LeanBaseConnector(LeanBaseConnector c) {
     this.pluginId = c.pluginId;
     this.sourceConnectorName = c.sourceConnectorName;
     // We don't copy over the listeneres!
@@ -40,7 +35,8 @@ public abstract class LeanBaseConnector implements ILeanConnector {
   public abstract LeanBaseConnector clone();
 
   /**
-   * @return Null if the dialog class is determined automatically.  Otherwise returns the dialog class name.
+   * @return Null if the dialog class is determined automatically. Otherwise returns the dialog
+   *     class name.
    */
   @JsonIgnore
   public String getDialogClassname() {
@@ -53,28 +49,29 @@ public abstract class LeanBaseConnector implements ILeanConnector {
    * @throws LeanException
    */
   public void outputDone() throws LeanException {
-    for ( ILeanRowListener rowListener : rowListeners ) {
-      rowListener.rowReceived( null, null );
+    for (ILeanRowListener rowListener : rowListeners) {
+      rowListener.rowReceived(null, null);
     }
   }
 
-  public void passToRowListeners( IRowMeta rowMeta, Object[] rowData ) throws LeanException {
-    for ( ILeanRowListener rowListener : rowListeners ) {
-      rowListener.rowReceived( rowMeta, rowData );
+  public void passToRowListeners(IRowMeta rowMeta, Object[] rowData) throws LeanException {
+    for (ILeanRowListener rowListener : rowListeners) {
+      rowListener.rowReceived(rowMeta, rowData);
     }
   }
 
-  public abstract void startStreaming( IDataContext dataContext ) throws LeanException;
+  public abstract void startStreaming(IDataContext dataContext) throws LeanException;
 
   public abstract void waitUntilFinished() throws LeanException;
 
   @Override
-  public void addRowListener( ILeanRowListener rowListener ) throws LeanException {
-    rowListeners.add( rowListener );
+  public void addRowListener(ILeanRowListener rowListener) throws LeanException {
+    rowListeners.add(rowListener);
   }
 
-  @Override public void removeDataListener( ILeanRowListener rowListener ) {
-    rowListeners.remove( rowListener );
+  @Override
+  public void removeDataListener(ILeanRowListener rowListener) {
+    rowListeners.remove(rowListener);
   }
 
   /**
@@ -86,10 +83,8 @@ public abstract class LeanBaseConnector implements ILeanConnector {
     return pluginId;
   }
 
-  /**
-   * @param pluginId The pluginId to set
-   */
-  public void setPluginId( String pluginId ) {
+  /** @param pluginId The pluginId to set */
+  public void setPluginId(String pluginId) {
     this.pluginId = pluginId;
   }
 
@@ -102,10 +97,8 @@ public abstract class LeanBaseConnector implements ILeanConnector {
     return sourceConnectorName;
   }
 
-  /**
-   * @param sourceConnectorName The sourceConnectorName to set
-   */
-  public void setSourceConnectorName( String sourceConnectorName ) {
+  /** @param sourceConnectorName The sourceConnectorName to set */
+  public void setSourceConnectorName(String sourceConnectorName) {
     this.sourceConnectorName = sourceConnectorName;
   }
 
@@ -118,10 +111,8 @@ public abstract class LeanBaseConnector implements ILeanConnector {
     return rowListeners;
   }
 
-  /**
-   * @param rowListeners The rowListeners to set
-   */
-  public void setRowListeners( List<ILeanRowListener> rowListeners ) {
+  /** @param rowListeners The rowListeners to set */
+  public void setRowListeners(List<ILeanRowListener> rowListeners) {
     this.rowListeners = rowListeners;
   }
 }
