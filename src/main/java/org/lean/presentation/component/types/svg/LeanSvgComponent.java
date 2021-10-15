@@ -8,7 +8,6 @@ import org.apache.hop.core.svg.SvgCacheEntry;
 import org.apache.hop.core.svg.SvgFile;
 import org.apache.hop.core.variables.IVariables;
 import org.apache.hop.metadata.api.HopMetadataProperty;
-import org.lean.core.LeanAttachment;
 import org.lean.core.LeanGeometry;
 import org.lean.core.LeanPosition;
 import org.lean.core.LeanSize;
@@ -101,39 +100,43 @@ public class LeanSvgComponent extends LeanBaseComponent implements ILeanComponen
     results.addDataSet(component, DATA_SVG_DETAILS, details);
   }
 
-  @Override public LeanSize getExpectedSize( LeanPresentation presentation, LeanPage page, LeanComponent component, IDataContext dataContext, IRenderContext renderContext, LeanLayoutResults results )
-    throws LeanException {
+  @Override
+  public LeanSize getExpectedSize(
+      LeanPresentation presentation,
+      LeanPage page,
+      LeanComponent component,
+      IDataContext dataContext,
+      IRenderContext renderContext,
+      LeanLayoutResults results)
+      throws LeanException {
     SvgDetails details = (SvgDetails) results.getDataSet(component, DATA_SVG_DETAILS);
     return new LeanSize(details.imageGeometry.getWidth(), details.imageGeometry.getHeight());
   }
 
   @Override
-  public LeanGeometry getExpectedGeometry( LeanPresentation presentation, LeanPage page, LeanComponent component, IDataContext dataContext, IRenderContext renderContext, LeanLayoutResults results )
-    throws LeanException {
+  public LeanGeometry getExpectedGeometry(
+      LeanPresentation presentation,
+      LeanPage page,
+      LeanComponent component,
+      IDataContext dataContext,
+      IRenderContext renderContext,
+      LeanLayoutResults results)
+      throws LeanException {
 
     SvgDetails details = (SvgDetails) results.getDataSet(component, DATA_SVG_DETAILS);
 
     // Calculate the boundaries of this image based on the layout
     //
-    LeanGeometry geometry = super.getExpectedGeometry( presentation, page, component, dataContext, renderContext, results );
-
-    // Now if one of the sides of the layout wasn't specified we can adjust the location or size...
-    //
-    LeanLayout layout = component.getLayout();
-    LeanAttachment left = layout.getLeft();
-    LeanAttachment top = layout.getTop();
-    LeanAttachment right = layout.getRight();
-    LeanAttachment bottom = layout.getBottom();
-
+    LeanGeometry geometry =
+        super.getExpectedGeometry(
+            presentation, page, component, dataContext, renderContext, results);
 
     // See if we need to scale the SVG to fit the target...
     //
     // Zoom in or out to make the image fit onto the parent page (it's the best use-case for now)
     //
-    float xMagnification =
-      (float) geometry.getWidth() / (float) details.imageGeometry.getWidth();
-    float yMagnification =
-      (float) geometry.getHeight() / (float) details.imageGeometry.getHeight();
+    float xMagnification = (float) geometry.getWidth() / (float) details.imageGeometry.getWidth();
+    float yMagnification = (float) geometry.getHeight() / (float) details.imageGeometry.getHeight();
 
     // Based on the scale type we calculate the magnifications...
     //
@@ -166,17 +169,41 @@ public class LeanSvgComponent extends LeanBaseComponent implements ILeanComponen
     details.yMagnification = yMagnification;
 
     int width = Math.round(xMagnification * details.imageGeometry.getWidth());
-    int xDifference = geometry.getWidth()-width;
+    int xDifference = geometry.getWidth() - width;
 
     int height = Math.round(yMagnification * details.imageGeometry.getHeight());
-    int yDifference = geometry.getHeight()-height;
+    int yDifference = geometry.getHeight() - height;
+
+    LeanLayout layout = component.getLayout();
 
     geometry.setWidth(width);
     geometry.setHeight(height);
-    geometry.incX(xDifference);
-    geometry.incY(yDifference);
+    if (layout.hasRight()) {
+      geometry.incX(xDifference);
+    }
+    if (layout.hasBottom()) {
+      geometry.incY(yDifference);
+    }
+
+    // TODO: fix issue with calculating centered boundaries when magnification is involved
+
+    // Update the stored geometry to make sure...
+    //
+    results.addComponentGeometry(component.getName(), geometry);
 
     return geometry;
+  }
+
+  @Override
+  public void doLayout(
+      LeanPresentation presentation,
+      LeanPage page,
+      LeanComponent component,
+      IDataContext dataContext,
+      IRenderContext renderContext,
+      LeanLayoutResults results)
+      throws LeanException {
+    super.doLayout(presentation, page, component, dataContext, renderContext, results);
   }
 
   public void render(
@@ -200,7 +227,6 @@ public class LeanSvgComponent extends LeanBaseComponent implements ILeanComponen
     //
     SvgDetails details = (SvgDetails) results.getDataSet(component, DATA_SVG_DETAILS);
     Node imageSvgNode = details.svgDocument.getRootElement();
-
 
     // Embed the SVG into the presentation
     //

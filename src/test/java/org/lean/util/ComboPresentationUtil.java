@@ -115,14 +115,13 @@ public class ComboPresentationUtil extends BasePresentationUtil {
       lineChart.setDrawingCurvedTrendLine(true);
 
       LeanComponent lineChartComponent = new LeanComponent("LineChart", lineChart);
-      // Setting imageSize forces chart on next page, comment out Right/Bottom attachments
-      // lineChartComponent.setSize( new LeanSize( 600, 600 ) );
-      LeanLayout chartLayout = new LeanLayout();
-      // Fill the page
-      chartLayout.setLeft(new LeanAttachment(0, 0));
-      chartLayout.setRight(new LeanAttachment("Crosstab", 100, 0, LeanAttachment.Alignment.RIGHT));
-      chartLayout.setTop(new LeanAttachment("Crosstab", 0, 20, LeanAttachment.Alignment.BOTTOM));
-      chartLayout.setBottom(new LeanAttachment(100, -10));
+      LeanLayout chartLayout =
+          new LeanLayoutBuilder()
+              .left()
+              .topFromBottom("Crosstab", 0, 0)
+              .bottom(0)
+              .rightFromRight("Crosstab", 0, 0)
+              .build();
       lineChartComponent.setLayout(chartLayout);
 
       // Add the table to the first page.
@@ -138,20 +137,18 @@ public class ComboPresentationUtil extends BasePresentationUtil {
       LeanComponent trendChartComponent = new LeanComponent("TrendChartDetailed", trendChart);
       // Setting imageSize forces chart on next page, comment out Right/Bottom attachments
       // lineChartComponent.setSize( new LeanSize( 600, 600 ) );
-      LeanLayout trendChartLayout = new LeanLayout();
-      // Fill the page
-      trendChartLayout.setLeft(
-          new LeanAttachment("Crosstab", 0, 10, LeanAttachment.Alignment.RIGHT));
-      trendChartLayout.setTop(new LeanAttachment("Crosstab", 0, 0, LeanAttachment.Alignment.TOP));
-      trendChartLayout.setRight(new LeanAttachment(100, 0)); // Right of the page
-      trendChartLayout.setBottom(
-          new LeanAttachment("Crosstab", 0, 0, LeanAttachment.Alignment.BOTTOM));
+      LeanLayout trendChartLayout =
+          new LeanLayoutBuilder()
+              .beside("Crosstab", 5)
+              .right()
+              .bottom(new LeanAttachment("Crosstab", 0, 0, LeanAttachment.Alignment.BOTTOM))
+              .build();
       trendChartComponent.setLayout(trendChartLayout);
 
       pageOne.getComponents().add(trendChartComponent);
     }
 
-    // Add a rotated LEAN! label in the background
+    // Add a rotated LEAN logo in the background
     //
     {
       LeanSvgComponent rotatedLabel = new LeanSvgComponent("lean-logo.svg", ScaleType.MAX);
@@ -160,13 +157,10 @@ public class ComboPresentationUtil extends BasePresentationUtil {
       imageComponent.setLayout(new LeanLayoutBuilder().top().right().bottom().build());
 
       LeanComponent labelComponent = new LeanComponent("RotatedLabel", rotatedLabel);
-      LeanLayout labelLayout = new LeanLayout();
-      labelLayout.setLeft(new LeanAttachment("Crosstab", 0, 50, LeanAttachment.Alignment.RIGHT));
-      labelLayout.setTop(new LeanAttachment("Crosstab", 0, 35, LeanAttachment.Alignment.BOTTOM));
-      labelLayout.setBottom(new LeanAttachment(null, 0, 0, LeanAttachment.Alignment.BOTTOM));
-      labelLayout.setRight(new LeanAttachment(null, 0, 0, LeanAttachment.Alignment.RIGHT));
+      LeanLayout labelLayout =
+          new LeanLayoutBuilder().leftFromRight("Crosstab", 0, 15).right(-15).bottom(-35).build();
       labelComponent.setLayout(labelLayout);
-      labelComponent.setRotation("-45");
+      labelComponent.setRotation("15");
       pageOne.getComponents().add(labelComponent);
     }
 

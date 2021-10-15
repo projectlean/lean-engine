@@ -7,6 +7,7 @@ import org.lean.presentation.component.LeanComponent;
 import org.lean.presentation.component.types.label.LeanLabelComponent;
 import org.lean.presentation.component.types.svg.LeanSvgComponent;
 import org.lean.presentation.component.types.svg.ScaleType;
+import org.lean.presentation.layout.LeanLayout;
 import org.lean.presentation.layout.LeanLayoutBuilder;
 import org.lean.presentation.page.LeanPage;
 
@@ -58,43 +59,87 @@ public class SvgPresentationUtil extends BasePresentationUtil {
       pageOne.getComponents().add(svgComponent);
     }
 
-    // Logo at the top left...
-    //
-    {
-      LeanSvgComponent svg = new LeanSvgComponent("lean-logo.svg", ScaleType.MIN);
-      svg.setBorder( true );
-      LeanComponent svgComponent = new LeanComponent("logo-top-left", svg);
-      svgComponent.setLayout(new LeanLayoutBuilder().top().left().build());
-      pageOne.getComponents().add(svgComponent);
-    }
-
     // Logo at the top right...
     //
     {
       LeanSvgComponent svg = new LeanSvgComponent("lean-logo.svg", ScaleType.MIN);
-      svg.setBorder( true );
+      svg.setBorder(true);
       LeanComponent svgComponent = new LeanComponent("logo-top-right", svg);
-      svgComponent.setLayout(new LeanLayoutBuilder().topFromBottom("logo-top-right-100", 0, 5).right(0,0).build());
+      svgComponent.setLayout(
+          new LeanLayoutBuilder().topFromBottom("logo-top-right-100", 0, 5).right(0, 0).build());
       pageOne.getComponents().add(svgComponent);
     }
 
-    // Logo at the bottom left...
+    // Logo at the top left...
     //
     {
       LeanSvgComponent svg = new LeanSvgComponent("lean-logo.svg", ScaleType.MIN);
-      LeanComponent svgComponent = new LeanComponent("logo-bottom-left", svg);
-      svgComponent.setLayout(new LeanLayoutBuilder().bottom().left().build());
+      svg.setBorder(true);
+      LeanComponent svgComponent = new LeanComponent("logo-top-left", svg);
+      svgComponent.setLayout(new LeanLayoutBuilder().top().left().rightFromLeft(0, 100).build());
       pageOne.getComponents().add(svgComponent);
     }
 
-    // Logo at the bottom right...
+    // 5 small Logos across (limit scale horizontally)
     //
     {
-      LeanSvgComponent svg = new LeanSvgComponent("lean-logo.svg", ScaleType.MIN);
-      LeanComponent svgComponent = new LeanComponent("logo-bottom-right", svg);
-      svgComponent.setLayout(new LeanLayoutBuilder().bottom().right().build());
-      pageOne.getComponents().add(svgComponent);
+      String referenceComponent = "logo-top-left";
+      for (int i = 0; i < 5; i++) {
+        LeanSvgComponent svg = new LeanSvgComponent("lean-logo.svg", ScaleType.MIN);
+        svg.setBorder(true);
+        String name = "logo-across-" + i;
+        LeanComponent svgComponent = new LeanComponent(name, svg);
+        LeanLayout layout =
+            new LeanLayoutBuilder()
+                .leftFromRight(referenceComponent, 0, 0)
+                .topFromBottom(referenceComponent, 0, 0)
+                .rightFromRight(referenceComponent, 0, 100)
+                .build();
+        svgComponent.setLayout(layout);
+        pageOne.getComponents().add(svgComponent);
+        referenceComponent = name;
+      }
     }
+
+        // Logo at the bottom left...
+        //
+        {
+          LeanSvgComponent svg = new LeanSvgComponent("lean-logo.svg", ScaleType.MIN);
+          LeanComponent svgComponent = new LeanComponent("logo-bottom-left", svg);
+          svgComponent.setLayout(new LeanLayoutBuilder().bottom().left().build());
+          pageOne.getComponents().add(svgComponent);
+        }
+
+        // Logo at the bottom right...
+        //
+        {
+          LeanSvgComponent svg = new LeanSvgComponent("lean-logo.svg", ScaleType.MIN);
+          LeanComponent svgComponent = new LeanComponent("logo-bottom-right", svg);
+          svgComponent.setLayout(new LeanLayoutBuilder().topFromBottom(0,
+     -50).bottom().right().build());
+          pageOne.getComponents().add(svgComponent);
+        }
+
+        // 5 tiny Logos edging to the center left from the bottom right corner
+        //
+        {
+          String referenceComponent = "logo-bottom-right";
+          for (int i = 0; i < 5; i++) {
+            LeanSvgComponent svg = new LeanSvgComponent("lean-logo.svg", ScaleType.MIN);
+            svg.setBorder(true);
+            String name = "logo-bottom-across-" + i;
+            LeanComponent svgComponent = new LeanComponent(name, svg);
+            LeanLayout layout =
+                new LeanLayoutBuilder()
+                    .topFromTop(referenceComponent, 0, -50)
+                    .rightFromLeft(referenceComponent, 0, 50)
+                    .bottomFromTop(referenceComponent, 0, 0)
+                    .build();
+            svgComponent.setLayout(layout);
+            pageOne.getComponents().add(svgComponent);
+            referenceComponent = name;
+          }
+        }
 
     return presentation;
   }

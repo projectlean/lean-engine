@@ -122,7 +122,7 @@ public class LineChartPresentationUtil extends BasePresentationUtil {
     LeanLineChartComponent lineChart = createColorRandomLineChart();
 
     LeanComponent lineChartComponent = new LeanComponent(LINE_CHART_NAME, lineChart);
-    lineChartComponent.setLayout(new LeanLayoutBuilder().left(5).right(-5).top(5).bottom(-5).build());
+    lineChartComponent.setLayout(new LeanLayoutBuilder().all(5).build());
 
     // Add the table to the first page.
     //
@@ -143,7 +143,7 @@ public class LineChartPresentationUtil extends BasePresentationUtil {
     lineChart.setDrawingCurvedTrendLine(true);
 
     LeanComponent lineChartComponent = new LeanComponent(LINE_CHART_NAME, lineChart);
-    lineChartComponent.setLayout(new LeanLayoutBuilder().left(5).right(-5).top(5).bottom(-5).build());
+    lineChartComponent.setLayout(new LeanLayoutBuilder().all(5).build());
 
     // Add the table to the first page.
     //

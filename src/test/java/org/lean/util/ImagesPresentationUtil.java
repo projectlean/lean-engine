@@ -42,9 +42,9 @@ public class ImagesPresentationUtil extends BasePresentationUtil {
 
     // Add the tap image...
     //
-    LeanSvgComponent hand = new LeanSvgComponent("pointing_hand_cursor_vector.svg", ScaleType.MAX);
+    LeanSvgComponent hand = new LeanSvgComponent("pointing_hand_cursor_vector.svg", ScaleType.MIN);
     LeanComponent handComponent = new LeanComponent("Hand", hand);
-    handComponent.setLayout(new LeanLayoutBuilder().top().right().bottom().build() );
+    handComponent.setLayout(new LeanLayoutBuilder().top().left().bottom().build() );
     pageOne.getComponents().add(handComponent);
 
     // Tap or click anywhere

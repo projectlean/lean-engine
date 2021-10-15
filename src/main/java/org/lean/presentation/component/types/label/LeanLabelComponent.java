@@ -3,6 +3,7 @@ package org.lean.presentation.component.types.label;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import org.apache.batik.svggen.SVGGraphics2D;
 import org.apache.commons.lang.StringUtils;
+import org.apache.hop.core.svg.HopSvgGraphics2D;
 import org.apache.hop.metadata.api.HopMetadataProperty;
 import org.lean.core.LeanGeometry;
 import org.lean.core.LeanHorizontalAlignment;
@@ -25,6 +26,9 @@ import org.lean.presentation.layout.LeanRenderPage;
 import org.lean.presentation.page.LeanPage;
 import org.lean.render.IRenderContext;
 
+import java.awt.font.TextAttribute;
+import java.text.AttributedString;
+
 @JsonDeserialize(as = LeanLabelComponent.class)
 @LeanComponentPlugin(
     id = "LeanLabelComponent",
@@ -43,10 +47,13 @@ public class LeanLabelComponent extends LeanBaseComponent implements ILeanCompon
 
   @HopMetadataProperty private String customHtml;
 
+  @HopMetadataProperty private boolean underline;
+
   public LeanLabelComponent() {
     super("LeanLabelComponent");
     horizontalAlignment = LeanHorizontalAlignment.LEFT;
     verticalAlignment = LeanVerticalAlignment.TOP;
+    underline = false;
   }
 
   public LeanLabelComponent(LeanLabelComponent c) {
@@ -55,6 +62,7 @@ public class LeanLabelComponent extends LeanBaseComponent implements ILeanCompon
     this.horizontalAlignment = c.horizontalAlignment;
     this.verticalAlignment = c.verticalAlignment;
     this.customHtml = c.customHtml;
+    this.underline = c.underline;
   }
 
   public LeanLabelComponent(String label) {
@@ -80,7 +88,7 @@ public class LeanLabelComponent extends LeanBaseComponent implements ILeanCompon
     // Calculate the width and height of the text in the given font
     //
     LeanRenderPage currentRenderPage = results.getCurrentRenderPage(page);
-    SVGGraphics2D gc = currentRenderPage.getGc();
+    HopSvgGraphics2D gc = currentRenderPage.getGc();
 
     // Set the font so we can calculate the correct text imageSize
     //
@@ -186,7 +194,14 @@ public class LeanLabelComponent extends LeanBaseComponent implements ILeanCompon
         break;
     }
 
-    gc.drawString(text, x + textGeometry.getOffsetX(), y + textGeometry.getOffsetY());
+    AttributedString attributedString = new AttributedString(text);
+    if (underline) {
+      attributedString.addAttribute( TextAttribute.UNDERLINE, TextAttribute.UNDERLINE_ON );
+    }
+    gc.drawString(
+        attributedString.getIterator(),
+        x + textGeometry.getOffsetX(),
+        y + textGeometry.getOffsetY());
 
     LeanGeometry labelGeometry =
         new LeanGeometry(
@@ -253,5 +268,21 @@ public class LeanLabelComponent extends LeanBaseComponent implements ILeanCompon
   /** @param customHtml The customHtml to set */
   public void setCustomHtml(String customHtml) {
     this.customHtml = customHtml;
+  }
+
+  /**
+   * Gets underline
+   *
+   * @return value of underline
+   */
+  public boolean isUnderline() {
+    return underline;
+  }
+
+  /**
+   * @param underline The underline to set
+   */
+  public void setUnderline( boolean underline ) {
+    this.underline = underline;
   }
 }
