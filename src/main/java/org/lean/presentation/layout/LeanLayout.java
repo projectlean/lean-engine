@@ -1,7 +1,15 @@
 package org.lean.presentation.layout;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.hop.metadata.api.HopMetadataProperty;
 import org.lean.core.LeanAttachment;
+import org.lean.core.exception.LeanException;
+import org.lean.presentation.component.LeanComponent;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * In case a position is not relative it means absolute vs the top and left margins of the page. In
@@ -120,6 +128,88 @@ public class LeanLayout {
     for (LeanAttachment attachment : new LeanAttachment[] {left, top, right, bottom}) {
       if (attachment != null && oldName.equals(attachment.getComponentName())) {
         attachment.setComponentName(newName);
+      }
+    }
+  }
+
+  public Set<String> getReferencedLayoutComponentNames() {
+    Set<String> names = new HashSet<>();
+    for (LeanAttachment attachment : new LeanAttachment[] {left, top, right, bottom}) {
+      if (attachment != null && StringUtils.isNotEmpty( attachment.getComponentName() ) ) {
+        names.add(attachment.getComponentName() );
+      }
+    }
+    return names;
+  }
+
+  public boolean hasLeft() {
+    return left!=null;
+  }
+
+  public boolean hasTop() {
+    return top!=null;
+  }
+
+  public boolean hasRight() {
+    return right!=null;
+  }
+
+  public boolean hasBottom() {
+    return bottom!=null;
+  }
+
+  public int numberOfAnchors() {
+    int anchors = 0;
+    if (hasLeft()) {
+      anchors++;
+    }
+    if (hasRight()) {
+      anchors++;
+    }
+    if (hasTop()) {
+      anchors++;
+    }
+    if (hasBottom()) {
+      anchors++;
+    }
+    return anchors;
+  }
+
+  public void validate( LeanComponent component) throws LeanException {
+    if (hasLeft()) {
+      switch (left.getAlignment()) {
+        case TOP:
+        case BOTTOM:
+          throw new LeanException(
+              "Setting a TOP or BOTTOM alignment makes no sense for left attachments on component "
+                  + component.getName());
+      }
+    }
+    if (hasTop()) {
+      switch (top.getAlignment()) {
+        case LEFT:
+        case RIGHT:
+          throw new LeanException(
+            "Setting a LEFT or RIGHT alignment makes no sense for top attachments on component "
+              + component.getName());
+      }
+    }
+    if (hasRight()) {
+      switch (right.getAlignment()) {
+        case TOP:
+        case BOTTOM:
+          throw new LeanException(
+            "Setting a TOP or BOTTOM alignment makes no sense for right attachments on component "
+              + component.getName());
+      }
+    }
+    if (hasBottom()) {
+      switch (bottom.getAlignment()) {
+        case LEFT:
+        case RIGHT:
+          throw new LeanException(
+            "Setting a LEFT or RIGHT alignment makes no sense for bottom attachments on component "
+              + component.getName());
       }
     }
   }

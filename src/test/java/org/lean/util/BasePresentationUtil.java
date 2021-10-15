@@ -91,7 +91,6 @@ public class BasePresentationUtil {
     LeanPage header = LeanPage.getHeaderFooter(true, portrait, 50);
     header.getComponents().add(createHeaderLabelComponent(headerMessage));
     header.getComponents().add(createPresentationNameLabelComponent());
-    header.getComponents().add(createHeaderImageComponent());
     presentation.setHeader(header);
 
     // Add a footer with a single label at the bottom of the page.
@@ -99,14 +98,16 @@ public class BasePresentationUtil {
     LeanPage footer = LeanPage.getHeaderFooter(false, portrait, 25);
     footer.getComponents().add(createPageNumberLabelComponent());
     footer.getComponents().add(createSysdateLabelComponent());
+    footer.getComponents().add(createLogoComponent());
+
     presentation.setFooter(footer);
   }
 
-  protected static LeanComponent createHeaderImageComponent() {
+  protected static LeanComponent createLogoComponent() {
     LeanSvgComponent leanLabel = new LeanSvgComponent("lean-logo.svg", ScaleType.MIN);
     leanLabel.setBorder(true);
     LeanComponent imageComponent = new LeanComponent("Logo", leanLabel);
-    imageComponent.setLayout(new LeanLayoutBuilder().top().right().bottom().build());
+    imageComponent.setLayout(new LeanLayoutBuilder().left(50, 0).top(10).bottom(0).build());
     return imageComponent;
   }
 
@@ -117,7 +118,7 @@ public class BasePresentationUtil {
     LeanComponent labelComponent = new LeanComponent(HEADER_MESSAGE_LABEL, label);
     LeanLayout labelLayout = new LeanLayout();
     labelLayout.setLeft(new LeanAttachment(null, 0, 0, LeanAttachment.Alignment.CENTER));
-    labelLayout.setTop(new LeanAttachment(null, 0, 0, LeanAttachment.Alignment.CENTER));
+    labelLayout.setTop(new LeanAttachment(null, 0, 0, LeanAttachment.Alignment.TOP));
     labelComponent.setLayout(labelLayout);
     return labelComponent;
   }
@@ -129,7 +130,7 @@ public class BasePresentationUtil {
     LeanComponent labelComponent = new LeanComponent("PresentationName", label);
     LeanLayout labelLayout = new LeanLayout();
     labelLayout.setLeft(new LeanAttachment(null, 0, 0, LeanAttachment.Alignment.LEFT));
-    labelLayout.setTop(new LeanAttachment(null, 0, 0, LeanAttachment.Alignment.CENTER));
+    labelLayout.setTop(new LeanAttachment(null, 0, 0, LeanAttachment.Alignment.TOP));
     labelComponent.setLayout(labelLayout);
     return labelComponent;
   }

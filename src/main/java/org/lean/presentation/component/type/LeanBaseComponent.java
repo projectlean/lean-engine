@@ -85,7 +85,6 @@ public abstract class LeanBaseComponent implements ILeanComponent {
       LeanLayoutResults results)
       throws LeanException;
 
-
   /**
    * Third Calculate expected geometry of the component based on relative positioning and
    * everything.
@@ -106,8 +105,9 @@ public abstract class LeanBaseComponent implements ILeanComponent {
 
     // Get the natural imageSize of this component
     //
-    LeanSize expectedSize = getExpectedSize(presentation, page, component, dataContext, renderContext, results);
-    if (expectedSize==null) {
+    LeanSize expectedSize =
+        getExpectedSize(presentation, page, component, dataContext, renderContext, results);
+    if (expectedSize == null) {
       expectedSize = new LeanSize(0, 0);
     }
 
@@ -118,6 +118,9 @@ public abstract class LeanBaseComponent implements ILeanComponent {
 
     LeanLayout layout = component.getLayout();
 
+    // Validate some basic static information.
+    layout.validate(component);
+
     LeanAttachment left = layout.getLeft();
     LeanAttachment top = layout.getTop();
     LeanAttachment right = layout.getRight();
@@ -127,141 +130,64 @@ public abstract class LeanBaseComponent implements ILeanComponent {
 
     // Left means x coordinate
     //
-    if (layout.getLeft() != null) {
-      if (left.getComponentName() == null) {
-        // This means relative to the page
-        //
-        int pageWidth = page.getWidthBetweenMargins();
-        switch (left.getAlignment()) {
-          case DEFAULT:
-          case LEFT:
-            x =
-                (int) ((double) pageWidth * ((double) left.getPercentage() / 100))
-                    + left.getOffset();
-            break;
-          case RIGHT:
-            x =
-                pageWidth
-                    - (int) ((double) pageWidth * (double) left.getPercentage() / 100)
-                    - left.getOffset();
-            break;
-          case CENTER:
-            // Center only makes sense if this component has a natural imageSize
-            //
-            x = (pageWidth - width) / 2 + left.getOffset();
-            break;
-          case TOP:
-          case BOTTOM:
-            throw new LeanException(
-                "Setting a TOP or BOTTOM alignment makes no sense for left attachments on component "
-                    + component.getName());
-        }
-      } else {
-        // Get the geometry after a layout result of the neighbor
-        //
-        LeanGeometry neighborGeometry = results.findGeometry(left.getComponentName());
+    if (left != null) {
+      LeanGeometry geometry = lookupGeometry(left.getComponentName(), page, results, presentation);
 
-        // The next should never occur if our cocktail sort is OK and/or if the components exists in
-        // the right order on the page.
-        //
-        if (neighborGeometry == null) {
+      switch (left.getAlignment()) {
+        case DEFAULT:
+        case LEFT:
+          x =
+              geometry.getX()
+                  + calcPct(geometry.getWidth(), left.getPercentage())
+                  + left.getOffset();
+          break;
+        case RIGHT:
+          x =
+              geometry.getX()
+                  + geometry.getWidth()
+                  - calcPct(geometry.getWidth(), left.getPercentage())
+                  + left.getOffset();
+          break;
+        case CENTER:
+          x =
+              (geometry.getWidth() - width) / 2
+                  + calcPct(geometry.getWidth(), left.getPercentage())
+                  + left.getOffset();
+          break;
+        case TOP:
+        case BOTTOM:
           throw new LeanException(
-              "Unable to find component layout result for "
-                  + component.getName()
-                  + " referencing left neighbor "
-                  + left.getComponentName()
-                  + " : component layout sort problem?");
-        }
-
-        switch (left.getAlignment()) {
-          case DEFAULT:
-          case LEFT:
-            x = neighborGeometry.getX() + left.getOffset();
-            break;
-          case RIGHT:
-            x = neighborGeometry.getX() + neighborGeometry.getWidth() + left.getOffset();
-            break;
-          case CENTER:
-            // Center only makes sense if this component has a imageSize
-            // We'll use the specified imageSize of the component
-            //
-            x = (neighborGeometry.getWidth() - width) / 2 + left.getOffset();
-            break;
-          case TOP:
-          case BOTTOM:
-            throw new LeanException(
-                "Setting a TOP or BOTTOM alignment makes no sense for left attachments on component "
-                    + component.getName());
-        }
+              "Setting a TOP or BOTTOM alignment makes no sense for left attachments on component "
+                  + component.getName());
       }
     }
 
     // top means y coordinate
     //
-    if (layout.getTop() != null) {
-      if (top.getComponentName() == null) {
-        // This means relative to the page
-        //
-        int pageHeight = presentation.getUsableHeight(page);
-        switch (top.getAlignment()) {
-          case DEFAULT:
-          case TOP:
-            y = (int) ((double) pageHeight * (double) top.getPercentage() / 100) + top.getOffset();
-            break;
-          case BOTTOM:
-            y =
-                pageHeight
-                    - (int) ((double) pageHeight * (double) top.getPercentage() / 100)
-                    - top.getOffset();
-            break;
-          case CENTER:
-            // Center only makes sense if this component has a natural imageSize
-            //
-            y = (pageHeight - height) / 2 + top.getOffset();
-            break;
-          case LEFT:
-          case RIGHT:
-            throw new LeanException(
-                "Setting a LEFT or RIGHT alignment makes no sense for top attachments on component "
-                    + component.getName());
-        }
-      } else {
-        // Get the geometry after a layout result of the neighbor
-        //
-        LeanGeometry neighborGeometry = results.findGeometry(top.getComponentName());
-
-        // The next should never occur if our cocktail sort is OK and/or if the components exists in
-        // the right order on the page.
-        //
-        if (neighborGeometry == null) {
-          throw new LeanException(
-              "Unable to find component layout result for "
-                  + component.getName()
-                  + " referencing top neighbor "
-                  + top.getComponentName()
-                  + " : component layout sort problem?");
-        }
-
-        switch (top.getAlignment()) {
-          case DEFAULT:
-          case TOP:
-            y = neighborGeometry.getY() + top.getOffset();
-            break;
-          case BOTTOM:
-            y = neighborGeometry.getY() + neighborGeometry.getHeight() + top.getOffset();
-            break;
-          case CENTER:
-            // Center only makes sense if this component has a imageSize
-            // We'll use the specified imageSize of the component
-            //
-            y = (neighborGeometry.getHeight() - height) / 2 + top.getOffset();
-            break;
-          case LEFT:
-          case RIGHT:
-            throw new LeanException(
-                "Setting a LEFT or RIGHT alignment makes no sense for top attachments on component "
-                    + component.getName());
-        }
+    if (top != null) {
+      LeanGeometry geometry = lookupGeometry(top.getComponentName(), page, results, presentation);
+      switch (top.getAlignment()) {
+        case DEFAULT:
+        case TOP:
+          y =
+              geometry.getY()
+                  + calcPct(geometry.getHeight(), top.getPercentage())
+                  + top.getOffset();
+          break;
+        case BOTTOM:
+          y =
+              geometry.getY()
+                  + geometry.getHeight()
+                  - calcPct(geometry.getHeight(), top.getPercentage())
+                  + top.getOffset();
+          break;
+        case CENTER:
+          y =
+              geometry.getY()
+                  + geometry.getHeight() / 2
+                  + calcPct(geometry.getHeight(), top.getPercentage())
+                  + top.getOffset();
+          break;
       }
     }
 
@@ -270,175 +196,136 @@ public abstract class LeanBaseComponent implements ILeanComponent {
 
     // Right attachment : width
 
-    if (layout.getRight() != null) {
-      if (right.getComponentName() == null) {
-        // This means relative to the page
+    if (right != null) {
+      LeanGeometry geometry = lookupGeometry(right.getComponentName(), page, results, presentation);
+      if (left == null) {
+        // We're calculating the x-boundary, not the width
         //
-        int pageWidth = page.getWidthBetweenMargins();
         switch (right.getAlignment()) {
-          case DEFAULT:
           case LEFT:
-            width =
-                -x
-                    + (int) ((double) pageWidth * (double) right.getPercentage() / 100)
+            x =
+                geometry.getX()
+                    - width
+                    + calcPct(geometry.getHeight(), right.getPercentage())
                     + right.getOffset();
             break;
+          case DEFAULT:
           case RIGHT:
-            width =
-                -x
-                    + pageWidth
-                    - (int) ((double) pageWidth * (double) right.getPercentage() / 100)
-                    - right.getOffset();
+            x =
+                geometry.getX()
+                    + geometry.getWidth()
+                    - width // hug the right
+                    - calcPct(geometry.getHeight(), right.getPercentage())
+                    + right.getOffset();
             break;
           case CENTER:
-            // Center only makes sense if this component has a natural imageSize
-            // Don't change the width
-            //
+            x =
+                geometry.getX()
+                    + geometry.getWidth() / 2
+                    - geometry.getWidth()
+                    + calcPct(geometry.getHeight(), right.getPercentage())
+                    + right.getOffset();
             break;
-          case TOP:
-          case BOTTOM:
-            throw new LeanException(
-                "Setting a TOP or BOTTOM alignment makes no sense for right attachments on component "
-                    + component.getName());
-        }
-        // If we have no left reference point the width we actually calculated the x position
-        // We should keep the natural width
-        //
-        if (left == null) {
-          x = width - expectedSize.getWidth();
-          width = expectedSize.getWidth();
         }
       } else {
-        // Get the geometry after a layout result of the neighbor
+        // We have a left and right boundary, so we can calculate the width
         //
-        LeanGeometry neighborGeometry = results.findGeometry(right.getComponentName());
-
-        // The next should never occur if our cocktail sort is OK and/or if the components exists in
-        // the right order on the page.
-        //
-        if (neighborGeometry == null) {
-          throw new LeanException(
-              "Unable to find component layout result for "
-                  + component.getName()
-                  + " referencing right neighbor "
-                  + right.getComponentName()
-                  + " : component layout sort problem?");
-        }
-
         switch (right.getAlignment()) {
-          case DEFAULT:
           case LEFT:
-            width = neighborGeometry.getX() - x + right.getOffset();
+            width =
+                geometry.getX()
+                    - x
+                    + calcPct(geometry.getWidth(), right.getPercentage())
+                    + right.getOffset();
             break;
+          case DEFAULT:
           case RIGHT:
-            // If we have no information about the left hand side of the component
-            // we can simply calculate the X position backwards with the natural width.
+            // We calculate the width, stretch or shrink the component area
+            // So we're asked to take the right boundary of the referenced geometry
+            // Then we're subtracting the width of the geometry.
+            // Which is to say that this is the same as the x location
             //
-            if (layout.getLeft() == null) {
-              x =
-                  neighborGeometry.getX()
-                      + neighborGeometry.getWidth()
-                      - expectedSize.getWidth();
-            } else {
-              // In the other case we need to calculate the width, stretch or shrink the component
-              // area
-              //
-              width = neighborGeometry.getX() + neighborGeometry.getWidth() - x + right.getOffset();
-            }
+            width =
+                geometry.getX()
+                    + geometry.getWidth()
+                    - x
+                    - calcPct(geometry.getWidth(), right.getPercentage())
+                    + right.getOffset();
             break;
           case CENTER:
-            // Center only makes sense if this component has a imageSize
-            // Don't change the width
-            //
+            width =
+                geometry.getX()
+                    + geometry.getWidth() / 2
+                    - x
+                    + calcPct(geometry.getWidth(), right.getPercentage())
+                    + right.getOffset();
             break;
-          case TOP:
-          case BOTTOM:
-            throw new LeanException(
-                "Setting a TOP or BOTTOM alignment makes no sense for right attachments on component "
-                    + component.getName());
         }
       }
     }
 
     // bottom means height
     //
-    if (layout.getBottom() != null) {
-      if (bottom.getComponentName() == null) {
-        // This means relative to the page
+    if (bottom != null) {
+      LeanGeometry geometry =
+          lookupGeometry(bottom.getComponentName(), page, results, presentation);
+
+      if (top == null) {
+        // We're calculating the y-location, not the height
         //
-        int pageHeight = presentation.getUsableHeight(page);
         switch (bottom.getAlignment()) {
-          case DEFAULT:
           case TOP:
-            height =
-                -y
-                    + (int) ((double) pageHeight * ((double) bottom.getPercentage() / 100))
+            y =
+                geometry.getY()
+                    - height
+                    + calcPct(geometry.getHeight(), bottom.getPercentage())
                     + bottom.getOffset();
             break;
+          case DEFAULT:
           case BOTTOM:
-            height =
-                -y
-                    + (int)
-                        ((double) pageHeight - (double) pageHeight * (bottom.getPercentage() / 100))
-                    - bottom.getOffset();
+            y =
+                geometry.getY()
+                    + geometry.getHeight()
+                    - height // hug the bottom
+                    + calcPct(geometry.getHeight(), bottom.getPercentage())
+                    + bottom.getOffset();
             break;
           case CENTER:
-            // Center only makes sense if this component has a natural imageSize
-            // Don't change the height
+            y =
+                geometry.getY()
+                    + geometry.getHeight() / 2
+                    - geometry.getHeight()
+                    + bottom.getOffset();
             break;
-          case LEFT:
-          case RIGHT:
-            throw new LeanException(
-                "Setting a LEFT or RIGHT alignment makes no sense for bottom attachments on component "
-                    + component.getName());
-        }
-
-        // If we have no top reference point the height we calculated is actually the x position
-        // We should keep the natural height
-        //
-        if (top == null) {
-          y = height - expectedSize.getHeight();
-          height = expectedSize.getHeight();
         }
       } else {
-        // Get the geometry after a layout result of the neighbor
+        // We calculate the width
         //
-        LeanGeometry neighborGeometry = results.findGeometry(bottom.getComponentName());
-
-        // The next should never occur if our cocktail sort is OK and/or if the components exists in
-        // the right order on the page.
-        //
-        if (neighborGeometry == null) {
-          throw new LeanException(
-              "Unable to find component layout result for "
-                  + component.getName()
-                  + " referencing top neighbor "
-                  + bottom.getComponentName()
-                  + " : component layout sort problem?");
-        }
-
         switch (bottom.getAlignment()) {
-          case DEFAULT:
           case TOP:
-            height = neighborGeometry.getY() - y + bottom.getOffset();
-            break;
-          case BOTTOM:
-            // If we don't know the top we don't know the position
-            // Then we can calculate backwards with the natural height of the component
-            //
             height =
-                neighborGeometry.getY() + neighborGeometry.getHeight() - y + bottom.getOffset();
+                geometry.getY()
+                    - y
+                    + calcPct(geometry.getWidth(), bottom.getPercentage())
+                    + bottom.getOffset();
+            break;
+          case DEFAULT:
+          case BOTTOM:
+            height =
+                geometry.getY()
+                    + geometry.getHeight()
+                    - y
+                    - calcPct(geometry.getWidth(), bottom.getPercentage())
+                    + bottom.getOffset();
             break;
           case CENTER:
-            // Center only makes sense if this component has a imageSize
-            // Don't change the height
-            //
+            height =
+                geometry.getY()
+                    + geometry.getHeight() / 2
+                    - y
+                    - calcPct(geometry.getWidth(), bottom.getPercentage())
+                    + bottom.getOffset();
             break;
-          case LEFT:
-          case RIGHT:
-            throw new LeanException(
-                "Setting a LEFT or RIGHT alignment makes no sense for bottom attachments on component "
-                    + component.getName());
         }
       }
     }
@@ -452,6 +339,33 @@ public abstract class LeanBaseComponent implements ILeanComponent {
     // Now we have the actual position and imageSize of the component
     //
     return new LeanGeometry(x, y, width, height);
+  }
+
+  private LeanGeometry lookupGeometry(
+      String componentName, LeanPage page, LeanLayoutResults results, LeanPresentation presentation)
+      throws LeanException {
+    if (StringUtils.isEmpty(componentName)) {
+      // Use the geometry of the page...
+      //
+      int width = page.getWidthBetweenMargins();
+      int height = presentation.getUsableHeight(page);
+      LeanGeometry geometry = new LeanGeometry(0, 0, width, height);
+      return geometry;
+    } else {
+      LeanGeometry geometry = results.findGeometry(componentName);
+      if (geometry == null) {
+        throw new LeanException(
+            "Unable to find the geometry of component "
+                + componentName
+                + " on page "
+                + page.getPageNumber());
+      }
+      return geometry;
+    }
+  }
+
+  private int calcPct(int height, int percentage) {
+    return (int) ((double) height * (double) percentage / 100);
   }
 
   /**

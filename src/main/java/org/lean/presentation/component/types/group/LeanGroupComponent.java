@@ -13,6 +13,8 @@ import org.lean.core.exception.LeanException;
 import org.lean.presentation.LeanComponentLayoutResult;
 import org.lean.presentation.LeanPresentation;
 import org.lean.presentation.component.LeanComponent;
+import org.lean.presentation.component.listeners.IDoLayoutListener;
+import org.lean.presentation.component.listeners.IProcessSourceDataListener;
 import org.lean.presentation.component.type.ILeanComponent;
 import org.lean.presentation.component.type.LeanBaseComponent;
 import org.lean.presentation.component.type.LeanComponentPlugin;
@@ -234,6 +236,13 @@ public class LeanGroupComponent extends LeanBaseComponent implements ILeanCompon
       //
       IDataContext groupRowDataContext = new GroupDataContext(dataContext, groupRow);
 
+      // Call the processSourceData listeners...
+      //
+      for (IProcessSourceDataListener listener : rowComponent.getProcessSourceDataListeners()) {
+        listener.beforeProcessSourceDataCalled(
+            presentation, page, rowComponent, groupRowDataContext, renderContext, results);
+      }
+
       // Read the data for the component (Table, Crosstab, Image, ...)
       // This is stored in groupResults
       //
@@ -247,7 +256,7 @@ public class LeanGroupComponent extends LeanBaseComponent implements ILeanCompon
       LeanSize groupRowExpectedSize =
           groupIComponent.getExpectedSize(
               presentation, page, rowComponent, groupRowDataContext, renderContext, results);
-      if (groupRowExpectedSize==null) {
+      if (groupRowExpectedSize == null) {
         groupRowExpectedSize = new LeanSize(0, 0);
       }
 
@@ -316,6 +325,21 @@ public class LeanGroupComponent extends LeanBaseComponent implements ILeanCompon
       GroupRowDetails groupRowDetails = details.rowDetails.get(rowNr);
       LeanComponent rowComponent = groupRowDetails.groupRowComponent;
       ILeanComponent groupIComponent = rowComponent.getComponent();
+
+      // Call the doLayout listeners...
+      //
+      for (IDoLayoutListener listener : rowComponent.getDoLayoutListeners()) {
+        listener.beforeDoLayout(
+          presentation,
+          page,
+          rowComponent,
+          groupRowDetails.groupRowDataContext,
+          renderContext,
+          results);
+      }
+
+      // Do the actual layout
+      //
       groupIComponent.doLayout(
           presentation,
           page,

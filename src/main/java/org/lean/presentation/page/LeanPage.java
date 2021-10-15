@@ -1,12 +1,20 @@
 package org.lean.presentation.page;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.apache.hop.metadata.api.HopMetadataBase;
 import org.apache.hop.metadata.api.HopMetadataProperty;
 import org.lean.core.exception.LeanException;
 import org.lean.presentation.component.LeanComponent;
+import org.lean.presentation.layout.LeanLayout;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /** This represents one page in a presentation. */
 public class LeanPage {
@@ -152,13 +160,58 @@ public class LeanPage {
   }
 
   /**
-   * TODO: perform cocktail sort
+   * Perform a topological sort
    *
    * @return a sorted copy of the components
    */
   @JsonIgnore
-  public List<LeanComponent> getSortedComponents() {
-    return new ArrayList<>(components);
+  public List<LeanComponent> getSortedComponents() throws LeanException {
+    // Create a map with the simple name to component relationships
+    //
+    Map<String, LeanComponent> componentsMap = new HashMap<>();
+    components.forEach( leanComponent -> componentsMap.put(leanComponent.getName(), leanComponent) );
+
+    // Now create 2 lists: non-referenced components and the rest
+    //
+    List<LeanComponent> nonReferenced = new ArrayList<>();
+    List<LeanComponent> referenced = new ArrayList<>();
+
+    // Calculate the referenced components for each component...
+    //
+    Map<LeanComponent, Set<LeanComponent>> referencesMap = new HashMap<>();
+    for (LeanComponent component : components) {
+      Set<LeanComponent> dependencies = component.getDependentComponents( componentsMap );
+      referencesMap.put(component, dependencies);
+      if (dependencies.isEmpty()) {
+        nonReferenced.add( component );
+      } else {
+        referenced.add(component);
+      }
+    }
+
+    // Simply sort the non-referenced components by name...
+    //
+    Collections.sort( nonReferenced, Comparator.comparing( HopMetadataBase::getName ) );
+
+    // Do a cocktail sort, a safe way to sort a directed graph...
+    //
+    for (int i=0;i<referenced.size();i++) {
+      for (int j=0;j<referenced.size()-1;j++) {
+        LeanComponent a = referenced.get(j);
+        LeanComponent b = referenced.get(j+1);
+        if (!a.equals( b )) {
+          if (!referencesMap.get( b ).contains( a )) {
+            referenced.set(j+1, a);
+            referenced.set(j, b);
+          }
+        }
+      }
+    }
+
+    // Add the 2 lists...
+    //
+    nonReferenced.addAll( referenced );
+    return nonReferenced;
   }
 
   /** @return the components */

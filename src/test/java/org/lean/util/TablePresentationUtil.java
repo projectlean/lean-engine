@@ -15,7 +15,6 @@ import org.apache.hop.core.row.value.ValueMetaString;
 import org.apache.hop.core.variables.IVariables;
 import org.apache.hop.metadata.api.IHopMetadataProvider;
 import org.apache.hop.metadata.api.IHopMetadataSerializer;
-import org.lean.core.LeanAttachment;
 import org.lean.core.LeanColorRGB;
 import org.lean.core.LeanColumn;
 import org.lean.core.LeanDatabaseConnection;
@@ -246,7 +245,8 @@ public class TablePresentationUtil extends BasePresentationUtil {
     label.setBackGroundColor(new LeanColorRGB(200, 200, 200));
 
     LeanComponent label1 = new LeanComponent(COMPONENT_NAME_LABEL, label);
-    label1.setLayout(new LeanLayoutBuilder().left().right().topFromBottom(0,30).build() );
+    label1.setLayout(
+        new LeanLayoutBuilder().left().right().topFromBottom(COMPONENT_NAME_TABLE, 0, 30).build());
 
     pageOne.getComponents().add(label1);
 

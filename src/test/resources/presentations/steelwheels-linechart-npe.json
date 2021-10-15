@@ -22,7 +22,7 @@
             },
             "right": {
               "componentName": null,
-              "percentage": 100,
+              "percentage": 0,
               "offset": -5,
               "alignment": "DEFAULT"
             },
@@ -34,7 +34,7 @@
             },
             "bottom": {
               "componentName": null,
-              "percentage": 100,
+              "percentage": 0,
               "offset": -5,
               "alignment": "DEFAULT"
             }

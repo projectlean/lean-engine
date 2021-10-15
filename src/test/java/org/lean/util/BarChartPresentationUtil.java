@@ -3,7 +3,6 @@ package org.lean.util;
 import org.apache.hop.core.variables.IVariables;
 import org.apache.hop.metadata.api.IHopMetadataProvider;
 import org.lean.core.AggregationMethod;
-import org.lean.core.LeanAttachment;
 import org.lean.core.LeanDimension;
 import org.lean.core.LeanFact;
 import org.lean.core.LeanHorizontalAlignment;
@@ -13,6 +12,7 @@ import org.lean.presentation.component.LeanComponent;
 import org.lean.presentation.component.types.chart.LeanBarChartComponent;
 import org.lean.presentation.component.types.label.LeanLabelComponent;
 import org.lean.presentation.layout.LeanLayout;
+import org.lean.presentation.layout.LeanLayoutBuilder;
 
 import java.util.Arrays;
 
@@ -35,13 +35,7 @@ public class BarChartPresentationUtil extends BasePresentationUtil {
     LeanBarChartComponent lineChart = createColorRandomBarChart();
 
     LeanComponent lineChartComponent = new LeanComponent(LINE_CHART_NAME, lineChart);
-    LeanLayout chartLayout = new LeanLayout();
-    // Fill the page
-    chartLayout.setLeft(new LeanAttachment(0, 5));
-    chartLayout.setRight(new LeanAttachment(100, -5));
-    chartLayout.setTop(new LeanAttachment(0, 5));
-    chartLayout.setBottom(new LeanAttachment(100, -5));
-    lineChartComponent.setLayout(chartLayout);
+    lineChartComponent.setLayout(new LeanLayoutBuilder().all(5).build());
 
     // Add the chart to the first page.
     //

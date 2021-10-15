@@ -18,25 +18,25 @@
               "componentName": null,
               "percentage": 0,
               "offset": 5,
-              "alignment": "DEFAULT"
+              "alignment": "LEFT"
             },
             "right": {
               "componentName": null,
-              "percentage": 100,
+              "percentage": 0,
               "offset": -5,
-              "alignment": "DEFAULT"
+              "alignment": "RIGHT"
             },
             "top": {
               "componentName": null,
               "percentage": 0,
               "offset": 5,
-              "alignment": "DEFAULT"
+              "alignment": "TOP"
             },
             "bottom": {
               "componentName": null,
-              "percentage": 100,
+              "percentage": 0,
               "offset": -5,
-              "alignment": "DEFAULT"
+              "alignment": "BOTTOM"
             }
           },
           "size": null,

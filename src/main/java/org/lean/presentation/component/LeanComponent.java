@@ -3,7 +3,6 @@ package org.lean.presentation.component;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.apache.hop.core.logging.ILogChannel;
-import org.apache.hop.core.logging.LogChannel;
 import org.apache.hop.core.logging.LoggingObject;
 import org.apache.hop.metadata.api.HopMetadataBase;
 import org.apache.hop.metadata.api.HopMetadataProperty;
@@ -12,6 +11,8 @@ import org.apache.hop.metadata.api.IHopMetadataProvider;
 import org.lean.core.LeanSize;
 import org.lean.core.exception.LeanException;
 import org.lean.presentation.LeanPresentation;
+import org.lean.presentation.component.listeners.IDoLayoutListener;
+import org.lean.presentation.component.listeners.IProcessSourceDataListener;
 import org.lean.presentation.component.type.ILeanComponent;
 import org.lean.presentation.connector.LeanConnector;
 import org.lean.presentation.datacontext.RenderPageDataContext;
@@ -23,8 +24,12 @@ import org.lean.presentation.theme.LeanTheme;
 import org.lean.render.IRenderContext;
 import org.lean.render.context.SimpleRenderContext;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Main component class encapsulating component plugins through ILeanComponent
@@ -41,7 +46,13 @@ public class LeanComponent extends HopMetadataBase implements IHopMetadata {
   @HopMetadataProperty private String transparency;
   @HopMetadataProperty private LeanSize clipSize;
 
-  public LeanComponent() {}
+  @JsonIgnore private List<IProcessSourceDataListener> processSourceDataListeners;
+  @JsonIgnore private List<IDoLayoutListener> doLayoutListeners;
+
+  public LeanComponent() {
+    this.processSourceDataListeners = new ArrayList<>();
+    this.doLayoutListeners = new ArrayList<>();
+  }
 
   public LeanComponent(String name, ILeanComponent component) {
     this();
@@ -57,12 +68,18 @@ public class LeanComponent extends HopMetadataBase implements IHopMetadata {
       this.component.setThemeName(c.component.getThemeName());
     }
     this.layout = c.layout == null ? null : new LeanLayout(c.layout);
-    this.clipSize = c.clipSize==null ? null : new LeanSize(c.clipSize);
+    this.clipSize = c.clipSize == null ? null : new LeanSize(c.clipSize);
+    this.processSourceDataListeners.addAll(c.processSourceDataListeners);
+    this.doLayoutListeners.addAll(c.doLayoutListeners);
   }
 
   @Override
   public String toString() {
-    return "LeanComponent(" + name + ":" + component.getPluginId() + ")";
+    return "LeanComponent("
+        + name
+        + ":"
+        + (component == null ? "-" : component.getPluginId())
+        + ")";
   }
 
   @Override
@@ -99,9 +116,53 @@ public class LeanComponent extends HopMetadataBase implements IHopMetadata {
       LeanLayoutResults footerResults)
       throws LeanException {
     component.setLogChannel(log);
+
+    // Call the process source data listeners...
+    //
+    for (IProcessSourceDataListener listener : processSourceDataListeners) {
+      listener.beforeProcessSourceDataCalled(
+          leanPresentation, page, this, dataContext, renderContext, footerResults);
+    }
+
     component.processSourceData(
         leanPresentation, page, this, dataContext, renderContext, footerResults);
+
+    // Call the do layout listeners
+    //
     component.doLayout(leanPresentation, page, this, dataContext, renderContext, footerResults);
+  }
+
+  /**
+   * Build a complete set of all the components this component depends upon for doing layout
+   *
+   * @param components
+   * @return
+   */
+  public Set<LeanComponent> getDependentComponents(Map<String, LeanComponent> components)
+      throws LeanException {
+    Set<LeanComponent> set = new HashSet<>();
+
+    for (String referencedComponentName : layout.getReferencedLayoutComponentNames()) {
+      LeanComponent referencedComponent = components.get(referencedComponentName);
+      if (referencedComponent == null) {
+        throw new LeanException(
+            "Component "
+                + getName()
+                + " references "
+                + referencedComponentName
+                + " which isn't known");
+      }
+      // Now see if this component is in the list yet...
+      //
+      if (!set.contains(referencedComponent)) {
+        // Do a recursive search and all the referenced components as well...
+        //
+        set.add(referencedComponent);
+        set.addAll(referencedComponent.getDependentComponents(components));
+      }
+    }
+
+    return set;
   }
 
   /**
@@ -137,7 +198,6 @@ public class LeanComponent extends HopMetadataBase implements IHopMetadata {
 
     IRenderContext renderContext = new SimpleRenderContext(width, height, themes);
     LoggingObject loggingObject = new LoggingObject("componentRender");
-    ILogChannel log = LogChannel.GENERAL;
 
     // We don't pass in any new parameters
     //
@@ -223,10 +283,37 @@ public class LeanComponent extends HopMetadataBase implements IHopMetadata {
     return clipSize;
   }
 
-  /**
-   * @param clipSize The clipSize to set
-   */
-  public void setClipSize( LeanSize clipSize ) {
+  /** @param clipSize The clipSize to set */
+  public void setClipSize(LeanSize clipSize) {
     this.clipSize = clipSize;
+  }
+
+  /**
+   * Gets processSourceDataListeners
+   *
+   * @return value of processSourceDataListeners
+   */
+  public List<IProcessSourceDataListener> getProcessSourceDataListeners() {
+    return processSourceDataListeners;
+  }
+
+  /** @param processSourceDataListeners The processSourceDataListeners to set */
+  public void setProcessSourceDataListeners(
+      List<IProcessSourceDataListener> processSourceDataListeners) {
+    this.processSourceDataListeners = processSourceDataListeners;
+  }
+
+  /**
+   * Gets doLayoutListeners
+   *
+   * @return value of doLayoutListeners
+   */
+  public List<IDoLayoutListener> getDoLayoutListeners() {
+    return doLayoutListeners;
+  }
+
+  /** @param doLayoutListeners The doLayoutListeners to set */
+  public void setDoLayoutListeners(List<IDoLayoutListener> doLayoutListeners) {
+    this.doLayoutListeners = doLayoutListeners;
   }
 }
