@@ -32,7 +32,7 @@
     <mockito-all.version>1.9.5</mockito-all.version>
     <junit.version>4.13.1</junit.version>
     <grizzly2-version>2.29.1</grizzly2-version>
-    <batik.version>1.12</batik.version>
+    <batik.version>1.14</batik.version>
 
     <jetty-version>9.4.24.v20191120</jetty-version>
   </properties>
