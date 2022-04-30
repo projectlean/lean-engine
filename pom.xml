@@ -4,7 +4,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>org.lean</groupId>
-  <version>0.0.11-SNAPSHOT</version>
+  <version>0.0.12-SNAPSHOT</version>
   <artifactId>lean-engine</artifactId>
   <name>${project.artifactId}</name>
   <description>Lean Engine for ANalytics</description>
@@ -21,20 +21,20 @@
   </licenses>
 
   <properties>
-    <hop.version>1.0.0</hop.version>
+    <hop.version>2.0.0-SNAPSHOT</hop.version>
 
-    <maven.compiler.source>1.8</maven.compiler.source>
-    <maven.compiler.target>1.8</maven.compiler.target>
+    <maven.compiler.source>11</maven.compiler.source>
+    <maven.compiler.target>11</maven.compiler.target>
     <maven.build.timestamp.format>yyyy-MM-dd hh.mm.ss</maven.build.timestamp.format>
 
     <jandex-maven-plugin.version>1.0.8</jandex-maven-plugin.version>
 
-    <mockito-all.version>1.9.5</mockito-all.version>
-    <junit.version>4.13.1</junit.version>
+    <mockito-all.version>1.10.19</mockito-all.version>
+    <junit.version>4.13.2</junit.version>
     <grizzly2-version>2.29.1</grizzly2-version>
-    <batik.version>1.12</batik.version>
+    <batik.version>1.14</batik.version>
 
-    <jetty-version>9.4.24.v20191120</jetty-version>
+    <jetty-version>11.0.9</jetty-version>
   </properties>
 
   <repositories>
