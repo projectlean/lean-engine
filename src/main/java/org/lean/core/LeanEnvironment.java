@@ -24,11 +24,9 @@ public class LeanEnvironment {
       try {
         PluginRegistry.addPluginType(LeanComponentPluginType.getInstance());
         PluginRegistry.addPluginType(LeanConnectorPluginType.getInstance());
-
-        PluginRegistry.init(true);
-
+        PluginRegistry.init();
       } catch (Exception e) {
-        throw new LeanException("Unable to initialize plugin registry", e);
+        throw new LeanException("Unable to register lean plugin types", e);
       }
 
       initialized = true;

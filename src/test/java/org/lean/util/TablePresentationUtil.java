@@ -71,11 +71,11 @@ public class TablePresentationUtil extends BasePresentationUtil {
 
     IRowMeta rowMeta = new RowMeta();
     rowMeta.addValueMeta(new ValueMetaInteger("id"));
-    rowMeta.addValueMeta(new ValueMetaString("name"));
+    rowMeta.addValueMeta(new ValueMetaString("name", 500, -1 ));
     rowMeta.addValueMeta(new ValueMetaDate("updated"));
     rowMeta.addValueMeta(new ValueMetaBoolean("important"));
     rowMeta.addValueMeta(new ValueMetaNumber("random", 9, 4));
-    rowMeta.addValueMeta(new ValueMetaString("color"));
+    rowMeta.addValueMeta(new ValueMetaString("color", 20, -1));
 
     try {
 
