@@ -10,11 +10,11 @@ public class LeanFOPErrorHandler implements ErrorHandler {
   protected static SimpleLog logger;
 
   protected final Log getLogger() {
-    if (this.logger == null) {
-      this.logger = new SimpleLog("FOP/Transcoder");
-      ((SimpleLog) logger).setLevel(SimpleLog.LOG_LEVEL_INFO);
+    if (logger == null) {
+      logger = new SimpleLog("FOP/Transcoder");
+      logger.setLevel(SimpleLog.LOG_LEVEL_INFO);
     }
-    return this.logger;
+    return logger;
   }
 
   /** {@inheritDoc} */

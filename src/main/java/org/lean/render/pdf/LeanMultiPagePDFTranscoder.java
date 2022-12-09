@@ -1,6 +1,9 @@
 package org.lean.render.pdf;
 
-import org.apache.avalon.framework.configuration.Configuration;
+import java.awt.Color;
+import java.io.BufferedOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import org.apache.batik.bridge.BridgeContext;
 import org.apache.batik.bridge.UnitProcessor;
 import org.apache.batik.ext.awt.RenderingHintsKeyExt;
@@ -8,6 +11,7 @@ import org.apache.batik.transcoder.TranscoderException;
 import org.apache.batik.transcoder.TranscoderOutput;
 import org.apache.batik.transcoder.image.ImageTranscoder;
 import org.apache.fop.Version;
+import org.apache.fop.configuration.Configuration;
 import org.apache.fop.fonts.FontInfo;
 import org.apache.fop.svg.AbstractFOPTranscoder;
 import org.apache.fop.svg.PDFBridgeContext;
@@ -16,11 +20,6 @@ import org.apache.fop.svg.PDFTranscoder;
 import org.apache.fop.svg.font.FOPFontFamilyResolverImpl;
 import org.w3c.dom.Document;
 import org.w3c.dom.svg.SVGLength;
-
-import java.awt.*;
-import java.io.BufferedOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
 
 public class LeanMultiPagePDFTranscoder extends AbstractFOPTranscoder {
 
@@ -80,7 +79,7 @@ public class LeanMultiPagePDFTranscoder extends AbstractFOPTranscoder {
 
       if (effCfg != null) {
         PDFDocumentGraphics2DConfigurator configurator = new PDFDocumentGraphics2DConfigurator();
-        boolean useComplexScriptFeatures = false; // TODO - FIX ME
+        boolean useComplexScriptFeatures = false;
         configurator.configure(graphics, effCfg, useComplexScriptFeatures);
       } else {
         graphics.setupDefaultFontInfo();
