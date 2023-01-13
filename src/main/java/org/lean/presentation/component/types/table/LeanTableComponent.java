@@ -1,6 +1,10 @@
 package org.lean.presentation.component.types.table;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import java.awt.BasicStroke;
+import java.awt.Stroke;
+import java.util.ArrayList;
+import java.util.List;
 import org.apache.batik.svggen.SVGGraphics2D;
 import org.apache.commons.lang.StringUtils;
 import org.apache.hop.core.RowMetaAndData;
@@ -17,6 +21,8 @@ import org.lean.core.LeanGeometry;
 import org.lean.core.LeanPosition;
 import org.lean.core.LeanSize;
 import org.lean.core.LeanTextGeometry;
+import org.lean.core.draw.DrawnContext;
+import org.lean.core.draw.DrawnItem;
 import org.lean.core.exception.LeanException;
 import org.lean.presentation.LeanComponentLayoutResult;
 import org.lean.presentation.LeanPresentation;
@@ -32,10 +38,6 @@ import org.lean.presentation.page.LeanPage;
 import org.lean.presentation.theme.LeanTheme;
 import org.lean.render.IRenderContext;
 
-import java.awt.*;
-import java.util.ArrayList;
-import java.util.List;
-
 @JsonDeserialize(as = LeanTableComponent.class)
 @LeanComponentPlugin(id = "LeanTableComponent", name = "Table", description = "A table component")
 public class LeanTableComponent extends LeanBaseComponent implements ILeanComponent {
@@ -47,6 +49,8 @@ public class LeanTableComponent extends LeanBaseComponent implements ILeanCompon
   @HopMetadataProperty private List<LeanColumn> columnSelection;
 
   @HopMetadataProperty private LeanColorRGB gridColor;
+
+  @HopMetadataProperty private LeanColorRGB headerBackGroundColor;
 
   @HopMetadataProperty private int horizontalMargin;
 
@@ -80,6 +84,8 @@ public class LeanTableComponent extends LeanBaseComponent implements ILeanCompon
       this.columnSelection.add(new LeanColumn(lc));
     }
     this.gridColor = c.gridColor == null ? null : new LeanColorRGB(c.gridColor);
+    this.headerBackGroundColor =
+        c.headerBackGroundColor == null ? null : new LeanColorRGB(c.headerBackGroundColor);
     this.horizontalMargin = c.horizontalMargin;
     this.verticalMargin = c.verticalMargin;
     this.evenHeights = c.evenHeights;
@@ -370,7 +376,10 @@ public class LeanTableComponent extends LeanBaseComponent implements ILeanCompon
               componentGeometry,
               maxWidths,
               true,
-              renderContext);
+              renderContext,
+              component,
+              layoutResult,
+              offSet);
     }
 
     for (int rowNr = startRow; rowNr < endRow; rowNr++) {
@@ -386,7 +395,10 @@ public class LeanTableComponent extends LeanBaseComponent implements ILeanCompon
               componentGeometry,
               maxWidths,
               rowNr == 0,
-              renderContext);
+              renderContext,
+              component,
+              layoutResult,
+              offSet);
     }
 
     drawBorder(gc, componentGeometry, renderContext);
@@ -402,10 +414,14 @@ public class LeanTableComponent extends LeanBaseComponent implements ILeanCompon
       LeanGeometry componentGeometry,
       List<Integer> maxWidths,
       boolean firstRow,
-      IRenderContext renderContext)
+      IRenderContext renderContext,
+      LeanComponent component,
+      LeanComponentLayoutResult layoutResult,
+      LeanPosition offSet)
       throws LeanException {
     List<LeanTextGeometry> columnSizes = columnSizesList.get(rowNr);
     List<String> rowStrings = rowStringsList.get(rowNr);
+    List<DrawnItem> drawnItems = layoutResult.getRenderPage().getDrawnItems();
 
     int x = componentGeometry.getX();
 
@@ -422,34 +438,75 @@ public class LeanTableComponent extends LeanBaseComponent implements ILeanCompon
         enableFont(gc, lookupDefaultFont(renderContext));
       }
 
+      int stringX;
+      int stringY;
+
       switch (leanColumn.getHorizontalAlignment()) {
         case LEFT:
-          gc.drawString(
-              text,
-              x + textGeometry.getOffsetX() + horizontalMargin,
-              y + textGeometry.getOffsetY() + verticalMargin);
+          stringX = x + textGeometry.getOffsetX() + horizontalMargin;
+          stringY = y + textGeometry.getOffsetY() + verticalMargin;
           break;
-
         case RIGHT:
-          gc.drawString(
-              text,
-              x + maxWidth + horizontalMargin - textGeometry.getWidth(),
-              y + textGeometry.getOffsetY() + verticalMargin);
+          stringX = x + maxWidth + horizontalMargin - textGeometry.getWidth();
+          stringY = y + textGeometry.getOffsetY() + verticalMargin;
           break;
         case CENTER:
-          gc.drawString(
-              text,
-              x + ((maxWidth + horizontalMargin * 2) - textGeometry.getWidth()) / 2,
-              y + textGeometry.getOffsetY() + verticalMargin);
+          stringX = x + ((maxWidth + horizontalMargin * 2) - textGeometry.getWidth()) / 2;
+          stringY = y + textGeometry.getOffsetY() + verticalMargin;
           break;
+        default:
+          throw new LeanException(
+              "Horizontal column alignment "
+                  + leanColumn.getHorizontalAlignment()
+                  + " is not yet supported");
       }
+
+      int cellWidth = maxWidth + horizontalMargin * 2;
+      int cellHeight = maxHeight + verticalMargin * 2;
+
+      // Do we need a specific background color for the header?
+      //
+      if (header && (rowNr == 0 || headerOnEveryPage && firstRow)) {
+        if (headerBackGroundColor != null) {
+          enableColor(gc, headerBackGroundColor);
+          gc.fillRect(x, y, cellWidth, cellHeight);
+        }
+      } else {
+        LeanColorRGB bg = lookupBackgroundColor(renderContext);
+        if (background && bg != null) {
+          enableColor(gc, bg);
+          gc.fillRect(x, y, cellWidth, cellHeight);
+        }
+      }
+
+      enableColor(gc, lookupDefaultColor(renderContext));
+      if (StringUtils.isNotEmpty(text)) {
+        gc.drawString(text, stringX, stringY);
+      }
+
+      DrawnContext drawnContext = new DrawnContext(text);
+      drawnContext.getDimensions().add(leanColumn);
+
+      // Add this to the drawn areas.
+      DrawnItem drawnItem =
+          new DrawnItem(
+              component.getName(),
+              component.getComponent().getPluginId(),
+              layoutResult.getPartNumber(),
+              DrawnItem.DrawnItemType.ComponentItem,
+              firstRow ? DrawnItem.Category.Header.name() : DrawnItem.Category.Cell.name(),
+              0,
+              0,
+              new LeanGeometry(offSet.getX() + x, offSet.getY() + y, cellWidth, cellHeight),
+              drawnContext);
+      drawnItems.add(drawnItem);
 
       enableColor(gc, lookupGridColor(renderContext));
       Stroke oldStroke = gc.getStroke();
       if (StringUtils.isNotEmpty(gridLineWidth)) {
-        gc.setStroke(new BasicStroke(Float.valueOf(gridLineWidth)));
+        gc.setStroke(new BasicStroke(Float.parseFloat(gridLineWidth)));
       }
-      gc.drawRect(x, y, maxWidth + horizontalMargin * 2, maxHeight + verticalMargin * 2);
+      gc.drawRect(x, y, cellWidth, cellHeight);
       if (StringUtils.isNotEmpty(gridLineWidth)) {
         gc.setStroke(oldStroke);
       }
@@ -644,7 +701,9 @@ public class LeanTableComponent extends LeanBaseComponent implements ILeanCompon
     return horizontalMargin;
   }
 
-  /** @param horizontalMargin The horizontalMargin to set */
+  /**
+   * @param horizontalMargin The horizontalMargin to set
+   */
   public void setHorizontalMargin(int horizontalMargin) {
     this.horizontalMargin = horizontalMargin;
   }
@@ -658,7 +717,9 @@ public class LeanTableComponent extends LeanBaseComponent implements ILeanCompon
     return verticalMargin;
   }
 
-  /** @param verticalMargin The verticalMargin to set */
+  /**
+   * @param verticalMargin The verticalMargin to set
+   */
   public void setVerticalMargin(int verticalMargin) {
     this.verticalMargin = verticalMargin;
   }
@@ -672,7 +733,9 @@ public class LeanTableComponent extends LeanBaseComponent implements ILeanCompon
     return gridColor;
   }
 
-  /** @param gridColor The gridColor to set */
+  /**
+   * @param gridColor The gridColor to set
+   */
   public void setGridColor(LeanColorRGB gridColor) {
     this.gridColor = gridColor;
   }
@@ -686,7 +749,9 @@ public class LeanTableComponent extends LeanBaseComponent implements ILeanCompon
     return headerFont;
   }
 
-  /** @param headerFont The headerFont to set */
+  /**
+   * @param headerFont The headerFont to set
+   */
   public void setHeaderFont(LeanFont headerFont) {
     this.headerFont = headerFont;
   }
@@ -700,7 +765,9 @@ public class LeanTableComponent extends LeanBaseComponent implements ILeanCompon
     return header;
   }
 
-  /** @param header The header to set */
+  /**
+   * @param header The header to set
+   */
   public void setHeader(boolean header) {
     this.header = header;
   }
@@ -714,7 +781,9 @@ public class LeanTableComponent extends LeanBaseComponent implements ILeanCompon
     return evenHeights;
   }
 
-  /** @param evenHeights The evenHeights to set */
+  /**
+   * @param evenHeights The evenHeights to set
+   */
   public void setEvenHeights(boolean evenHeights) {
     this.evenHeights = evenHeights;
   }
@@ -728,7 +797,9 @@ public class LeanTableComponent extends LeanBaseComponent implements ILeanCompon
     return headerOnEveryPage;
   }
 
-  /** @param headerOnEveryPage The headerOnEveryPage to set */
+  /**
+   * @param headerOnEveryPage The headerOnEveryPage to set
+   */
   public void setHeaderOnEveryPage(boolean headerOnEveryPage) {
     this.headerOnEveryPage = headerOnEveryPage;
   }
@@ -742,7 +813,9 @@ public class LeanTableComponent extends LeanBaseComponent implements ILeanCompon
     return columnSelection;
   }
 
-  /** @param columnSelection The columnSelection to set */
+  /**
+   * @param columnSelection The columnSelection to set
+   */
   public void setColumnSelection(List<LeanColumn> columnSelection) {
     this.columnSelection = columnSelection;
   }
@@ -756,8 +829,28 @@ public class LeanTableComponent extends LeanBaseComponent implements ILeanCompon
     return gridLineWidth;
   }
 
-  /** @param gridLineWidth The gridLineWidth to set */
+  /**
+   * @param gridLineWidth The gridLineWidth to set
+   */
   public void setGridLineWidth(String gridLineWidth) {
     this.gridLineWidth = gridLineWidth;
+  }
+
+  /**
+   * Gets headerBackGroundColor
+   *
+   * @return value of headerBackGroundColor
+   */
+  public LeanColorRGB getHeaderBackGroundColor() {
+    return headerBackGroundColor;
+  }
+
+  /**
+   * Sets headerBackGroundColor
+   *
+   * @param headerBackGroundColor value of headerBackGroundColor
+   */
+  public void setHeaderBackGroundColor(LeanColorRGB headerBackGroundColor) {
+    this.headerBackGroundColor = headerBackGroundColor;
   }
 }

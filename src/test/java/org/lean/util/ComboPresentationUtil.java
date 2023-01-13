@@ -1,5 +1,7 @@
 package org.lean.util;
 
+import java.util.Arrays;
+import java.util.Collections;
 import org.apache.hop.core.variables.IVariables;
 import org.apache.hop.metadata.api.IHopMetadataProvider;
 import org.lean.core.AggregationMethod;
@@ -22,8 +24,6 @@ import org.lean.presentation.interaction.LeanInteractionMethod;
 import org.lean.presentation.layout.LeanLayout;
 import org.lean.presentation.layout.LeanLayoutBuilder;
 import org.lean.presentation.page.LeanPage;
-
-import java.util.Arrays;
 
 public class ComboPresentationUtil extends BasePresentationUtil {
 
@@ -175,9 +175,10 @@ public class ComboPresentationUtil extends BasePresentationUtil {
                     "LineChart",
                     null,
                     DrawnItem.DrawnItemType.ComponentItem.name(),
-                    DrawnItem.Category.ChartSeriesLabel.name()),
+                    DrawnItem.Category.ChartSeriesLabel.name(),
+                    Collections.emptyList()),
                 new LeanInteractionAction(
-                    LeanInteractionAction.ActionType.OpenPresentation, "Other presentation")));
+                    LeanInteractionAction.ActionType.OPEN_PRESENTATION, "Other presentation")));
 
     return presentation;
   }

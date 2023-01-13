@@ -83,6 +83,7 @@ public class LeanSortMethod {
   public enum Type {
     NATIVE_VALUE,
     STRING_ALPHA,
+    STRING_ALPHA_CASE_INSENSITIVE,
     STRING_NUMERIC,
     STRING_CUSTOM;
   }

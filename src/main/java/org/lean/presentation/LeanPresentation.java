@@ -3,6 +3,15 @@ package org.lean.presentation;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.awt.AlphaComposite;
+import java.awt.Color;
+import java.awt.Composite;
+import java.awt.Shape;
+import java.awt.geom.AffineTransform;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 import org.apache.batik.svggen.SVGGraphics2D;
 import org.apache.commons.lang.StringUtils;
 import org.apache.hop.core.Const;
@@ -40,19 +49,10 @@ import org.lean.presentation.variable.LeanParameter;
 import org.lean.render.IRenderContext;
 import org.lean.render.context.PresentationRenderContext;
 
-import javax.ws.rs.Path;
-import java.awt.*;
-import java.awt.geom.AffineTransform;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-
 @HopMetadata(
     key = "presentation",
     name = "Presentation",
     description = "Top level document of the presentation metadata")
-@Path("presentations")
 public class LeanPresentation extends HopMetadataBase implements IHasIdentity, IHopMetadata {
 
   @HopMetadataProperty private String description;
@@ -176,7 +176,7 @@ public class LeanPresentation extends HopMetadataBase implements IHasIdentity, I
 
         // At the very least, add an empty render page in case we have no components...
         //
-        results.addNewPage( page, null );
+        results.addNewPage(page, null);
 
         List<LeanComponent> sortedComponents = page.getSortedComponents();
         for (LeanComponent leanComponent : sortedComponents) {
@@ -293,7 +293,8 @@ public class LeanPresentation extends HopMetadataBase implements IHasIdentity, I
           }
 
           // Clipping of string drawing...
-          boolean clip = leanComponent.getClipSize() != null && leanComponent.getClipSize().isDefined();
+          boolean clip =
+              leanComponent.getClipSize() != null && leanComponent.getClipSize().isDefined();
           Shape oldClip = gc.getClip();
           if (clip) {
             LeanGeometry lg = componentLayoutResult.getGeometry();
@@ -464,14 +465,16 @@ public class LeanPresentation extends HopMetadataBase implements IHasIdentity, I
   }
 
   /**
-   * Look for the connector with the given name and hand it's implementation
+   * Look for the connector with the given name and hand its implementation back.
    *
    * @param name The name of the connector to look for.
    * @return The connector implementation or null if the connector couldn't be found
    */
   public LeanConnector getConnector(String name) {
     for (LeanConnector connector : connectors) {
-      if (connector.getName().equalsIgnoreCase(name)) {
+      if (connector != null
+          && connector.getName() != null
+          && connector.getName().equalsIgnoreCase(name)) {
         return connector;
       }
     }
@@ -496,7 +499,9 @@ public class LeanPresentation extends HopMetadataBase implements IHasIdentity, I
     return null;
   }
 
-  /** @return The default theme using the default theme name or null if it couldn't be found. */
+  /**
+   * @return The default theme using the default theme name or null if it couldn't be found.
+   */
   @JsonIgnore
   public LeanTheme getDefaultTheme() {
     return lookupTheme(defaultThemeName);
@@ -538,15 +543,6 @@ public class LeanPresentation extends HopMetadataBase implements IHasIdentity, I
     }
   }
 
-  public LeanConnector findConnector(String connectorName) {
-    for (LeanConnector connector : connectors) {
-      if (connector.getName().equalsIgnoreCase(connectorName)) {
-        return connector;
-      }
-    }
-    return null;
-  }
-
   /**
    * Find the given interaction for the drawn item. Look in the list of defined interactions for
    * this presentation to see what needs to happen to the particular drawn item. We assumed it's
@@ -565,22 +561,30 @@ public class LeanPresentation extends HopMetadataBase implements IHasIdentity, I
     return null;
   }
 
-  /** @return the description */
+  /**
+   * @return the description
+   */
   public String getDescription() {
     return description;
   }
 
-  /** @param description the description to set */
+  /**
+   * @param description the description to set
+   */
   public void setDescription(String description) {
     this.description = description;
   }
 
-  /** @return the connectors */
+  /**
+   * @return the connectors
+   */
   public List<LeanConnector> getConnectors() {
     return connectors;
   }
 
-  /** @param connectors the connectors to set */
+  /**
+   * @param connectors the connectors to set
+   */
   public void setConnectors(List<LeanConnector> connectors) {
     this.connectors = connectors;
   }
@@ -594,7 +598,9 @@ public class LeanPresentation extends HopMetadataBase implements IHasIdentity, I
     return pages;
   }
 
-  /** @param pages The pages to set */
+  /**
+   * @param pages The pages to set
+   */
   public void setPages(List<LeanPage> pages) {
     this.pages = pages;
   }
@@ -608,7 +614,9 @@ public class LeanPresentation extends HopMetadataBase implements IHasIdentity, I
     return header;
   }
 
-  /** @param header The header to set */
+  /**
+   * @param header The header to set
+   */
   public void setHeader(LeanPage header) {
     this.header = header;
   }
@@ -622,7 +630,9 @@ public class LeanPresentation extends HopMetadataBase implements IHasIdentity, I
     return footer;
   }
 
-  /** @param footer The footer to set */
+  /**
+   * @param footer The footer to set
+   */
   public void setFooter(LeanPage footer) {
     this.footer = footer;
   }
@@ -636,7 +646,9 @@ public class LeanPresentation extends HopMetadataBase implements IHasIdentity, I
     return themes;
   }
 
-  /** @param themes The themes to set */
+  /**
+   * @param themes The themes to set
+   */
   public void setThemes(List<LeanTheme> themes) {
     this.themes = themes;
   }
@@ -650,7 +662,9 @@ public class LeanPresentation extends HopMetadataBase implements IHasIdentity, I
     return defaultThemeName;
   }
 
-  /** @param defaultThemeName The defaultThemeName to set */
+  /**
+   * @param defaultThemeName The defaultThemeName to set
+   */
   public void setDefaultThemeName(String defaultThemeName) {
     this.defaultThemeName = defaultThemeName;
   }
@@ -664,7 +678,9 @@ public class LeanPresentation extends HopMetadataBase implements IHasIdentity, I
     return interactions;
   }
 
-  /** @param interactions The interactions to set */
+  /**
+   * @param interactions The interactions to set
+   */
   public void setInteractions(List<LeanInteraction> interactions) {
     this.interactions = interactions;
   }

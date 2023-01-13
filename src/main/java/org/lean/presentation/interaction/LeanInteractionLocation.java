@@ -1,7 +1,10 @@
 package org.lean.presentation.interaction;
 
+import java.util.ArrayList;
+import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.apache.hop.metadata.api.HopMetadataProperty;
+import org.lean.core.LeanColumn;
 import org.lean.core.draw.DrawnItem;
 
 /** Describe where an interaction can take place */
@@ -19,14 +22,24 @@ public class LeanInteractionLocation {
   // The item category or null for all categories
   @HopMetadataProperty private String itemCategory;
 
-  public LeanInteractionLocation() {}
+  // The list of dimensions to match on empty for all dimensions
+  @HopMetadataProperty private List<String> dimensionColumns;
+
+  public LeanInteractionLocation() {
+    this.dimensionColumns = new ArrayList<>();
+  }
 
   public LeanInteractionLocation(
-      String componentName, String componentPluginId, String itemType, String itemCategory) {
+      String componentName,
+      String componentPluginId,
+      String itemType,
+      String itemCategory,
+      List<String> dimensions) {
     this.componentName = componentName;
     this.componentPluginId = componentPluginId;
     this.itemType = itemType;
     this.itemCategory = itemCategory;
+    this.dimensionColumns = dimensions;
   }
 
   public LeanInteractionLocation(LeanInteractionLocation location) {
@@ -35,6 +48,7 @@ public class LeanInteractionLocation {
     this.componentPluginId = location.componentPluginId;
     this.itemType = location.itemType;
     this.itemCategory = location.itemCategory;
+    this.dimensionColumns.addAll(location.dimensionColumns);
   }
 
   public boolean matches(DrawnItem drawnItem) {
@@ -59,6 +73,21 @@ public class LeanInteractionLocation {
         return false;
       }
     }
+    if (!dimensionColumns.isEmpty()) {
+      for (String dimensionName : dimensionColumns) {
+        boolean found = false;
+        for (LeanColumn dimension : drawnItem.getContext().getDimensions()) {
+          if (dimension.getColumnName().equals(dimensionName)) {
+            found = true;
+            break;
+          }
+        }
+        if (!found) {
+          return false;
+        }
+      }
+    }
+
     return true;
   }
 
@@ -71,7 +100,9 @@ public class LeanInteractionLocation {
     return componentName;
   }
 
-  /** @param componentName The componentName to set */
+  /**
+   * @param componentName The componentName to set
+   */
   public void setComponentName(String componentName) {
     this.componentName = componentName;
   }
@@ -85,7 +116,9 @@ public class LeanInteractionLocation {
     return componentPluginId;
   }
 
-  /** @param componentPluginId The componentPluginId to set */
+  /**
+   * @param componentPluginId The componentPluginId to set
+   */
   public void setComponentPluginId(String componentPluginId) {
     this.componentPluginId = componentPluginId;
   }
@@ -99,7 +132,9 @@ public class LeanInteractionLocation {
     return itemType;
   }
 
-  /** @param itemType The itemType to set */
+  /**
+   * @param itemType The itemType to set
+   */
   public void setItemType(String itemType) {
     this.itemType = itemType;
   }
@@ -113,8 +148,28 @@ public class LeanInteractionLocation {
     return itemCategory;
   }
 
-  /** @param itemCategory The itemCategory to set */
+  /**
+   * @param itemCategory The itemCategory to set
+   */
   public void setItemCategory(String itemCategory) {
     this.itemCategory = itemCategory;
+  }
+
+  /**
+   * Gets dimensionColumns
+   *
+   * @return value of dimensionColumns
+   */
+  public List<String> getDimensionColumns() {
+    return dimensionColumns;
+  }
+
+  /**
+   * Sets dimensionColumns
+   *
+   * @param dimensionColumns value of dimensionColumns
+   */
+  public void setDimensionColumns(List<String> dimensionColumns) {
+    this.dimensionColumns = dimensionColumns;
   }
 }

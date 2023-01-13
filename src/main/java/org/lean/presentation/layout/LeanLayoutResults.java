@@ -1,5 +1,14 @@
 package org.lean.presentation.layout;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 import org.apache.batik.transcoder.TranscoderInput;
 import org.apache.batik.transcoder.TranscoderOutput;
 import org.apache.fop.svg.PDFTranscoder;
@@ -12,16 +21,6 @@ import org.lean.core.draw.DrawnItem;
 import org.lean.core.exception.LeanException;
 import org.lean.presentation.component.LeanComponent;
 import org.lean.presentation.page.LeanPage;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
 
 /** Contains layout results of a presentation */
 public class LeanLayoutResults {
@@ -99,30 +98,19 @@ public class LeanLayoutResults {
   }
 
   public LeanRenderPage getCurrentRenderPage(LeanPage page) {
-    LeanRenderPage renderPage = null;
-
     for (int i = renderPages.size() - 1; i >= 0; i--) {
-      boolean found = false;
-      if (page.isHeader() && renderPages.get(i).getPage().isHeader()) {
-        found = true;
-      } else if (page.isFooter() && renderPages.get(i).getPage().isFooter()) {
-        found = true;
-      } else if (renderPages.get(i).getPage().getPageNumber() == page.getPageNumber()) {
-        found = true;
-      }
-      if (found) {
-        renderPage = renderPages.get(i);
-        break;
+      // The header & footer flag or the page number give us what we need.
+      //
+      if (page.isHeader() && renderPages.get(i).getPage().isHeader()
+          || page.isFooter() && renderPages.get(i).getPage().isFooter()
+          || renderPages.get(i).getPage().getPageNumber() == page.getPageNumber()) {
+        return renderPages.get(i);
       }
     }
 
     // No page with this number found, create a new one...
     //
-    if (renderPage == null) {
-      renderPage = addNewPage(page, null);
-    }
-
-    return renderPage;
+    return addNewPage(page, null);
   }
 
   public void replaceGCForHeaderFooter(HopSvgGraphics2D gc) throws LeanException {
@@ -225,32 +213,22 @@ public class LeanLayoutResults {
       svgFilenames.add(svgFilename);
       pdfFilenames.add(pdfFilename);
 
-      try {
-        FileOutputStream stream = new FileOutputStream(svgFilename);
+      try (FileOutputStream stream = new FileOutputStream(svgFilename)) {
         try {
           stream.write(renderPage.getSvgXml().getBytes("UTF-8"));
           stream.flush();
         } catch (Exception e) {
           throw new LeanException("Unable to convert rendering to SVG XML", e);
-        } finally {
-          try {
-            stream.close();
-          } catch (IOException e) {
-            throw new LeanException("Unable to close file", e);
-          }
         }
 
         // Save file to PDF as well...
         //
         if (convertToPdfs) {
-          try {
-
-            FileInputStream svgInputStream = new FileInputStream(svgFilename);
+          try (FileInputStream svgInputStream = new FileInputStream(svgFilename)) {
             TranscoderInput input = new TranscoderInput(svgInputStream);
             TranscoderOutput output = new TranscoderOutput(new FileOutputStream(pdfFilename));
             PDFTranscoder transcoder = new PDFTranscoder();
             transcoder.transcode(input, output);
-
           } catch (Exception e) {
             throw new LeanException(
                 "Unable to transcode SVG '" + svgFilename + "' to PDF '" + pdfFilename, e);
@@ -291,7 +269,9 @@ public class LeanLayoutResults {
     return renderPages;
   }
 
-  /** @param renderPages The renderPages to set */
+  /**
+   * @param renderPages The renderPages to set
+   */
   public void setRenderPages(List<LeanRenderPage> renderPages) {
     this.renderPages = renderPages;
   }
@@ -305,7 +285,9 @@ public class LeanLayoutResults {
     return log;
   }
 
-  /** @param log The log to set */
+  /**
+   * @param log The log to set
+   */
   public void setLog(ILogChannel log) {
     this.log = log;
   }
@@ -319,7 +301,9 @@ public class LeanLayoutResults {
     return id;
   }
 
-  /** @param id The id to set */
+  /**
+   * @param id The id to set
+   */
   public void setId(String id) {
     this.id = id;
   }
