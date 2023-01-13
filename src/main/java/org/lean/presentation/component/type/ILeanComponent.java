@@ -2,7 +2,12 @@ package org.lean.presentation.component.type;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import org.apache.hop.core.exception.HopException;
 import org.apache.hop.core.logging.ILogChannel;
+import org.apache.hop.core.plugins.IPlugin;
+import org.apache.hop.core.plugins.PluginRegistry;
+import org.apache.hop.metadata.api.HopMetadataObject;
+import org.apache.hop.metadata.api.IHopMetadataObjectFactory;
 import org.lean.core.LeanColorRGB;
 import org.lean.core.LeanFont;
 import org.lean.core.LeanGeometry;
@@ -24,6 +29,7 @@ import org.lean.render.IRenderContext;
  * @author matt
  */
 @JsonDeserialize(using = ILeanComponentDeserializer.class)
+@HopMetadataObject(objectFactory = ILeanComponent.LeanComponentObjectFactory.class)
 public interface ILeanComponent extends Cloneable {
 
   /**
@@ -100,7 +106,9 @@ public interface ILeanComponent extends Cloneable {
   @JsonIgnore
   void setLogChannel(ILogChannel log);
 
-  /** @return a copy of this components metadata */
+  /**
+   * @return a copy of this components metadata
+   */
   ILeanComponent clone();
 
   /**
@@ -116,7 +124,9 @@ public interface ILeanComponent extends Cloneable {
    */
   String getPluginId();
 
-  /** @param pluginId The pluginId to set */
+  /**
+   * @param pluginId The pluginId to set
+   */
   void setPluginId(String pluginId);
 
   /**
@@ -126,7 +136,9 @@ public interface ILeanComponent extends Cloneable {
    */
   String getSourceConnectorName();
 
-  /** @param sourceConnectorName The sourceConnectorName to set */
+  /**
+   * @param sourceConnectorName The sourceConnectorName to set
+   */
   void setSourceConnectorName(String sourceConnectorName);
 
   /**
@@ -136,7 +148,9 @@ public interface ILeanComponent extends Cloneable {
    */
   LeanFont getDefaultFont();
 
-  /** @param defaultFont The defaultFont to set */
+  /**
+   * @param defaultFont The defaultFont to set
+   */
   void setDefaultFont(LeanFont defaultFont);
 
   /**
@@ -146,7 +160,9 @@ public interface ILeanComponent extends Cloneable {
    */
   LeanColorRGB getDefaultColor();
 
-  /** @param defaultColor The defaultColor to set */
+  /**
+   * @param defaultColor The defaultColor to set
+   */
   void setDefaultColor(LeanColorRGB defaultColor);
 
   /**
@@ -156,7 +172,9 @@ public interface ILeanComponent extends Cloneable {
    */
   boolean isBackground();
 
-  /** @param background The background to set */
+  /**
+   * @param background The background to set
+   */
   void setBackground(boolean background);
 
   /**
@@ -166,7 +184,9 @@ public interface ILeanComponent extends Cloneable {
    */
   LeanColorRGB getBackGroundColor();
 
-  /** @param backGroundColor The backGroundColor to set */
+  /**
+   * @param backGroundColor The backGroundColor to set
+   */
   void setBackGroundColor(LeanColorRGB backGroundColor);
 
   /**
@@ -176,7 +196,9 @@ public interface ILeanComponent extends Cloneable {
    */
   boolean isBorder();
 
-  /** @param border The border to set */
+  /**
+   * @param border The border to set
+   */
   void setBorder(boolean border);
 
   /**
@@ -186,12 +208,32 @@ public interface ILeanComponent extends Cloneable {
    */
   LeanColorRGB getBorderColor();
 
-  /** @param borderColor The borderColor to set */
+  /**
+   * @param borderColor The borderColor to set
+   */
   void setBorderColor(LeanColorRGB borderColor);
 
-  /** @return The theme to use to render this component */
+  /**
+   * @return The theme to use to render this component
+   */
   String getThemeName();
 
-  /** @param themeName The themeName to set */
+  /**
+   * @param themeName The themeName to set
+   */
   void setThemeName(String themeName);
+
+  final class LeanComponentObjectFactory implements IHopMetadataObjectFactory {
+    @Override
+    public Object createObject(String id, Object parentObject) throws HopException {
+      PluginRegistry registry = PluginRegistry.getInstance();
+      IPlugin plugin = registry.getPlugin(LeanComponentPluginType.class, id);
+      return registry.loadClass(plugin);
+    }
+
+    @Override
+    public String getObjectId(Object object) throws HopException {
+      return ((ILeanComponent) object).getPluginId();
+    }
+  }
 }

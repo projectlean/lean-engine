@@ -2,6 +2,10 @@ package org.lean.presentation.component.type;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.font.TextLayout;
+import java.awt.geom.Rectangle2D;
 import org.apache.batik.svggen.SVGGraphics2D;
 import org.apache.commons.lang.StringUtils;
 import org.apache.hop.core.Const;
@@ -26,10 +30,6 @@ import org.lean.presentation.page.LeanPage;
 import org.lean.presentation.theme.LeanTheme;
 import org.lean.render.IRenderContext;
 
-import java.awt.*;
-import java.awt.font.TextLayout;
-import java.awt.geom.Rectangle2D;
-
 public abstract class LeanBaseComponent implements ILeanComponent {
 
   @HopMetadataProperty @JsonProperty protected String pluginId;
@@ -37,10 +37,10 @@ public abstract class LeanBaseComponent implements ILeanComponent {
   @HopMetadataProperty @JsonProperty protected boolean background;
   @HopMetadataProperty @JsonProperty protected boolean border;
   @HopMetadataProperty @JsonProperty protected String themeName;
-  @HopMetadataProperty @JsonProperty private LeanFont defaultFont;
-  @HopMetadataProperty @JsonProperty private LeanColorRGB defaultColor;
-  @HopMetadataProperty @JsonProperty private LeanColorRGB backGroundColor;
-  @HopMetadataProperty @JsonProperty private LeanColorRGB borderColor;
+  @HopMetadataProperty @JsonProperty protected LeanFont defaultFont;
+  @HopMetadataProperty @JsonProperty protected LeanColorRGB defaultColor;
+  @HopMetadataProperty @JsonProperty protected LeanColorRGB backGroundColor;
+  @HopMetadataProperty @JsonProperty protected LeanColorRGB borderColor;
 
   // Fields below are not serialized
   //
@@ -543,7 +543,6 @@ public abstract class LeanBaseComponent implements ILeanComponent {
     // Is there a background?
     //
     if (background) {
-
       LeanColorRGB actualBackgroundColor = lookupBackgroundColor(renderContext);
       if (actualBackgroundColor != null) {
         Color oldColor = gc.getColor();
@@ -606,6 +605,25 @@ public abstract class LeanBaseComponent implements ILeanComponent {
   }
 
   /**
+   * Enable to specified background color, get the old background color back
+   *
+   * @param gc the graphical context
+   * @param leanColor the background color to set
+   * @return The old color on the gc
+   */
+  protected LeanColorRGB enableBackgroundColor(SVGGraphics2D gc, LeanColorRGB leanColor) {
+    // The label color...
+    //
+    Color oldColor = gc.getBackground();
+
+    if (leanColor != null) {
+      gc.setBackground(new Color(leanColor.getR(), leanColor.getG(), leanColor.getB()));
+    }
+
+    return new LeanColorRGB(oldColor.getRed(), oldColor.getGreen(), oldColor.getBlue());
+  }
+
+  /**
    * Set all the default in terms of background, border, color and font
    *
    * @param gc
@@ -631,7 +649,10 @@ public abstract class LeanBaseComponent implements ILeanComponent {
   protected LeanTextGeometry calculateTextGeometry(SVGGraphics2D gc, String string) {
     // Calculate the proper imageSize of the string...
     //
-    TextLayout textLayout = new TextLayout(string, gc.getFont(), gc.getFontRenderContext());
+    boolean emptyString = StringUtils.isEmpty(string);
+    TextLayout textLayout =
+        new TextLayout(
+            emptyString ? "Apache Hop" : string, gc.getFont(), gc.getFontRenderContext());
     Rectangle2D bounds = textLayout.getBounds();
 
     // Height is negative, don't like it.
@@ -643,7 +664,7 @@ public abstract class LeanBaseComponent implements ILeanComponent {
     int textHeight = (int) (bounds.getHeight() + descent);
 
     return new LeanTextGeometry(
-        textWidth,
+        emptyString ? 0 : textWidth,
         textHeight,
         -(int) bounds.getX(),
         (int) (-bounds.getY() + textLayout.getDescent()));
@@ -676,7 +697,9 @@ public abstract class LeanBaseComponent implements ILeanComponent {
     return log;
   }
 
-  /** @param log The log to set */
+  /**
+   * @param log The log to set
+   */
   @JsonIgnore
   public void setLogChannel(ILogChannel log) {
     this.log = log;
@@ -691,7 +714,9 @@ public abstract class LeanBaseComponent implements ILeanComponent {
     return pluginId;
   }
 
-  /** @param pluginId The pluginId to set */
+  /**
+   * @param pluginId The pluginId to set
+   */
   public void setPluginId(String pluginId) {
     this.pluginId = pluginId;
   }
@@ -705,7 +730,9 @@ public abstract class LeanBaseComponent implements ILeanComponent {
     return sourceConnectorName;
   }
 
-  /** @param sourceConnectorName The sourceConnectorName to set */
+  /**
+   * @param sourceConnectorName The sourceConnectorName to set
+   */
   public void setSourceConnectorName(String sourceConnectorName) {
     this.sourceConnectorName = sourceConnectorName;
   }
@@ -719,7 +746,9 @@ public abstract class LeanBaseComponent implements ILeanComponent {
     return defaultFont;
   }
 
-  /** @param defaultFont The defaultFont to set */
+  /**
+   * @param defaultFont The defaultFont to set
+   */
   public void setDefaultFont(LeanFont defaultFont) {
     this.defaultFont = defaultFont;
   }
@@ -733,7 +762,9 @@ public abstract class LeanBaseComponent implements ILeanComponent {
     return defaultColor;
   }
 
-  /** @param defaultColor The defaultColor to set */
+  /**
+   * @param defaultColor The defaultColor to set
+   */
   public void setDefaultColor(LeanColorRGB defaultColor) {
     this.defaultColor = defaultColor;
   }
@@ -747,7 +778,9 @@ public abstract class LeanBaseComponent implements ILeanComponent {
     return background;
   }
 
-  /** @param background The background to set */
+  /**
+   * @param background The background to set
+   */
   public void setBackground(boolean background) {
     this.background = background;
   }
@@ -761,7 +794,9 @@ public abstract class LeanBaseComponent implements ILeanComponent {
     return backGroundColor;
   }
 
-  /** @param backGroundColor The backGroundColor to set */
+  /**
+   * @param backGroundColor The backGroundColor to set
+   */
   public void setBackGroundColor(LeanColorRGB backGroundColor) {
     this.backGroundColor = backGroundColor;
   }
@@ -775,7 +810,9 @@ public abstract class LeanBaseComponent implements ILeanComponent {
     return border;
   }
 
-  /** @param border The border to set */
+  /**
+   * @param border The border to set
+   */
   public void setBorder(boolean border) {
     this.border = border;
   }
@@ -789,7 +826,9 @@ public abstract class LeanBaseComponent implements ILeanComponent {
     return borderColor;
   }
 
-  /** @param borderColor The borderColor to set */
+  /**
+   * @param borderColor The borderColor to set
+   */
   public void setBorderColor(LeanColorRGB borderColor) {
     this.borderColor = borderColor;
   }
@@ -803,7 +842,9 @@ public abstract class LeanBaseComponent implements ILeanComponent {
     return themeName;
   }
 
-  /** @param themeName The themeName to set */
+  /**
+   * @param themeName The themeName to set
+   */
   public void setThemeName(String themeName) {
     this.themeName = themeName;
   }

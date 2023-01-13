@@ -1,11 +1,10 @@
 package org.lean.presentation.interaction;
 
-import org.apache.hop.metadata.api.HopMetadataProperty;
-import org.lean.core.draw.DrawnItem;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import org.apache.hop.metadata.api.HopMetadataProperty;
+import org.lean.core.draw.DrawnItem;
 
 /**
  * Describes an interaction: method: how the user interacts. location: where the interaction can
@@ -19,7 +18,9 @@ public class LeanInteraction {
 
   @HopMetadataProperty private List<LeanInteractionAction> actions;
 
-  public LeanInteraction() {}
+  public LeanInteraction() {
+    this.actions = new ArrayList<>();
+  }
 
   public LeanInteraction(
       LeanInteractionMethod method,
@@ -34,7 +35,6 @@ public class LeanInteraction {
     this();
     this.method = new LeanInteractionMethod(interaction.method);
     this.location = new LeanInteractionLocation(interaction.location);
-    this.actions = new ArrayList<>();
     for (LeanInteractionAction action : interaction.actions) {
       actions.add(new LeanInteractionAction(action));
     }
@@ -56,7 +56,9 @@ public class LeanInteraction {
     return method;
   }
 
-  /** @param method The method to set */
+  /**
+   * @param method The method to set
+   */
   public void setMethod(LeanInteractionMethod method) {
     this.method = method;
   }
@@ -70,7 +72,9 @@ public class LeanInteraction {
     return location;
   }
 
-  /** @param location The location to set */
+  /**
+   * @param location The location to set
+   */
   public void setLocation(LeanInteractionLocation location) {
     this.location = location;
   }
@@ -84,7 +88,9 @@ public class LeanInteraction {
     return actions;
   }
 
-  /** @param actions The action to set */
+  /**
+   * @param actions The action to set
+   */
   public void setActions(List<LeanInteractionAction> actions) {
     this.actions = actions;
   }

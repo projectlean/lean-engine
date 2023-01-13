@@ -4,21 +4,35 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.hop.metadata.api.HopMetadataProperty;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /** This describes an action that can be taken by a user on a presentation. */
 public class LeanInteractionAction {
 
-  // The type of action to take
-  @HopMetadataProperty private ActionType actionType;
-  // The name of the object to reference
-  @HopMetadataProperty private String objectName;
-  // The parameter to set
-  @HopMetadataProperty private List<LeanInteractionParameter> parameters;
+  public enum ActionType {
+    /**
+     * Open the presentation with the name either in the object name (static value) or take the name
+     * from the value clicked on. In either case you can also set this string value where you
+     * clicked on as a parameter.
+     */
+    OPEN_PRESENTATION
+  }
 
-  public LeanInteractionAction() {
-    parameters = new ArrayList<>();
+  /** The type of action to take. */
+  @HopMetadataProperty private ActionType actionType;
+  /**
+   * The name of the object to reference (static value, for example: open a presentation with fixed
+   * name.
+   */
+  @HopMetadataProperty private String objectName;
+  /**
+   * The name of the parameter to set before the action. Its value comes from the string value
+   * clicked on.
+   */
+  @HopMetadataProperty private String valueParameter;
+
+  public LeanInteractionAction() {}
+
+  public LeanInteractionAction(ActionType actionType) {
+    this(actionType, null);
   }
 
   public LeanInteractionAction(ActionType actionType, String objectName) {
@@ -31,9 +45,7 @@ public class LeanInteractionAction {
     this();
     this.actionType = action.actionType;
     this.objectName = action.objectName;
-    for (LeanInteractionParameter parameter : action.parameters) {
-      this.parameters.add(new LeanInteractionParameter(parameter));
-    }
+    this.valueParameter = action.valueParameter;
   }
 
   public String toJsonString() throws JsonProcessingException {
@@ -50,7 +62,9 @@ public class LeanInteractionAction {
     return actionType;
   }
 
-  /** @param actionType The actionType to set */
+  /**
+   * @param actionType The actionType to set
+   */
   public void setActionType(ActionType actionType) {
     this.actionType = actionType;
   }
@@ -64,32 +78,28 @@ public class LeanInteractionAction {
     return objectName;
   }
 
-  /** @param objectName The objectName to set */
+  /**
+   * @param objectName The objectName to set
+   */
   public void setObjectName(String objectName) {
     this.objectName = objectName;
   }
 
   /**
-   * Gets parameters
+   * Gets valueParameter
    *
-   * @return value of parameters
+   * @return value of valueParameter
    */
-  public List<LeanInteractionParameter> getParameters() {
-    return parameters;
+  public String getValueParameter() {
+    return valueParameter;
   }
 
-  /** @param parameters The parameters to set */
-  public void setParameters(List<LeanInteractionParameter> parameters) {
-    this.parameters = parameters;
-  }
-
-  // TODO: make the action types plugins with a way to provide a JavaScript function for the browser
-  // side functionality
-  //
-  public enum ActionType {
-    OpenPresentation,
-    FilterOnly,
-    FilterInclude,
-    FilterExclude,
+  /**
+   * Sets valueParameter
+   *
+   * @param valueParameter value of valueParameter
+   */
+  public void setValueParameter(String valueParameter) {
+    this.valueParameter = valueParameter;
   }
 }

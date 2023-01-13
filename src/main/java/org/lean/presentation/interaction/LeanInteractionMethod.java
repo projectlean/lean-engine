@@ -72,4 +72,6 @@ public class LeanInteractionMethod {
   public void setMouseDoubleClick(boolean mouseDoubleClick) {
     this.mouseDoubleClick = mouseDoubleClick;
   }
+
+
 }

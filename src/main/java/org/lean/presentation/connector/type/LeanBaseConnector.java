@@ -27,7 +27,7 @@ public abstract class LeanBaseConnector implements ILeanConnector {
   public LeanBaseConnector(LeanBaseConnector c) {
     this.pluginId = c.pluginId;
     this.sourceConnectorName = c.sourceConnectorName;
-    // We don't copy over the listeneres!
+    // We don't copy over the listeners!
     //
     this.rowListeners = new ArrayList<>();
   }

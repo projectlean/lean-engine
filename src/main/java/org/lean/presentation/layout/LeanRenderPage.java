@@ -1,5 +1,9 @@
 package org.lean.presentation.layout;
 
+import java.awt.Dimension;
+import java.io.StringWriter;
+import java.util.ArrayList;
+import java.util.List;
 import org.apache.hop.core.svg.HopSvgGraphics2D;
 import org.lean.core.LeanGeometry;
 import org.lean.core.LeanPosition;
@@ -9,11 +13,6 @@ import org.lean.core.exception.LeanException;
 import org.lean.presentation.LeanComponentLayoutResult;
 import org.lean.presentation.component.LeanComponent;
 import org.lean.presentation.page.LeanPage;
-
-import java.awt.*;
-import java.io.StringWriter;
-import java.util.ArrayList;
-import java.util.List;
 
 import static org.lean.core.draw.DrawnItem.Category;
 
@@ -32,6 +31,8 @@ public class LeanRenderPage {
   private List<LeanComponentLayoutResult> layoutResults;
 
   private List<DrawnItem> drawnItems;
+
+  private String svgXml;
 
   public LeanRenderPage() {
     layoutResults = new ArrayList<>();
@@ -56,10 +57,14 @@ public class LeanRenderPage {
   }
 
   public String getSvgXml() throws LeanException {
+    if (svgXml != null) {
+      return svgXml;
+    }
     try {
       StringWriter stringWriter = new StringWriter();
       gc.stream(stringWriter, true);
-      return stringWriter.toString();
+      svgXml = stringWriter.toString();
+      return svgXml;
     } catch (Exception e) {
       throw new LeanException("Error converting SVG to XML", e);
     }
@@ -164,7 +169,9 @@ public class LeanRenderPage {
     return page;
   }
 
-  /** @param page The page to set */
+  /**
+   * @param page The page to set
+   */
   public void setPage(LeanPage page) {
     this.page = page;
   }
@@ -178,7 +185,9 @@ public class LeanRenderPage {
     return gc;
   }
 
-  /** @param gc The gc to set */
+  /**
+   * @param gc The gc to set
+   */
   public void setGc(HopSvgGraphics2D gc) {
     this.gc = gc;
   }
@@ -192,7 +201,9 @@ public class LeanRenderPage {
     return layoutResults;
   }
 
-  /** @param layoutResults The layoutResults to set */
+  /**
+   * @param layoutResults The layoutResults to set
+   */
   public void setLayoutResults(List<LeanComponentLayoutResult> layoutResults) {
     this.layoutResults = layoutResults;
   }
@@ -206,7 +217,9 @@ public class LeanRenderPage {
     return pageNumber;
   }
 
-  /** @param pageNumber The pageNumber to set */
+  /**
+   * @param pageNumber The pageNumber to set
+   */
   public void setPageNumber(int pageNumber) {
     this.pageNumber = pageNumber;
   }
@@ -220,7 +233,9 @@ public class LeanRenderPage {
     return drawnItems;
   }
 
-  /** @param drawnItems The drawnItems to set */
+  /**
+   * @param drawnItems The drawnItems to set
+   */
   public void setDrawnItems(List<DrawnItem> drawnItems) {
     this.drawnItems = drawnItems;
   }
